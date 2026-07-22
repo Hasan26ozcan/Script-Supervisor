@@ -1,0 +1,48 @@
+services:
+  harness:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - HARNESS_MOCK_MODE=${HARNESS_MOCK_MODE:-1}
+      - HARNESS_ANTHROPIC_API_KEY=${HARNESS_ANTHROPIC_API_KEY:-}
+      - HARNESS_LANGFUSE_ENABLED=${HARNESS_LANGFUSE_ENABLED:-false}
+      - HARNESS_LANGFUSE_HOST=http://langfuse:3000
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - langfuse
+    profiles: ["default"]
+
+  # Optional local observability stack (Phase 7+). Langfuse is MIT-licensed
+  # and self-hostable, which matters here since trace data can contain
+  # unpublished creative briefs / client material.
+  #
+  # This is the *minimal* single-container Langfuse quickstart image, not
+  # the full production compose (which additionally wants ClickHouse,
+  # Postgres, Redis, and S3-compatible storage as separate services --
+  # see https://langfuse.com/self-hosting for the full stack when trace
+  # volume actually justifies it).
+  langfuse:
+    image: langfuse/langfuse:2
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXTAUTH_SECRET=dev-only-change-me
+      - SALT=dev-only-change-me
+      - DATABASE_URL=postgresql://postgres:postgres@langfuse-db:5432/langfuse
+    depends_on:
+      - langfuse-db
+    profiles: ["observability"]
+
+  langfuse-db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=langfuse
+    volumes:
+      - langfuse-db-data:/var/lib/postgresql/data
+    profiles: ["observability"]
+
+volumes:
+  langfuse-db-data:
