@@ -1,0 +1,42 @@
+[
+  {
+    "id": "action_001",
+    "title": "High-Speed Chase Through Neon City",
+    "brief": "A detective races through a rain-slicked cyberpunk city at night, pursuing a cybernetic assassin who stole a vital data chip. Neon signs reflect in puddles, steam rises from vents, and the chase weaves between flying vehicles and crowded market stalls.",
+    "genre": "action",
+    "setting": "cyberpunk metropolis at night",
+    "mood": "tense, urgent, gritty"
+  },
+  {
+    "id": "drama_001",
+    "title": "Last Letter Home",
+    "brief": "A young soldier sits in a trench during WWI, writing what might be his last letter to his younger sister. He describes the mud, the constant artillery, and his fear, but ends with hopes for her future and promises to return home.",
+    "genre": "drama",
+    "setting": "WWI trench, dawn",
+    "mood": "somber, reflective, heartfelt"
+  },
+  {
+    "id": "comedy_001",
+    "title": "The Misdelivered Pizza",
+    "brief": "Two rival food truck owners accidentally swap orders, leading to a vegan receiving a meat-lovers pizza and a meat-lover receiving a vegan special. Their attempt to swap back creates a series of increasingly absurd misunderstandings across the city.",
+    "genre": "comedy",
+    "setting": "modern city lunch rush",
+    "mood": "lighthearted, chaotic, humorous"
+  },
+  {
+    "id": "minimal_dialogue_001",
+    "title": "The Last Light",
+    "brief": "An elderly lighthouse keeper makes his final climb up the spiral stairs to check the lamp one last time before automation makes his job obsolete. The film focuses on his weathered hands, the rhythmic climb, and the sweeping ocean views from each window.",
+    "genre": "minimal dialogue",
+    "setting": "isolated coastal lighthouse, sunset",
+    "mood": "peaceful, melancholic, contemplative"
+  },
+  {
+    "id": "ensemble_001",
+    "title": "The Heist Team Assembly",
+    "brief": "A master thief recruits five specialists for an impossible casino heist: the hacker, the acrobat, the con artist, the explosives expert, and the inside man. Each specialist demonstrates their unique skill in a quick vignette before they meet to plan the job.",
+    "genre": "ensemble cast",
+    "setting": "various locations across the city",
+    "mood": "energetic, clever, anticipatory"
+  }
+]

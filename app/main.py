@@ -8,6 +8,7 @@ Endpoints:
 """
 from __future__ import annotations
 
+import asyncio
 import json
 from pathlib import Path
 
@@ -51,10 +52,10 @@ class CompareRequest(BaseModel):
 
 
 @app.post("/run", response_model=RunTrace)
-def run_loop(req: RunRequest) -> RunTrace:
+async def run_loop(req: RunRequest) -> RunTrace:
     loop = CorrectionLoop(rubric=rubric, max_turns=req.max_turns)
     refs = [ReferenceImage(path=r.path, caption=r.caption) for r in req.reference_images]
-    trace = loop.run(req.brief, reference_images=refs)
+    trace = await loop.run(req.brief, reference_images=refs)
     (TRACES_DIR / f"{trace.run_id}.json").write_text(trace.model_dump_json(indent=2))
     return trace
 
