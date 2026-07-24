@@ -38,5 +38,109 @@
     "genre": "ensemble cast",
     "setting": "various locations across the city",
     "mood": "energetic, clever, anticipatory"
+  },
+  {
+    "id": "scifi_001",
+    "title": "First Contact Protocol",
+    "brief": "A linguist stationed at a remote Arctic research station receives the first extraterrestrial signal - a repeating mathematical sequence embedded in cosmic background radiation. As she decodes it, she realizes the message contains both a warning and an invitation.",
+    "genre": "science fiction",
+    "setting": "Arctic research station, present day",
+    "mood": "wondering, tense, hopeful"
+  },
+  {
+    "id": "horror_001",
+    "title": "The Whispering Walls",
+    "brief": "After moving into a converted 19th-century asylum, a family begins hearing whispers in the walls that sound remarkably like their deceased relatives. The whispers grow more insistent, guiding them toward a hidden basement room.",
+    "genre": "horror",
+    "setting": "renovated asylum, suburban neighborhood",
+    "mood": "creepy, unsettling, dread-filled"
+  },
+  {
+    "id": "romance_001",
+    "title": "The Letter Shop",
+    "brief": "In a nostalgic stationery shop, a shy calligrapher finds themselves falling for a regular customer who commissions love letters they never send. When the customer stops coming, the calligrapher must decide whether to confess their feelings through one final, unsent letter.",
+    "genre": "romance",
+    "setting": "quaint stationery shop, rainy season",
+    "mood": "warm, hopeful, bittersweet"
+  },
+  {
+    "id": "thriller_001",
+    "title": "Dead Drop",
+    "brief": "A bike messenger picks up what they think is a routine package, only to discover it contains evidence of a city-wide corruption scandal. Now they must navigate the urban landscape while evading both corrupt officials and the criminals who want the evidence destroyed.",
+    "genre": "thriller",
+    "setting": "metropolitan downtown, rush hour",
+    "mood": "tense, fast-paced, paranoid"
+  },
+  {
+    "id": "period_001",
+    "title": "The Botanist's Daughter",
+    "brief": "In 1890s London, a female botanist disguises herself as a man to join an expedition to the Amazon rainforest. When her identity is discovered mid-journey, she must prove her expertise while navigating both the wilderness and her crew's prejudices.",
+    "genre": "historical fiction",
+    "setting": "London to Amazon rainforest, 1892",
+    "mood": "adventurous, determined, enlightening"
+  },
+  {
+    "id": "mystery_001",
+    "title": "The Last Guest",
+    "brief": "At an isolated mountain lodge during a blizzard, seven strangers are stranded for the night. When one is found dead in the morning, the remaining six must determine which of them is the murderer before the storm passes and they can escape.",
+    "genre": "mystery",
+    "setting": "isolated mountain lodge, winter blizzard",
+    "mood": "suspenseful, claustrophobic, investigative"
+  },
+  {
+    "id": "fantasy_001",
+    "title": "The Last Lightkeeper",
+    "brief": "In a realm where stars are physical entities that can be harvested for power, a young apprentice discovers that the recent dimming of the night sky is caused by a conspiracy to harvest the last remaining pure star for a weapon that could plunge the world into eternal darkness.",
+    "genre": "fantasy",
+    "setting": "floating islands above a fantasy realm",
+    "mood": "epic, wondrous, urgent"
+  },
+  {
+    "id": "slice_of_life_001",
+    "title": "The Repair Shop",
+    "brief": "Every Saturday, an elderly watchmaker opens their tiny shop to repair not just timepieces, but also the cherished trinkets and broken heirlooms of neighborhood residents. Each repair reveals a story about the owner and their connection to the object.",
+    "genre": "slice of life",
+    "setting": "quaint neighborhood watchmaker's shop",
+    "mood": "warm, nostalgic, heartwarming"
+  },
+  {
+    "id": "documentary_style_001",
+    "title": "One Day in the Market",
+    "brief": "Following the interconnected stories of six vendors in a bustling Asian market from opening bell to closing time - the fishmonger who rises before dawn, the flower arranger who creates ephemeral beauty, the tea master who knows each customer's preference, and more.",
+    "genre": "documentary style",
+    "setting": "bustling Asian market, single day",
+    "mood": "observant, vivid, authentic"
+  },
+  {
+    "id": "animation_concept_001",
+    "title": "The Clockbird's Apprentice",
+    "brief": "In a city where time is literally harvested from special birds and stored in towers, a young street urchin befriends a injured clockbird and learns that the city's ruling council is secretly draining the birds' life force to extend their own lives.",
+    "genre": "animation/family",
+    "setting": "steampunk city powered by bird time",
+    "mood": "whimsical, adventurous, hopeful"
+  },
+  {
+    "id": "experimental_001",
+    "title": "Rooms",
+    "brief": "A character moves through a series of interconnected rooms, each representing a different year of their life. Objects remain, but their context and meaning shift as we see the same objects gain new significance through the lens of accumulated experience.",
+    "genre": "experimental",
+    "setting": "sequence of minimally furnished rooms",
+    "mood": "reflective, disjointed, contemplative"
+  },
+  {
+    "id": "western_001",
+    "title": "The Last Ride",
+    "brief": "An aging gunslinger agrees to escort a young widow and her child across dangerous territory to reach her family's ranch. What begins as a simple job becomes a journey of redemption as ghosts from the shooter's past emerge one by one.",
+    "genre": "western",
+    "setting": "American frontier, 1880s",
+    "mood": "stoic, gritty, redemptive"
+  },
+  {
+    "id": "musical_001",
+    "title": "The Bridge Songs",
+    "brief": "On the day a historic slated-for-demolition bridge is to be replaced, musicians, poets, and everyday people gather to perform their final tributes. Each performance reveals a personal connection to the structure that has defined their community for generations.",
+    "genre": "musical/drama",
+    "setting": "historic urban bridge, single day",
+    "mood": "nostalgic, communal, bittersweet"
   }
 ]
