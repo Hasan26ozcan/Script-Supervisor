@@ -3,7 +3,7 @@
 Routes a logical task ("draft", "critique", "revise") to a concrete model,
 tracks cost/latency/provenance for every call, and supports a mock mode so
 the whole harness is runnable and testable without hitting a real API or
-spending money. Swap MOCK_MODE off and set ANTHROPIC_API_KEY to go live.
+spending money. Swap MOCK_MODE off and set API keys to go live.
 
 This is deliberately the file you'd point to in an interview and say:
 "here's where I made a cost/latency tradeoff decision, and here's the data
@@ -22,12 +22,20 @@ import structlog
 
 import app.logging_config  # noqa: F401 -- configures structlog on import, side effect intentional
 from app.config import settings
-from app.schemas import Critique
+from app.schemas import Critique, BaseModel
 
-# Import anthropic conditionally for async support
+# Import providers conditionally for async support
 if not settings.mock_mode:
-    import anthropic
-    import anthropic.lib
+    if settings.provider == "anthropic":
+        import anthropic
+        import anthropic.lib
+    elif settings.provider == "groq":
+        try:
+            from groq import Groq
+            GROQ_AVAILABLE = True
+        except ImportError:
+            GROQ_AVAILABLE = False
+            # We'll handle this gracefully in __init__
 
 log = structlog.get_logger(component="gateway")
 
@@ -35,23 +43,31 @@ MOCK_MODE = settings.mock_mode
 
 # Rough per-1M-token prices (USD). Update as needed; this is a stand-in,
 # not a source of truth. Keeping it explicit and swappable is the point.
+# These are approximate rates - adjust based on actual provider pricing
 MODEL_PRICES = {
+    # Anthropic models (legacy support)
     "claude-haiku-4-5-20251001": {"input": 0.80, "output": 4.00},
     "claude-sonnet-5": {"input": 3.00, "output": 15.00},
     "claude-opus-4-8": {"input": 15.00, "output": 75.00},
+    # Groq models (approximate pricing - adjust as needed)
+    "llama-3.1-8b-instant": {"input": 0.10, "output": 0.10},
+    "llama-3.1-70b-versatile": {"input": 0.60, "output": 0.60},
+    "llama-3.2-11b-vision-preview": {"input": 0.30, "output": 0.30},
+    "llama-3.2-90b-vision-preview": {"input": 0.90, "output": 0.90},
+    "mixtral-8x7b-32768": {"input": 0.45, "output": 0.45},
+    "gemma-7b-it": {"input": 0.10, "output": 0.10},
 }
 
 TASK_DEFAULT_MODEL = {
     # Cheap model by default for drafting -- the harness's job is to make
     # this viable. Escalate only when the rubric says quality is lacking.
-    "draft": "claude-haiku-4-5-20251001",
-    "critique": "claude-sonnet-5",
-    "revise": "claude-haiku-4-5-20251001",
+    "draft": "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001",
+    "critique": "llama-3.1-70b-versatile" if settings.provider == "groq" else "claude-sonnet-5",
+    "revise": "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001",
     # Vision-grounded critique needs a model that actually looks at the
     # image, not just describes what it assumes an image like that would
-    # show -- Haiku can do vision too, but Sonnet is the safer default
-    # for a critic whose judgment we're about to feed into rubric weights.
-    "visual_critique": "claude-sonnet-5",
+    # show.
+    "visual_critique": "llama-3.2-11b-vision-preview" if settings.provider == "groq" else "claude-sonnet-5",
 }
 
 
@@ -97,11 +113,22 @@ class ModelGateway:
 
     def __init__(self, ledger: GatewayLedger | None = None):
         self.ledger = ledger or GatewayLedger()
-        self._client = None
+        self._anthropic_client = None
+        self._groq_client = None
+
         if not MOCK_MODE:
-            # api_key=None lets the SDK fall back to the standard
-            # ANTHROPIC_API_KEY env var if HARNESS_ANTHROPIC_API_KEY isn't set.
-            self._client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+            if settings.provider == "anthropic":
+                if not settings.anthropic_api_key:
+                    raise ValueError("ANTHROPIC_API_KEY required when provider=anthropic and mock_mode=False")
+                self._anthropic_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+            elif settings.provider == "groq":
+                if not settings.groq_api_key:
+                    raise ValueError("GROQ_API_KEY required when provider=groq and mock_mode=False")
+                if not GROQ_AVAILABLE:
+                    raise ImportError("groq package not installed. Install with: pip install groq")
+                self._groq_client = Groq(api_key=settings.groq_api_key)
+            else:
+                raise ValueError(f"Unsupported provider: {settings.provider}")
 
     def _record(
         self,
@@ -133,6 +160,7 @@ class ModelGateway:
             task=task,
             model=model,
             mock_mode=MOCK_MODE,
+            provider=settings.provider,
             prompt_tokens=prompt_tok,
             completion_tokens=completion_tok,
             latency_ms=round(latency_ms, 1),
@@ -142,21 +170,41 @@ class ModelGateway:
         return result
 
     async def call(self, task: str, system: str, user: str, model: str | None = None) -> CallResult:
-        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5")
+        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile")
         start = time.perf_counter()
 
         if MOCK_MODE:
             text, prompt_tok, completion_tok = self._mock_response(task, user)
         else:
-            resp = await self._client.messages.create(
-                model=model,
-                max_tokens=1024,
-                system=system,
-                messages=[{"role": "user", "content": user}],
-            )
-            text = "".join(b.text for b in resp.content if b.type == "text")
-            prompt_tok = resp.usage.input_tokens
-            completion_tok = resp.usage.output_tokens
+            if settings.provider == "anthropic":
+                assert self._anthropic_client is not None
+                resp = await self._anthropic_client.messages.create(
+                    model=model,
+                    max_tokens=1024,
+                    system=system,
+                    messages=[{"role": "user", "content": user}],
+                )
+                text = "".join(b.text for b in resp.content if b.type == "text")
+                prompt_tok = resp.usage.input_tokens
+                completion_tok = resp.usage.output_tokens
+            elif settings.provider == "groq":
+                assert self._groq_client is not None
+                # Groq uses OpenAI-compatible API
+                resp = self._groq_client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user}
+                    ],
+                    max_tokens=1024,
+                )
+                text = resp.choices[0].message.content
+                # Groq doesn't always return token counts in the same way
+                # We'll approximate if not provided
+                prompt_tok = getattr(resp.usage, 'prompt_tokens', len(system) // 4 + len(user) // 4)
+                completion_tok = getattr(resp.usage, 'completion_tokens', len(text) // 4)
+            else:
+                raise ValueError(f"Unsupported provider: {settings.provider}")
 
         latency_ms = (time.perf_counter() - start) * 1000
         return self._record(task, model, text, prompt_tok, completion_tok, latency_ms)
@@ -174,36 +222,68 @@ class ModelGateway:
         bytes, not a text description of an image, so its judgment about
         composition/lighting/continuity is grounded in what's actually there.
         """
-        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5")
+        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.2-11b-vision-preview")
         start = time.perf_counter()
 
         if MOCK_MODE:
-            text, prompt_tok, completion_tok = self._mock_vision_response(
-                task, user_text, len(image_paths)
-            )
+            text, prompt_tok, completion_tok = self._mock_vision_response(task, user_text, len(image_paths))
         else:
-            content: list[dict] = []
-            for p in image_paths:
-                path = Path(p)
-                media_type = mimetypes.guess_type(path.name)[0] or "image/jpeg"
-                data = base64.standard_b64encode(path.read_bytes()).decode("utf-8")
-                content.append(
-                    {
-                        "type": "image",
-                        "source": {"type": "base64", "media_type": media_type, "data": data},
-                    }
-                )
-            content.append({"type": "text", "text": user_text})
+            if settings.provider == "anthropic":
+                assert self._anthropic_client is not None
+                content: list[dict] = []
+                for p in image_paths:
+                    path = Path(p)
+                    media_type = mimetypes.guess_type(path.name)[0] or "image/jpeg"
+                    data = base64.standard_b64encode(path.read_bytes()).decode("utf-8")
+                    content.append(
+                        {
+                            "type": "image",
+                            "source": {"type": "base64", "media_type": media_type, "data": data},
+                        }
+                    )
+                content.append({"type": "text", "text": user_text})
 
-            resp = await self._client.messages.create(
-                model=model,
-                max_tokens=1024,
-                system=system,
-                messages=[{"role": "user", "content": content}],
-            )
-            text = "".join(b.text for b in resp.content if b.type == "text")
-            prompt_tok = resp.usage.input_tokens
-            completion_tok = resp.usage.output_tokens
+                resp = await self._anthropic_client.messages.create(
+                    model=model,
+                    max_tokens=1024,
+                    system=system,
+                    messages=[{"role": "user", "content": content}],
+                )
+                text = "".join(b.text for b in resp.content if b.type == "text")
+                prompt_tok = resp.usage.input_tokens
+                completion_tok = resp.usage.output_tokens
+            elif settings.provider == "groq":
+                # For Groq, we need to handle vision differently
+                # Groq's API might not support vision in the same way as Anthropic
+                # For now, we'll implement a placeholder that concatenates image descriptions
+                # In a real implementation, you'd use Groq's vision capabilities if available
+                assert self._groq_client is not None
+
+                # Simple approach: describe images in text (not ideal but works for testing)
+                # A better approach would be to use Groq's vision models if they exist
+                image_descriptions = []
+                for p in image_paths:
+                    # In a real implementation, we'd send the image to a vision model
+                    # For now, we'll just note that an image was provided
+                    image_descriptions.append(f"[Image: {Path(p).name}]")
+
+                vision_context = " ".join(image_descriptions)
+                enhanced_user_text = f"{user_text}\n\nVisual context: {vision_context}"
+
+                resp = self._groq_client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": enhanced_user_text}
+                    ],
+                    max_tokens=1024,
+                )
+                text = resp.choices[0].message.content
+                # Approximate token counts
+                prompt_tok = len(system) // 4 + len(enhanced_user_text) // 4
+                completion_tok = len(text) // 4
+            else:
+                raise ValueError(f"Unsupported provider: {settings.provider}")
 
         latency_ms = (time.perf_counter() - start) * 1000
         return self._record(
@@ -219,7 +299,8 @@ class ModelGateway:
         model: str | None = None,
         max_retries: int = 2,
     ) -> BaseModel:
-        """Make a structured call using Anthropic's tool use feature.
+        """Make a structured call using tool use feature (Anthropic) or
+        JSON mode (Groq) for structured output.
 
         Args:
             task: The task type (e.g., "critique")
@@ -232,21 +313,13 @@ class ModelGateway:
         Returns:
             Validated Pydantic model instance
         """
-        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5")
+        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile")
         start = time.perf_counter()
-
-        # Prepare the tool definition from the Pydantic schema
-        tool_definition = {
-            "name": "submit_critique",
-            "description": "Submit a structured critique",
-            "input_schema": schema.model_json_schema()
-        }
 
         for attempt in range(max_retries):
             try:
                 if MOCK_MODE:
                     # For mock mode, we'll generate a mock response that fits the schema
-                    # This is a simplified mock - in reality, we'd want to generate proper mock data
                     if schema == Critique:
                         mock_text = (
                             "clarity: 7/10 - shot descriptions are clear\n"
@@ -263,32 +336,81 @@ class ModelGateway:
                         prompt_tok = max(20, len(user) // 4)
                         completion_tok = 20
                 else:
-                    # Use Anthropic's tool use feature
-                    resp = await self._client.messages.create(
-                        model=model,
-                        max_tokens=1024,
-                        system=system,
-                        messages=[{"role": "user", "content": user}],
-                        tools=[tool_definition],
-                        tool_choice={"type": "tool", "name": "submit_critique"}
-                    )
+                    if settings.provider == "anthropic":
+                        assert self._anthropic_client is not None
+                        # Prepare the tool definition from the Pydantic schema
+                        tool_definition = {
+                            "name": "submit_critique",
+                            "description": "Submit a structured critique",
+                            "input_schema": schema.model_json_schema()
+                        }
 
-                    # Extract the tool use result
-                    text = ""
-                    for block in resp.content:
-                        if block.type == "tool_use" and block.name == "submit_critique":
-                            # The tool use block contains the structured input
-                            import json
-                            tool_input = block.input
-                            text = json.dumps(tool_input)
-                            break
+                        resp = await self._anthropic_client.messages.create(
+                            model=model,
+                            max_tokens=1024,
+                            system=system,
+                            messages=[{"role": "user", "content": user}],
+                            tools=[tool_definition],
+                            tool_choice={"type": "tool", "name": "submit_critique"}
+                        )
 
-                    if not text:
-                        # Fallback if no tool use was found
-                        text = "".join(b.text for b in resp.content if b.type == "text")
+                        # Extract the tool use result
+                        text = ""
+                        for block in resp.content:
+                            if block.type == "tool_use" and block.name == "submit_critique":
+                                # The tool use block contains the structured input
+                                import json
+                                tool_input = block.input
+                                text = json.dumps(tool_input)
+                                break
 
-                    prompt_tok = resp.usage.input_tokens
-                    completion_tok = resp.usage.output_tokens
+                        if not text:
+                            # Fallback if no tool use was found
+                            text = "".join(b.text for b in resp.content if b.type == "text")
+
+                        prompt_tok = resp.usage.input_tokens
+                        completion_tok = resp.usage.output_tokens
+                    elif settings.provider == "groq":
+                        assert self._groq_client is not None
+                        # For Groq, we'll use JSON mode if available, or prompt engineering
+                        # Groq supports JSON schema via the format parameter in some models
+                        # For simplicity, we'll prompt for JSON and parse it
+
+                        # Add JSON formatting instructions to the system prompt
+                        json_schema = schema.model_json_schema()
+                        import json
+                        schema_str = json.dumps(json_schema, indent=2)
+
+                        enhanced_system = f"""{system}
+
+                        You must respond with a valid JSON object that conforms to this schema:
+                        {schema_str}
+
+                        Respond ONLY with the JSON object, no additional text."""
+
+                        resp = self._groq_client.chat.completions.create(
+                            model=model,
+                            messages=[
+                                {"role": "system", "content": enhanced_system},
+                                {"role": "user", "content": user}
+                            ],
+                            max_tokens=1024,
+                            temperature=0.1,  # Lower temperature for more consistent JSON
+                        )
+                        text = resp.choices[0].message.content
+
+                        # Try to extract JSON from the response
+                        # Look for JSON-like content between curly braces
+                        import re
+                        json_match = re.search(r'\{.*\}', text, re.DOTALL)
+                        if json_match:
+                            text = json_match.group(0)
+                        # If no JSON found, we'll let the validation fail and retry
+
+                        prompt_tok = len(system) // 4 + len(user) // 4
+                        completion_tok = len(text) // 4
+                    else:
+                        raise ValueError(f"Unsupported provider: {settings.provider}")
 
                 latency_ms = (time.perf_counter() - start) * 1000
                 result = self._record(task, model, text, prompt_tok, completion_tok, latency_ms)

@@ -50,7 +50,11 @@ class CorrectionLoop:
             # Get prompts from registry
             draft_system = get_prompt("draft")
             critique_system = get_prompt("critique")
-            vision_critique_system = get_prompt("critique")  # For now, reuse critique for vision
+            try:
+                vision_critique_system = get_prompt("vision_critique")
+            except FileNotFoundError:
+                # Fallback to regular critique if vision_critique not available
+                vision_critique_system = get_prompt("critique")
 
             draft_call = await self.gateway.call(task, draft_system, draft_prompt)
             draft = Draft(

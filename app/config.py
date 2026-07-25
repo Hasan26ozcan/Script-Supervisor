@@ -16,8 +16,13 @@ class Settings(BaseSettings):
 
     mock_mode: bool = Field(default=True, description="If true, no real API calls are made.")
     anthropic_api_key: str | None = Field(
-        default=None, description="Required when mock_mode=False."
+        default=None, description="Required when mock_mode=False and using Anthropic."
     )
+    groq_api_key: str | None = Field(
+        default=None, description="Required when mock_mode=False and using Groq."
+    )
+    # Which provider to use: "anthropic" or "groq"
+    provider: str = Field(default="anthropic", description="LLM provider to use: 'anthropic' or 'groq'")
 
     # correction loop defaults
     max_turns: int = 3
