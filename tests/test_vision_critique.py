@@ -32,19 +32,19 @@ def _fresh_loop(tmp_path, **kwargs):
     return CorrectionLoop(gateway=gateway, rubric=rubric, **kwargs)
 
 
-def test_run_without_reference_images_uses_text_critique(tmp_path):
+async def test_run_without_reference_images_uses_text_critique(tmp_path):
     loop = _fresh_loop(tmp_path, max_turns=1)
-    trace = loop.run("A quiet kitchen scene, early morning.")
+    trace = await loop.run("A quiet kitchen scene, early morning.")
     assert trace.reference_images == []
     assert trace.steps[0].critique.modality == "text"
     criteria_used = {s.criterion for s in trace.steps[0].critique.scores}
     assert criteria_used <= {"clarity", "tone_match", "actionability"}
 
 
-def test_run_with_reference_images_uses_vision_critique(tmp_path):
+async def test_run_with_reference_images_uses_vision_critique(tmp_path):
     ref = _make_ref_image(tmp_path)
     loop = _fresh_loop(tmp_path, max_turns=1)
-    trace = loop.run("A quiet kitchen scene, early morning.", reference_images=[ref])
+    trace = await loop.run("A quiet kitchen scene, early morning.", reference_images=[ref])
 
     assert len(trace.reference_images) == 1
     assert trace.reference_images[0].caption == ref.caption
@@ -54,10 +54,10 @@ def test_run_with_reference_images_uses_vision_critique(tmp_path):
     assert criteria_used  # actually scored something, not empty
 
 
-def test_vision_call_is_logged_with_image_token_overhead(tmp_path):
+async def test_vision_call_is_logged_with_image_token_overhead(tmp_path):
     ref = _make_ref_image(tmp_path)
     loop = _fresh_loop(tmp_path, max_turns=1)
-    trace = loop.run("A tense hallway scene.", reference_images=[ref])
+    trace = await loop.run("A tense hallway scene.", reference_images=[ref])
 
     vision_calls = [c for c in loop.gateway.ledger.calls if c.task == "visual_critique"]
     assert len(vision_calls) == 1

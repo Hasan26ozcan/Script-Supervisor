@@ -15,10 +15,11 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from app.agent_loop import CRITIQUE_SYSTEM, CorrectionLoop
+from app.agent_loop import CorrectionLoop
 from app.config import settings
 from app.gateway import ModelGateway
 from app.preference_store import PreferenceStore
+from app.prompts import get_prompt
 from app.rubric import Rubric
 from app.schemas import PreferencePair, ReferenceImage, RunTrace
 
@@ -69,7 +70,7 @@ def get_trace(run_id: str) -> RunTrace:
 
 
 @app.post("/compare")
-def compare(req: CompareRequest) -> dict:
+async def compare(req: CompareRequest) -> dict:
     pref = PreferencePair(
         brief=req.brief,
         candidate_a=req.candidate_a,
@@ -83,10 +84,13 @@ def compare(req: CompareRequest) -> dict:
     # Re-score both candidates against the rubric so the preference can
     # actually move weights (needs criteria scores, not just raw text).
     gw = ModelGateway()
+    critique_system = get_prompt("critique")
     prompt_a = f"Brief: {req.brief}\n\nShot list:\n{req.candidate_a}"
     prompt_b = f"Brief: {req.brief}\n\nShot list:\n{req.candidate_b}"
-    scores_a, _ = rubric.parse_critique_text(gw.call("critique", CRITIQUE_SYSTEM, prompt_a).text)
-    scores_b, _ = rubric.parse_critique_text(gw.call("critique", CRITIQUE_SYSTEM, prompt_b).text)
+    call_a = await gw.call("critique", critique_system, prompt_a)
+    call_b = await gw.call("critique", critique_system, prompt_b)
+    scores_a, _ = rubric.parse_critique_text(call_a.text)
+    scores_b, _ = rubric.parse_critique_text(call_b.text)
     rubric.update_from_preference(pref, scores_a, scores_b)
     return {"status": "recorded", "pair_id": pref.pair_id, "updated_weights": rubric.weights}
 

@@ -435,7 +435,6 @@ class ModelGateway:
                         continue
                     else:
                         # Max retries exceeded, return error result
-                        from app.schemas import Critique
                         if schema == Critique:
                             # Return a Critique with parse_error=True
                             error_critique = Critique(

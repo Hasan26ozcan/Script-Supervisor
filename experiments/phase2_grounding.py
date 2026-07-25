@@ -16,7 +16,7 @@ import numpy as np
 from scipy import stats
 
 from app.gateway import ModelGateway
-from app.logging_config import setup_logging
+from app.logging_config import configure_logging
 from app.prompts import get_prompt
 
 
@@ -224,7 +224,7 @@ def analyze_results(results: dict[str, list[dict]]) -> dict:
                 "effect_size": float(effect_size),
                 "p_value": float(p_value),
                 "statistic": float(stat),
-                "significant": p_value < 0.05
+                "significant": bool(p_value < 0.05)
             }
         else:
             # Not enough data for statistical test
@@ -248,7 +248,7 @@ def analyze_results(results: dict[str, list[dict]]) -> dict:
 async def main():
     """Main function to run the grounding experiment."""
     # Setup logging
-    setup_logging()
+    configure_logging()
 
     print("Loading grounding trials...")
     trials = load_grounding_trials()
