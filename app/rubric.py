@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import math
+from datetime import datetime, UTC
 from pathlib import Path
 
 from app.config import settings
@@ -40,7 +41,13 @@ class Rubric:
         self.weights_path = (
             Path(weights_path) if weights_path else Path(settings.rubric_weights_path)
         )
+        self.weight_history_path = (
+            self.weights_path.parent / "rubric_weight_history.jsonl"
+            if weights_path
+            else Path(settings.rubric_weight_history_path)
+        )
         self.weights: dict[str, float] = self._load_weights()
+        self.weight_history: list[dict] = self._load_history()
 
     def _load_weights(self) -> dict[str, float]:
         if self.weights_path.exists():
@@ -52,6 +59,31 @@ class Rubric:
     def save_weights(self) -> None:
         self.weights_path.parent.mkdir(parents=True, exist_ok=True)
         self.weights_path.write_text(json.dumps(self.weights, indent=2))
+
+    def _load_history(self) -> list[dict]:
+        if not self.weight_history_path.exists():
+            return []
+        out: list[dict] = []
+        with self.weight_history_path.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                out.append(json.loads(line))
+        return out
+
+    def record_weight_snapshot(self, pref: PreferencePair | None = None) -> None:
+        self.weight_history_path.parent.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "pair_id": pref.pair_id if pref else None,
+            "brief": pref.brief if pref else None,
+            "winner": pref.winner if pref else None,
+            "weights": self.weights.copy(),
+        }
+        with self.weight_history_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(entry) + "\n")
+        self.weight_history.append(entry)
 
     def parse_critique_text(self, raw: str) -> tuple[list[RubricScore], str]:
         """Parses the (mock or real) critic response of the form:
@@ -122,3 +154,4 @@ class Rubric:
                 0.05, self.weights[crit] + learning_rate * direction * confidence
             )
         self.save_weights()
+        self.record_weight_snapshot(pref)

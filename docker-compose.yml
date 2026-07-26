@@ -10,8 +10,12 @@ services:
       - HARNESS_LANGFUSE_HOST=http://langfuse:3000
     volumes:
       - ./data:/app/data
-    depends_on:
-      - langfuse
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request as r, sys; sys.exit(0 if r.urlopen('http://127.0.0.1:8000/health').getcode() == 200 else 1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     profiles: ["default"]
 
   # Optional local observability stack (Phase 7+). Langfuse is MIT-licensed

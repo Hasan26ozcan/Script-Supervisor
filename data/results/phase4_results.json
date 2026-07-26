@@ -1,0 +1,213 @@
+{
+  "results": {
+    "trials": [
+      {
+        "id": "fluorescent_office",
+        "title": "Fluorescent Office",
+        "brief": "A bright fluorescent office space with cubicles and harsh lighting.",
+        "reference_image": "data\\images\\grounding\\fluorescent_office\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0038494000000000002,
+          "latency_ms": 301.4802999996391,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A bright fluorescent office space with c...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.0085408,
+          "latency_ms": 262.80320000023494,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A bright fluorescent office space with c...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2187353873330906
+      },
+      {
+        "id": "forest_clearing",
+        "title": "Forest Clearing",
+        "brief": "A sunlit forest clearing with rays of light breaking through the canopy.",
+        "reference_image": "data\\images\\grounding\\forest_clearing\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0038616,
+          "latency_ms": 320.39469999972425,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A sunlit forest clearing with rays of li...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.008556,
+          "latency_ms": 333.63049999934447,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A sunlit forest clearing with rays of li...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2156619018023616
+      },
+      {
+        "id": "golden_hour_street",
+        "title": "Golden Hour Street",
+        "brief": "Two people sharing a quiet moment during golden hour on a city street.",
+        "reference_image": "data\\images\\grounding\\golden_hour_street\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.003857,
+          "latency_ms": 310.39810000038415,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'Two people sharing a quiet moment during...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.0085454,
+          "latency_ms": 311.4589000001615,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'Two people sharing a quiet moment during...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2155561317085817
+      },
+      {
+        "id": "hospital_corridor",
+        "title": "Hospital Corridor",
+        "brief": "A long hospital corridor with fluorescent lighting and distant beeping monitors.",
+        "reference_image": "data\\images\\grounding\\hospital_corridor\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0038828,
+          "latency_ms": 340.29289999989487,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A long hospital corridor with fluorescen...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.0085772,
+          "latency_ms": 394.68639999904553,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A long hospital corridor with fluorescen...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2090244153703513
+      },
+      {
+        "id": "neon_alley",
+        "title": "Neon Alley",
+        "brief": "A colorful neon alley at night with reflective wet pavement.",
+        "reference_image": "data\\images\\grounding\\neon_alley\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0038298,
+          "latency_ms": 285.6703999996171,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A colorful neon alley at night with refl...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.0085242,
+          "latency_ms": 351.40320000027714,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A colorful neon alley at night with refl...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2257559141469527
+      },
+      {
+        "id": "rooftop_sunset",
+        "title": "Rooftop Sunset",
+        "brief": "A rooftop overlooking a city skyline at sunset with warm golden light.",
+        "reference_image": "data\\images\\grounding\\rooftop_sunset\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.003857,
+          "latency_ms": 299.6004000001449,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A rooftop overlooking a city skyline at ...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.0085454,
+          "latency_ms": 387.5957999998718,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A rooftop overlooking a city skyline at ...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2155561317085817
+      },
+      {
+        "id": "subway_car",
+        "title": "Subway Car",
+        "brief": "A crowded subway car during rush hour with passengers holding onto straps.",
+        "reference_image": "data\\images\\grounding\\subway_car\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0038676,
+          "latency_ms": 283.0956000002516,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A crowded subway car during rush hour wi...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.008556,
+          "latency_ms": 443.90469999916604,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A crowded subway car during rush hour wi...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2122246354328263
+      },
+      {
+        "id": "warehouse",
+        "title": "Warehouse",
+        "brief": "A tense confrontation in a dimly lit warehouse at night.",
+        "reference_image": "data\\images\\grounding\\warehouse\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0038122,
+          "latency_ms": 272.6606999995056,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A tense confrontation in a dimly lit war...'"
+        },
+        "vision": {
+          "overall": 6.0,
+          "cost_usd": 0.0085066,
+          "latency_ms": 352.36029999987295,
+          "turns": 3,
+          "stop_reason": "max_turns",
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A tense confrontation in a dimly lit war...'"
+        },
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2314149310109648
+      }
+    ]
+  },
+  "analysis": {
+    "mean_delta": 0.0,
+    "median_delta": 0.0,
+    "bootstrap_ci": {
+      "lower": 0.0,
+      "upper": 0.0
+    },
+    "wilcoxon": {
+      "statistic": 0.0,
+      "p_value": 1.0
+    },
+    "mean_text_cost": 0.0038521750000000002,
+    "mean_vision_cost": 0.008543949999999998,
+    "cost_ratio": 2.217954791773478
+  }
+}

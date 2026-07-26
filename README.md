@@ -27,8 +27,8 @@ This is an active build, developed in phases so that each stage produces a stand
 | 2 | VLM grounding proof (statistically rigorous) | Planned |
 | 3 | Text correction-loop effectiveness study | Planned |
 | 4 | Vision-critique effectiveness study (blind, κ agreement) | Planned |
-| 5 | Comparison UI for preference collection | Planned |
-| 6 | Human preference collection + rubric calibration | Planned |
+| 5 | Comparison UI for preference collection | In progress |
+| 6 | Human preference collection + rubric calibration | In progress |
 | 7 | Cost-aware model routing (text) — the key quality-vs-cost chart | Planned |
 | 8 | Cost-aware model routing (vision) | Planned |
 | 9 | DPO data prep + fine-tuning pipeline | Planned |

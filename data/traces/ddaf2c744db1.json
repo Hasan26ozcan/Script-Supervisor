@@ -1,0 +1,45 @@
+{
+  "run_id": "ddaf2c744db1",
+  "created_at": "2026-07-26T08:37:50.813984+00:00",
+  "input_brief": "A tense elevator ride.",
+  "reference_images": [],
+  "steps": [
+    {
+      "draft": {
+        "turn": 1,
+        "content": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A tense elevator ride....'",
+        "model": "claude-haiku-4-5-20251001",
+        "prompt_tokens": 20,
+        "completion_tokens": 40,
+        "latency_ms": 47.70972599999368
+      },
+      "critique": {
+        "turn": 1,
+        "scores": [
+          {
+            "criterion": "clarity",
+            "score": 6.0,
+            "rationale": "shot descriptions are generic"
+          },
+          {
+            "criterion": "tone_match",
+            "score": 7.0,
+            "rationale": "reasonable but not distinctive"
+          },
+          {
+            "criterion": "actionability",
+            "score": 5.0,
+            "rationale": "a DP could not shoot this as-is"
+          }
+        ],
+        "overall": 6.0,
+        "revision_notes": "add lens/camera-movement specifics, tighten shot count",
+        "modality": "text"
+      }
+    }
+  ],
+  "stop_reason": "max_turns",
+  "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A tense elevator ride....'",
+  "total_cost_usd": 0.0011539999999999999,
+  "total_latency_ms": 109.51827899998534
+}

@@ -1,0 +1,29 @@
+{
+  "trained_pairs": 1,
+  "heldout_pairs": 0,
+  "weight_history": [
+    {
+      "timestamp": "2026-07-26T09:14:38.136062+00:00",
+      "pair_id": "6ace03105b2a",
+      "brief": "A rainy rooftop chase.",
+      "winner": "a",
+      "weights": {
+        "clarity": 0.8500000000000001,
+        "tone_match": 0.8500000000000001,
+        "actionability": 0.8500000000000001,
+        "visual_continuity": 1.0,
+        "lighting_match": 1.0,
+        "mood_match": 1.0
+      }
+    }
+  ],
+  "holdout_analysis": {
+    "n_holdout": 0,
+    "overall_accuracy": 0.0,
+    "text_criteria_accuracy": 0.0,
+    "vision_criteria_accuracy": 0.0,
+    "coverage_text": 0,
+    "coverage_vision": 0,
+    "results": []
+  }
+}

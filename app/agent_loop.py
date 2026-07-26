@@ -10,8 +10,10 @@ from __future__ import annotations
 import asyncio
 from typing import Literal
 
+from app.config import settings
 from app.gateway import GatewayLedger, ModelGateway
 from app.prompts import get_prompt
+from app.routing import AdaptiveRouter
 from app.rubric import Rubric
 from app.schemas import Critique, Draft, ReferenceImage, RunTrace, TraceStep
 
@@ -25,15 +27,23 @@ class CorrectionLoop:
         self,
         gateway: ModelGateway | None = None,
         rubric: Rubric | None = None,
+        router: AdaptiveRouter | None = None,
+        model_overrides: dict[str, str] | None = None,
         max_turns: int = 3,
         plateau_epsilon: float = 0.3,
         threshold: float = 8.0,
+        quality_per_dollar_threshold: float | None = None,
     ):
         self.gateway = gateway or ModelGateway(GatewayLedger())
         self.rubric = rubric or Rubric()
+        self.router = router or AdaptiveRouter.load_from_file(settings.routing_rules_path)
+        self.model_overrides = model_overrides or {}
         self.max_turns = max_turns
         self.plateau_epsilon = plateau_epsilon
         self.threshold = threshold
+        self.quality_per_dollar_threshold = (
+            quality_per_dollar_threshold if quality_per_dollar_threshold is not None else settings.cost_efficiency_threshold
+        )
 
     async def run(self, brief: str, reference_images: list[ReferenceImage] | None = None) -> RunTrace:
         reference_images = reference_images or []
@@ -56,7 +66,8 @@ class CorrectionLoop:
                 # Fallback to regular critique if vision_critique not available
                 vision_critique_system = get_prompt("critique")
 
-            draft_call = await self.gateway.call(task, draft_system, draft_prompt)
+            draft_model = self.model_overrides.get(task) or self.router.select_model(task, trace.steps)
+            draft_call = await self.gateway.call(task, draft_system, draft_prompt, model=draft_model)
             draft = Draft(
                 turn=turn,
                 content=draft_call.text,
@@ -75,16 +86,26 @@ class CorrectionLoop:
                     f"Brief: {brief}\n\nReference images: {captions}\n\n"
                     f"Shot list:\n{draft.content}"
                 )
+                critique_model = self.model_overrides.get("visual_critique") or self.router.select_model(
+                    "visual_critique", trace.steps
+                )
                 critique_call = await self.gateway.call_vision(
                     "visual_critique",
                     vision_critique_system,
                     vision_prompt,
                     [ri.path for ri in reference_images],
+                    model=critique_model,
                 )
                 modality = "vision"
             else:
+                critique_model = self.model_overrides.get("critique") or self.router.select_model(
+                    "critique", trace.steps
+                )
                 critique_call = await self.gateway.call(
-                    "critique", critique_system, f"Brief: {brief}\n\nShot list:\n{draft.content}"
+                    "critique",
+                    critique_system,
+                    f"Brief: {brief}\n\nShot list:\n{draft.content}",
+                    model=critique_model,
                 )
                 modality = "text"
 
@@ -103,10 +124,25 @@ class CorrectionLoop:
             if overall >= self.threshold:
                 trace.stop_reason = "threshold_met"
                 break
-            if prev_overall is not None and abs(overall - prev_overall) < self.plateau_epsilon:
-                trace.stop_reason = "plateau"
-                break
+
+            if prev_overall is not None:
+                # Cost-aware early stop: ask whether the last marginal quality
+                # gain was worth the expense of another full turn. The point is
+                # not to avoid every extra turn, but to stop when the gain is
+                # too small relative to the cost.
+                delta = overall - prev_overall
+                if self.quality_per_dollar_threshold and self.quality_per_dollar_threshold > 0:
+                    last_turn_cost = self.gateway.ledger.total_cost_usd - prev_total_cost
+                    if last_turn_cost > 0:
+                        quality_per_dollar = delta / last_turn_cost
+                        if quality_per_dollar < self.quality_per_dollar_threshold:
+                            trace.stop_reason = "cost_threshold"
+                            break
+                if abs(delta) < self.plateau_epsilon:
+                    trace.stop_reason = "plateau"
+                    break
             prev_overall = overall
+            prev_total_cost = self.gateway.ledger.total_cost_usd
         else:
             trace.stop_reason = "max_turns"
 

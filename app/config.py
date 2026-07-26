@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     max_turns: int = 3
     plateau_epsilon: float = 0.3
     quality_threshold: float = 8.0
+    cost_efficiency_threshold: float = 0.0
 
     # storage locations -- kept as plain paths (not a database) deliberately
     # for phase 0-6; swapping to Postgres is a phase-7+ concern once trace
@@ -36,6 +37,13 @@ class Settings(BaseSettings):
     traces_dir: str = "data/traces"
     preferences_path: str = "data/preferences.jsonl"
     rubric_weights_path: str = "data/rubric_weights.json"
+    rubric_weight_history_path: str = "data/rubric_weight_history.jsonl"
+    comparison_pairs_path: str = "data/comparisons/phase5_pairs.jsonl"
+    routing_rules_path: str = "config/routing_rules.yaml"
+    routing_default_models: dict[str, str] = Field(
+        default_factory=dict,
+        description="Optional fallback routing default models for each task."
+    )
 
     # observability -- optional Langfuse export of every gateway call.
     # Langfuse is MIT-licensed and self-hostable, which matters here since

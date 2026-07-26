@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 5 Preference Collection</title>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; margin: 0; padding: 0; background: #f7fafc; color: #111827; }
+    main { max-width: 980px; margin: 0 auto; padding: 24px; }
+    h1, h2 { margin: 0 0 16px; }
+    .panel { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(15,23,42,.08); }
+    .flex { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; }
+    textarea { width: 100%; min-height: 280px; padding: 16px; border: 1px solid #d1d5db; border-radius: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.95rem; line-height: 1.6; resize: vertical; }
+    button { border: none; border-radius: 999px; padding: 14px 24px; font-size: 1rem; cursor: pointer; }
+    button.primary { background: #2563eb; color: white; }
+    button.secondary { background: #e5e7eb; color: #111827; }
+    button.tie { background: #f97316; color: white; }
+    .metadata { display: grid; gap: 8px; margin-bottom: 16px; }
+    .metadata span { display: inline-flex; gap: 8px; align-items: center; font-size: 0.95rem; color: #6b7280; }
+    img { max-width: 100%; border-radius: 16px; border: 1px solid #e5e7eb; }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+    .field-group { display: grid; gap: 8px; }
+    .field-group label { font-weight: 600; }
+    .field-group input, .field-group textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #d1d5db; font-size: 0.95rem; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Phase 5 Preference Collection</h1>
+    <p>This tool presents blind comparison pairs for brief-driven shot lists. Select the candidate you prefer, or choose "Tie" if they are equally good.</p>
+
+    <div id="status" class="panel">Loading comparison pairs…</div>
+
+    <div id="pair-panel" class="panel hidden">
+      <div class="metadata">
+        <span id="pair-source"></span>
+        <span id="pair-brief"></span>
+      </div>
+      <div id="image-container" class="panel hidden">
+        <img id="reference-image" alt="Reference image" />
+      </div>
+      <div class="flex">
+        <div>
+          <h2>Candidate A</h2>
+          <textarea id="candidate-a" readonly></textarea>
+        </div>
+        <div>
+          <h2>Candidate B</h2>
+          <textarea id="candidate-b" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-top: 18px;">
+        <label for="rater">Rater name</label>
+        <input id="rater" name="rater" placeholder="anonymous" />
+      </div>
+      <div class="field-group">
+        <label for="notes">Notes (optional)</label>
+        <textarea id="notes" rows="3" placeholder="Optional context for this judgment"></textarea>
+      </div>
+
+      <div class="controls">
+        <button class="primary" id="choose-a">Prefer A</button>
+        <button class="secondary" id="choose-b">Prefer B</button>
+        <button class="tie" id="choose-tie">Tie</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const status = document.getElementById("status");
+    const panel = document.getElementById("pair-panel");
+    const briefEl = document.getElementById("pair-brief");
+    const sourceEl = document.getElementById("pair-source");
+    const imageContainer = document.getElementById("image-container");
+    const referenceImage = document.getElementById("reference-image");
+    const candidateA = document.getElementById("candidate-a");
+    const candidateB = document.getElementById("candidate-b");
+    const rater = document.getElementById("rater");
+    const notes = document.getElementById("notes");
+    const chooseA = document.getElementById("choose-a");
+    const chooseB = document.getElementById("choose-b");
+    const chooseTie = document.getElementById("choose-tie");
+
+    let pairs = [];
+    let index = 0;
+
+    function getQueryParam(name) {
+      return new URLSearchParams(window.location.search).get(name) || "";
+    }
+
+    async function loadPairs() {
+      try {
+        const resp = await fetch("/comparison-pairs");
+        if (!resp.ok) throw new Error(`Failed to load pairs: ${resp.status}`);
+        pairs = await resp.json();
+        if (!Array.isArray(pairs) || pairs.length === 0) {
+          status.textContent = "No comparison pairs available yet. Generate pairs with the Phase 5 script first.";
+          return;
+        }
+        const savedRater = getQueryParam("rater");
+        if (savedRater) rater.value = savedRater;
+        status.classList.add("hidden");
+        panel.classList.remove("hidden");
+        renderPair();
+      } catch (error) {
+        status.textContent = error.message;
+      }
+    }
+
+    function renderPair() {
+      const pair = pairs[index];
+      sourceEl.textContent = `Source: ${pair.source || "phase5"}`;
+      briefEl.textContent = `Brief: ${pair.brief}`;
+      candidateA.value = pair.candidate_a;
+      candidateB.value = pair.candidate_b;
+      notes.value = "";
+      if (pair.reference_image) {
+        imageContainer.classList.remove("hidden");
+        let imageUrl = pair.reference_image.replaceAll("\\", "/");
+        if (!imageUrl.startsWith("/")) {
+          imageUrl = `/${imageUrl}`;
+        }
+        if (!imageUrl.startsWith("/data/")) {
+          imageUrl = `/data${imageUrl}`;
+        }
+        referenceImage.src = imageUrl;
+      } else {
+        imageContainer.classList.add("hidden");
+        referenceImage.src = "";
+      }
+    }
+
+    async function submitChoice(winner) {
+      const pair = pairs[index];
+      const payload = {
+        pair_id: pair.pair_id,
+        brief: pair.brief,
+        candidate_a: pair.candidate_a,
+        candidate_b: pair.candidate_b,
+        winner,
+        rater: rater.value || "anonymous",
+        notes: notes.value,
+      };
+      const resp = await fetch("/compare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!resp.ok) {
+        const body = await resp.text();
+        alert(`Failed to record preference: ${resp.status} ${body}`);
+        return;
+      }
+      index += 1;
+      if (index >= pairs.length) {
+        status.textContent = "Thank you! You have completed all available preference pairs.";
+        status.classList.remove("hidden");
+        panel.classList.add("hidden");
+      } else {
+        renderPair();
+      }
+    }
+
+    chooseA.addEventListener("click", (event) => { event.preventDefault(); submitChoice("a"); });
+    chooseB.addEventListener("click", (event) => { event.preventDefault(); submitChoice("b"); });
+    chooseTie.addEventListener("click", (event) => { event.preventDefault(); submitChoice("tie"); });
+
+    loadPairs();
+  </script>
+</body>
+</html>

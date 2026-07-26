@@ -13,6 +13,8 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.agent_loop import CorrectionLoop
@@ -24,6 +26,10 @@ from app.rubric import Rubric
 from app.schemas import PreferencePair, ReferenceImage, RunTrace
 
 app = FastAPI(title="Creative Harness")
+
+data_dir = Path(settings.data_dir)
+data_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/data", StaticFiles(directory=data_dir), name="data")
 
 TRACES_DIR = Path(settings.traces_dir)
 TRACES_DIR.mkdir(parents=True, exist_ok=True)
@@ -44,6 +50,7 @@ class RunRequest(BaseModel):
 
 
 class CompareRequest(BaseModel):
+    pair_id: str | None = None
     brief: str
     candidate_a: str
     candidate_b: str
@@ -71,14 +78,17 @@ def get_trace(run_id: str) -> RunTrace:
 
 @app.post("/compare")
 async def compare(req: CompareRequest) -> dict:
-    pref = PreferencePair(
-        brief=req.brief,
-        candidate_a=req.candidate_a,
-        candidate_b=req.candidate_b,
-        winner=req.winner,  # type: ignore[arg-type]
-        rater=req.rater,
-        notes=req.notes,
-    )
+    pref_data = {
+        "brief": req.brief,
+        "candidate_a": req.candidate_a,
+        "candidate_b": req.candidate_b,
+        "winner": req.winner,
+        "rater": req.rater,
+        "notes": req.notes,
+    }
+    if req.pair_id:
+        pref_data["pair_id"] = req.pair_id
+    pref = PreferencePair(**pref_data)
     pref_store.add(pref)
 
     # Re-score both candidates against the rubric so the preference can
@@ -98,3 +108,37 @@ async def compare(req: CompareRequest) -> dict:
 @app.get("/rubric")
 def get_rubric() -> dict:
     return {"criteria": rubric.criteria, "weights": rubric.weights}
+
+
+@app.get("/rubric/history")
+def get_rubric_history() -> dict:
+    return {"weight_history": rubric.weight_history}
+
+
+@app.get("/comparison-pairs")
+def get_comparison_pairs() -> list[dict]:
+    path = Path(settings.comparison_pairs_path)
+    if not path.exists():
+        return []
+    pairs: list[dict] = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            pairs.append(json.loads(line))
+    return pairs
+
+
+@app.get("/compare-ui", response_class=HTMLResponse)
+def compare_ui() -> HTMLResponse:
+    html_path = Path(__file__).resolve().parent / "templates" / "compare.html"
+    if not html_path.exists():
+        raise HTTPException(404, "Comparison UI not found")
+    return HTMLResponse(html_path.read_text(encoding="utf-8"))
+
+
+@app.get("/health")
+def health_check() -> dict:
+    """Simple readiness check for Docker and orchestration health checks."""
+    return {"status": "ok", "service": "creative-harness", "mode": "mock" if settings.mock_mode else "live"}

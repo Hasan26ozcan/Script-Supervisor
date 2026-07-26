@@ -6,6 +6,7 @@ otherwise tests would share (and corrupt) each other's on-disk state.
 """
 import importlib
 import sys
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -15,8 +16,17 @@ from fastapi.testclient import TestClient
 def client(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
-    for mod in ("app.main", "app.rubric", "app.preference_store", "app.config"):
+    for mod in ("app.main", "app.rubric", "app.preference_store", "app.config", "app.routing"):
         sys.modules.pop(mod, None)
+
+    # Ensure routing config exists for Phase 7 support in tests.
+    config_dir = tmp_path / "config"
+    config_dir.mkdir(parents=True, exist_ok=True)
+    (config_dir / "routing_rules.yaml").write_text(
+        "- task: draft\n  condition:\n    type: score_below\n    metric: overall\n    threshold: 7.5\n  escalate_to: llama-3.1-70b-versatile\n  max_escalations: 1\n",
+        encoding="utf-8",
+    )
+
     main = importlib.import_module("app.main")
     return TestClient(main.app)
 
@@ -67,6 +77,37 @@ def test_rubric_endpoint_reflects_criteria(client):
     body = resp.json()
     assert "clarity" in body["criteria"]
     assert "visual_continuity" in body["criteria"]
+
+
+def test_rubric_history_endpoint_returns_history(client):
+    resp = client.get("/rubric/history")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "weight_history" in body
+    assert isinstance(body["weight_history"], list)
+
+
+def test_comparison_pairs_endpoint_returns_list(client, tmp_path):
+    pairs_dir = tmp_path / "data" / "comparisons"
+    pairs_dir.mkdir(parents=True, exist_ok=True)
+    (pairs_dir / "phase5_pairs.jsonl").write_text(
+        '{"pair_id": "test-1", "source": "phase5", "brief": "A scene.", "candidate_a": "A1", "candidate_b": "B1"}\n',
+        encoding="utf-8",
+    )
+    resp = client.get("/comparison-pairs")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert isinstance(body, list)
+    assert body[0]["pair_id"] == "test-1"
+
+
+def test_compare_ui_endpoint_returns_html(client):
+    ui_path = Path("app/templates/compare.html")
+    ui_path.parent.mkdir(parents=True, exist_ok=True)
+    ui_path.write_text("<html></html>", encoding="utf-8")
+    resp = client.get("/compare-ui")
+    assert resp.status_code == 200
+    assert "html" in resp.text.lower()
 
 
 def test_run_endpoint_with_reference_images(client, tmp_path):

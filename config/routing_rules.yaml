@@ -1,0 +1,31 @@
+# Phase 7 routing rules for cost-aware escalation.
+# Each rule applies to a task and escalates the model if the condition
+# is met given the trace so far.
+
+# These rule values are a good default for Anthropic-style providers.
+# If you use `HARNESS_PROVIDER=groq`, override this file with your
+# provider-specific model names.
+
+- task: draft
+  condition:
+    type: score_below
+    metric: overall
+    threshold: 7.5
+  escalate_to: claude-sonnet-5
+  max_escalations: 1
+
+- task: critique
+  condition:
+    type: score_below
+    metric: overall
+    threshold: 6.5
+  escalate_to: claude-sonnet-5
+  max_escalations: 1
+
+- task: revise
+  condition:
+    type: score_below
+    metric: overall
+    threshold: 7.0
+  escalate_to: claude-sonnet-5
+  max_escalations: 1
