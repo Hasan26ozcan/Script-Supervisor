@@ -8,7 +8,6 @@ httpx>=0.27
 pyyaml>=6.0
 numpy>=1.30
 scipy>=1.12
-matplotlib>=3.8
 sqlalchemy>=2.0
 psycopg[binary]>=3.1
 pytest>=8.3
@@ -20,8 +19,3 @@ coverage>=7.0
 pre-commit>=4.5
 pip-audit>=2.7
 httpx2>=0.29
-
-# Optional: modern LLM eval harness (Anthropic/DeepMind/UK AISI standard).
-# Install with: pip install inspect-ai
-# See evals/inspect_preference_task.py and docs/evaluation/HARNESS_NOTES.md
-# inspect-ai>=0.3
