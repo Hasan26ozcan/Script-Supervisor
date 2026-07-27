@@ -18,7 +18,7 @@ ruff>=0.6
 mypy>=1.11
 coverage>=7.0
 pre-commit>=4.5
-pip-audit>=3.0
+pip-audit>=2.7
 httpx2>=0.29
 
 # Optional: modern LLM eval harness (Anthropic/DeepMind/UK AISI standard).
