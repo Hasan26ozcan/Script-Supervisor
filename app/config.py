@@ -36,13 +36,35 @@ class Settings(BaseSettings):
     data_dir: str = "data"
     traces_dir: str = "data/traces"
     preferences_path: str = "data/preferences.jsonl"
+    evaluation_reports_dir: str = "docs/evaluation"
     rubric_weights_path: str = "data/rubric_weights.json"
     rubric_weight_history_path: str = "data/rubric_weight_history.jsonl"
     comparison_pairs_path: str = "data/comparisons/phase5_pairs.jsonl"
+    mem0_state_path: str = "data/mem0_entries.jsonl"
+    mem0_stale_margin: float = Field(
+        default=1.0,
+        description="Margin threshold below which a compression pair is considered stale."
+    )
     routing_rules_path: str = "config/routing_rules.yaml"
     routing_default_models: dict[str, str] = Field(
         default_factory=dict,
         description="Optional fallback routing default models for each task."
+    )
+    database_url: str = Field(
+        default="postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness",
+        description="Primary SQL database URL for preference persistence."
+    )
+    database_echo: bool = Field(
+        default=False,
+        description="Enable SQLAlchemy SQL echo for debugging and local development."
+    )
+    run_budget_usd: float | None = Field(
+        default=None,
+        description="Optional per-run cost budget for model calls."
+    )
+    daily_budget_usd: float | None = Field(
+        default=None,
+        description="Optional daily cost budget for model calls."
     )
 
     # observability -- optional Langfuse export of every gateway call.

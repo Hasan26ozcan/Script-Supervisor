@@ -29,3 +29,12 @@
     threshold: 7.0
   escalate_to: claude-sonnet-5
   max_escalations: 1
+
+- task: vision
+  condition:
+    type: score_between
+    metric: overall
+    lower: 5.0
+    upper: 7.5
+  escalate_to: use_vision
+  max_escalations: 1

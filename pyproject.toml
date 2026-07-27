@@ -14,6 +14,8 @@ dependencies = [
     "pyyaml>=6.0",
     "numpy>=1.30",
     "scipy>=1.12",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.1",
 ]
 
 [project.optional-dependencies]
@@ -23,7 +25,14 @@ dev = [
     "pytest-cov>=5.0",
     "ruff>=0.6",
     "mypy>=1.11",
+    "coverage>=7.0",
+    "pre-commit>=4.5",
+    "pip-audit>=3.0",
+    "httpx2>=0.29",
     "matplotlib>=3.8",
+    "pandas>=2.0",
+    "seaborn>=0.13",
+    "evaluate>=0.4",
 ]
 training = [
     # Phase 9/10 only -- kept optional so `pip install .` for the API
@@ -34,6 +43,11 @@ training = [
     "accelerate>=1.0",
     "datasets>=3.0",
     "bitsandbytes>=0.44",
+]
+eval = [
+    # Modern LLM eval harness, used by Anthropic/DeepMind/UK AISI. Optional
+    # so the core API server doesn't need it. See evals/inspect_preference_task.py.
+    "inspect-ai>=0.3",
 ]
 
 [build-system]

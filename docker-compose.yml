@@ -8,6 +8,9 @@ services:
       - HARNESS_ANTHROPIC_API_KEY=${HARNESS_ANTHROPIC_API_KEY:-}
       - HARNESS_LANGFUSE_ENABLED=${HARNESS_LANGFUSE_ENABLED:-false}
       - HARNESS_LANGFUSE_HOST=http://langfuse:3000
+      - HARNESS_DATABASE_URL=${HARNESS_DATABASE_URL:-postgresql+psycopg://postgres:postgres@db:5432/creative_harness}
+    depends_on:
+      - db
     volumes:
       - ./data:/app/data
     healthcheck:
@@ -39,6 +42,23 @@ services:
       - langfuse-db
     profiles: ["observability"]
 
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=creative_harness
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles: ["default"]
+
   langfuse-db:
     image: postgres:16-alpine
     environment:
@@ -49,4 +69,5 @@ services:
     profiles: ["observability"]
 
 volumes:
+  pgdata:
   langfuse-db-data:

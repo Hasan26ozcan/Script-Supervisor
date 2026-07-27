@@ -1,0 +1,50 @@
+{
+  "suite_name": "proof-run-standalone",
+  "dataset_name": "fake_human_judgments_20_samples",
+  "n_samples": 20,
+  "holdout_size": 4,
+  "demo_dataset_included": true,
+  "win_rate": 0.5,
+  "win_rate_95ci": [
+    0.3,
+    0.7
+  ],
+  "significance_vs_50_50": {
+    "p_value": 1.0,
+    "significant_at_05": false
+  },
+  "bradley_terry": {
+    "strength_gap_logit": 0.0,
+    "p_a_beats_b": 0.5
+  },
+  "heuristic_judge_agreement_rate": 0.5,
+  "heuristic_judge_cohens_kappa": 0.0,
+  "inter_rater_reliability": "not computable: every item in this dataset has exactly one rater",
+  "preferences_by_winner": {
+    "a": 10,
+    "b": 10
+  },
+  "preferences_by_rater": {
+    "rater_01": 1,
+    "rater_02": 1,
+    "rater_03": 1,
+    "rater_04": 1,
+    "rater_05": 1,
+    "rater_06": 1,
+    "rater_07": 1,
+    "rater_08": 1,
+    "rater_09": 1,
+    "rater_10": 1,
+    "rater_11": 1,
+    "rater_12": 1,
+    "rater_13": 1,
+    "rater_14": 1,
+    "rater_15": 1,
+    "rater_16": 1,
+    "rater_17": 1,
+    "rater_18": 1,
+    "rater_19": 1,
+    "rater_20": 1
+  },
+  "note": "Produced by a standalone proof-runner (no pydantic/sqlalchemy available in this analysis sandbox, no network). Identical statistical/plotting logic to app/evaluation_harness.py. DB persistence step was not exercised here -- run the real module locally per docs/evaluation/HARNESS_NOTES.md."
+}

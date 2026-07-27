@@ -18,14 +18,16 @@ from app.schemas import TraceStep
 class EscalationCondition:
     type: str
     metric: str
-    threshold: float
+    threshold: float | None = None
+    lower: float | None = None
+    upper: float | None = None
 
 
 @dataclass
 class RoutingRule:
     task: str
     condition: EscalationCondition
-    escalate_to: str
+    escalate_to: str | None = None
     max_escalations: int = 1
 
 
@@ -47,16 +49,19 @@ class AdaptiveRouter:
 
         rules = []
         for entry in raw:
+            cond_data = entry["condition"]
             condition = EscalationCondition(
-                type=entry["condition"]["type"],
-                metric=entry["condition"]["metric"],
-                threshold=float(entry["condition"]["threshold"]),
+                type=cond_data["type"],
+                metric=cond_data["metric"],
+                threshold=float(cond_data["threshold"]) if cond_data.get("threshold") is not None else None,
+                lower=float(cond_data["lower"]) if cond_data.get("lower") is not None else None,
+                upper=float(cond_data["upper"]) if cond_data.get("upper") is not None else None,
             )
             rules.append(
                 RoutingRule(
                     task=entry["task"],
                     condition=condition,
-                    escalate_to=entry["escalate_to"],
+                    escalate_to=entry.get("escalate_to"),
                     max_escalations=int(entry.get("max_escalations", 1)),
                 )
             )
@@ -83,6 +88,19 @@ class AdaptiveRouter:
                     return rule.escalate_to
         return selected
 
+    def should_use_vision(self, trace_so_far: list[TraceStep]) -> bool:
+        vision_rules = [rule for rule in self.rules if rule.task == "vision"]
+        if not vision_rules:
+            return True
+        if not trace_so_far:
+            # If we haven't yet seen a critique, use the vision path by default
+            # when reference images are present so the first turn can be grounded.
+            return True
+        for rule in vision_rules:
+            if self._evaluate_condition(rule.condition, trace_so_far):
+                return rule.escalate_to == "use_vision"
+        return False
+
     def _evaluate_condition(self, condition: EscalationCondition, trace_so_far: list[TraceStep]) -> bool:
         if not trace_so_far:
             return False
@@ -93,5 +111,15 @@ class AdaptiveRouter:
             raise ValueError(f"Unknown routing metric: {condition.metric}")
 
         if condition.type == "score_below":
+            if condition.threshold is None:
+                raise ValueError("Threshold required for score_below condition")
             return metric_value < condition.threshold
+        if condition.type == "score_above":
+            if condition.threshold is None:
+                raise ValueError("Threshold required for score_above condition")
+            return metric_value > condition.threshold
+        if condition.type == "score_between":
+            if condition.lower is None or condition.upper is None:
+                raise ValueError("Lower and upper bounds required for score_between condition")
+            return condition.lower <= metric_value <= condition.upper
         raise ValueError(f"Unknown condition type: {condition.type}")

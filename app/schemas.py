@@ -84,8 +84,45 @@ class PreferencePair(BaseModel):
     pair_id: str = Field(default_factory=_uid)
     created_at: str = Field(default_factory=_now)
     brief: str
+    prompt: str = Field(default="", description="The exact prompt used to generate the candidate outputs.")
     candidate_a: str
     candidate_b: str
     winner: Literal["a", "b", "tie"]
     rater: str = "anonymous"
     notes: str = ""
+
+
+class ComparisonPair(BaseModel):
+    pair_id: str
+    source: str
+    brief: str
+    candidate_a: str
+    candidate_b: str
+    reference_image: str | None = None
+
+
+class MemoryValidationRecord(BaseModel):
+    timestamp: str = Field(default_factory=_now)
+    score_a: float
+    score_b: float
+    predicted_winner: Literal["a", "b", "tie"]
+    expected_winner: Literal["a", "b", "tie"]
+    margin: float
+    stale: bool
+
+
+class MemoryEntry(BaseModel):
+    entry_id: str = Field(default_factory=_uid)
+    source_pair_id: str
+    source: str
+    brief: str
+    prompt: str
+    candidate_a: str
+    candidate_b: str
+    expected_winner: Literal["a", "b", "tie"]
+    status: Literal["active", "stale", "replaced"] = "active"
+    created_at: str = Field(default_factory=_now)
+    last_validated_at: str | None = None
+    effectiveness_score: float = 0.0
+    validation_history: list[MemoryValidationRecord] = Field(default_factory=list)
+    replacement_suggestion: str | None = None

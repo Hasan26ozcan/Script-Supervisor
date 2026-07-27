@@ -115,6 +115,15 @@ class ModelGateway:
         self.ledger = ledger or GatewayLedger()
         self._anthropic_client = None
         self._groq_client = None
+        self.budget = None
+
+        if settings.run_budget_usd is not None or settings.daily_budget_usd is not None:
+            from app.budget import CostBudget
+
+            self.budget = CostBudget(
+                per_run_limit=settings.run_budget_usd,
+                daily_limit=settings.daily_budget_usd,
+            )
 
         if not MOCK_MODE:
             if settings.provider == "anthropic":
@@ -150,6 +159,8 @@ class ModelGateway:
             latency_ms=latency_ms,
             cost_usd=cost,
         )
+        if self.budget is not None:
+            self.budget.consume(cost)
         self.ledger.calls.append(result)
         # Structured, one-line-per-call log -- this is the provenance trail
         # the job posting asks for: every call's model/cost/latency is

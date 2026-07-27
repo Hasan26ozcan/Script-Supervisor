@@ -86,17 +86,30 @@ class CorrectionLoop:
                     f"Brief: {brief}\n\nReference images: {captions}\n\n"
                     f"Shot list:\n{draft.content}"
                 )
-                critique_model = self.model_overrides.get("visual_critique") or self.router.select_model(
-                    "visual_critique", trace.steps
-                )
-                critique_call = await self.gateway.call_vision(
-                    "visual_critique",
-                    vision_critique_system,
-                    vision_prompt,
-                    [ri.path for ri in reference_images],
-                    model=critique_model,
-                )
-                modality = "vision"
+
+                if self.router.should_use_vision(trace.steps):
+                    critique_model = self.model_overrides.get("visual_critique") or self.router.select_model(
+                        "visual_critique", trace.steps
+                    )
+                    critique_call = await self.gateway.call_vision(
+                        "visual_critique",
+                        vision_critique_system,
+                        vision_prompt,
+                        [ri.path for ri in reference_images],
+                        model=critique_model,
+                    )
+                    modality = "vision"
+                else:
+                    critique_model = self.model_overrides.get("critique") or self.router.select_model(
+                        "critique", trace.steps
+                    )
+                    critique_call = await self.gateway.call(
+                        "critique",
+                        critique_system,
+                        f"Brief: {brief}\n\nShot list:\n{draft.content}",
+                        model=critique_model,
+                    )
+                    modality = "text"
             else:
                 critique_model = self.model_overrides.get("critique") or self.router.select_model(
                     "critique", trace.steps

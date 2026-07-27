@@ -19,11 +19,17 @@ from pydantic import BaseModel
 
 from app.agent_loop import CorrectionLoop
 from app.config import settings
+from app.evaluation_harness import run_evaluation_suite
 from app.gateway import ModelGateway
 from app.preference_store import PreferenceStore
 from app.prompts import get_prompt
 from app.rubric import Rubric
-from app.schemas import PreferencePair, ReferenceImage, RunTrace
+from app.schemas import ComparisonPair, MemoryEntry, MemoryValidationRecord, PreferencePair, ReferenceImage, RunTrace
+from app.mem0 import Mem0Manager
+from training.generate_fake_preferences import build_fake_preferences
+
+# Ensure database tables and SQLAlchemy initialization occur at startup.
+import app.database  # noqa: F401
 
 app = FastAPI(title="Creative Harness")
 
@@ -36,6 +42,7 @@ TRACES_DIR.mkdir(parents=True, exist_ok=True)
 
 rubric = Rubric()
 pref_store = PreferenceStore()
+mem0_manager = Mem0Manager()
 
 
 class ReferenceImageIn(BaseModel):
@@ -52,11 +59,17 @@ class RunRequest(BaseModel):
 class CompareRequest(BaseModel):
     pair_id: str | None = None
     brief: str
+    prompt: str | None = None
     candidate_a: str
     candidate_b: str
     winner: str  # "a" | "b" | "tie"
     rater: str = "anonymous"
     notes: str = ""
+
+
+class EvaluationRequest(BaseModel):
+    suite_name: str = "live-evaluation"
+    include_demo_dataset: bool = True
 
 
 @app.post("/run", response_model=RunTrace)
@@ -80,6 +93,7 @@ def get_trace(run_id: str) -> RunTrace:
 async def compare(req: CompareRequest) -> dict:
     pref_data = {
         "brief": req.brief,
+        "prompt": req.prompt or f"Brief: {req.brief}\n\nShot list:\n",
         "candidate_a": req.candidate_a,
         "candidate_b": req.candidate_b,
         "winner": req.winner,
@@ -90,6 +104,17 @@ async def compare(req: CompareRequest) -> dict:
         pref_data["pair_id"] = req.pair_id
     pref = PreferencePair(**pref_data)
     pref_store.add(pref)
+
+    # Store this human judged pair for Mem0-style compression pair tracking.
+    comp_pair = ComparisonPair(
+        pair_id=pref.pair_id,
+        source="compare_api",
+        brief=req.brief,
+        candidate_a=req.candidate_a,
+        candidate_b=req.candidate_b,
+        reference_image=None,
+    )
+    mem0_manager.ingest_comparison_pair(comp_pair, req.winner)
 
     # Re-score both candidates against the rubric so the preference can
     # actually move weights (needs criteria scores, not just raw text).
@@ -103,6 +128,18 @@ async def compare(req: CompareRequest) -> dict:
     scores_b, _ = rubric.parse_critique_text(call_b.text)
     rubric.update_from_preference(pref, scores_a, scores_b)
     return {"status": "recorded", "pair_id": pref.pair_id, "updated_weights": rubric.weights}
+
+
+@app.post("/evaluation/run")
+def run_evaluation(req: EvaluationRequest | None = None) -> dict:
+    preferences = pref_store.all() or build_fake_preferences()
+    result = run_evaluation_suite(
+        preferences=preferences,
+        workspace_root=Path.cwd(),
+        suite_name=req.suite_name if req else "live-evaluation",
+        include_demo_dataset=(req.include_demo_dataset if req else True),
+    )
+    return result
 
 
 @app.get("/rubric")
@@ -128,6 +165,33 @@ def get_comparison_pairs() -> list[dict]:
                 continue
             pairs.append(json.loads(line))
     return pairs
+
+
+@app.get("/mem0/entries")
+def get_mem0_entries() -> list[dict]:
+    return [entry.model_dump() for entry in mem0_manager.store.entries.values()]
+
+
+@app.get("/mem0/stale")
+def get_mem0_stale_entries() -> list[dict]:
+    return [entry.model_dump() for entry in mem0_manager.store.find_stale_entries()]
+
+
+@app.post("/mem0/validate")
+async def validate_mem0_entries() -> dict:
+    results = await mem0_manager.validate_all()
+    summary = {
+        "total": len(results),
+        "stale": sum(1 for r in results if r.stale),
+        "active": sum(1 for r in results if not r.stale),
+    }
+    return {"summary": summary, "details": [r.model_dump() for r in results]}
+
+
+@app.post("/mem0/refresh")
+def refresh_mem0_entries() -> dict:
+    refreshed = mem0_manager.refresh_stale()
+    return {"refreshed": [entry.model_dump() for entry in refreshed]}
 
 
 @app.get("/compare-ui", response_class=HTMLResponse)
