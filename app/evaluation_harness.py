@@ -119,11 +119,17 @@ def _fit_bradley_terry(pairwise_a_wins: list[int]) -> dict[str, Any]:
     std_error = None
     if fit.hess_inv is not None:
         try:
-            std_error = float(np.sqrt(np.asarray(fit.hess_inv).reshape(1, 1)[0, 0]))
+            std_error = float(
+                np.sqrt(np.asarray(fit.hess_inv).reshape(1, 1)[0, 0])
+            )
         except Exception:  # pragma: no cover - defensive against solver edge cases
             std_error = None
     p_a = float(1 / (1 + np.exp(-gap)))
-    return {"strength_gap_logit": round(gap, 4), "std_error": std_error, "p_a_beats_b": round(p_a, 4)}
+    return {
+        "strength_gap_logit": round(gap, 4),
+        "std_error": std_error,
+        "p_a_beats_b": round(p_a, 4),
+    }
 
 
 def _heuristic_judge_winner(pref: PreferencePair) -> str:
@@ -155,7 +161,9 @@ def _cohens_kappa(labels_x: list[str], labels_y: list[str]) -> float | None:
     if len(categories) < 2:
         return None
     n = len(labels_x)
-    observed_agreement = sum(1 for x, y in zip(labels_x, labels_y) if x == y) / n
+    observed_agreement = sum(
+        1 for x, y in zip(labels_x, labels_y, strict=True) if x == y
+    ) / n
     px = {c: labels_x.count(c) / n for c in categories}
     py = {c: labels_y.count(c) / n for c in categories}
     expected_agreement = sum(px[c] * py[c] for c in categories)
@@ -288,7 +296,9 @@ def run_evaluation_suite(
     judge_predictions = [_heuristic_judge_winner(p) for p in preferences]
     human_labels = [p.winner for p in preferences]
     agreement_rate = round(
-        sum(1 for j, h in zip(judge_predictions, human_labels) if j == h) / max(1, len(preferences)), 4
+        sum(1 for j, h in zip(judge_predictions, human_labels, strict=True) if j == h)
+        / max(1, len(preferences)),
+        4,
     )
     kappa = _cohens_kappa(judge_predictions, human_labels)
 

@@ -7,7 +7,6 @@ enough (`RunTrace`) to answer that question later with data, not vibes.
 """
 from __future__ import annotations
 
-import asyncio
 from typing import Literal
 
 from app.config import settings
@@ -49,6 +48,7 @@ class CorrectionLoop:
         reference_images = reference_images or []
         trace = RunTrace(input_brief=brief, reference_images=reference_images)
         prev_overall: float | None = None
+        prev_total_cost: float | None = None
         revision_notes = ""
         use_vision = len(reference_images) > 0
 
@@ -138,7 +138,7 @@ class CorrectionLoop:
                 trace.stop_reason = "threshold_met"
                 break
 
-            if prev_overall is not None:
+            if prev_overall is not None and prev_total_cost is not None:
                 # Cost-aware early stop: ask whether the last marginal quality
                 # gain was worth the expense of another full turn. The point is
                 # not to avoid every extra turn, but to stop when the gain is

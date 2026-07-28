@@ -3,9 +3,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Literal
-
-import asyncio
+from typing import Literal
 
 import asyncio
 
@@ -39,12 +37,17 @@ class Mem0Store:
             for entry in self.entries.values():
                 f.write(entry.model_dump_json() + "\n")
 
-    def add_entry(self, pair: ComparisonPair, expected_winner: Literal["a", "b", "tie"]) -> MemoryEntry:
+    def add_entry(
+        self, pair: ComparisonPair, expected_winner: Literal["a", "b", "tie"]
+    ) -> MemoryEntry:
         entry = MemoryEntry(
             source_pair_id=pair.pair_id,
             source=pair.source,
             brief=pair.brief,
-            prompt=f"Brief: {pair.brief}\n\nShot list:\n",
+            prompt=(
+                f"Brief: {pair.brief}\n\n"
+                "Shot list:\n"
+            ),
             candidate_a=pair.candidate_a,
             candidate_b=pair.candidate_b,
             expected_winner=expected_winner,
@@ -66,7 +69,9 @@ class Mem0Store:
         self.entries[new_entry.entry_id] = new_entry
         self.save()
 
-    async def validate_entry(self, entry_id: str, rubric: Rubric, gateway: ModelGateway) -> MemoryValidationRecord:
+    async def validate_entry(
+        self, entry_id: str, rubric: Rubric, gateway: ModelGateway
+    ) -> MemoryValidationRecord:
         entry = self.entries[entry_id]
         critique_system = get_prompt("critique")
         prompt_a = f"Brief: {entry.brief}\n\nShot list:\n{entry.candidate_a}"
@@ -90,11 +95,15 @@ class Mem0Store:
         )
         entry.validation_history.append(record)
         entry.last_validated_at = record.timestamp
-        entry.effectiveness_score = margin if not stale else margin * 0.5
         if stale:
+            entry.effectiveness_score = margin * 0.5
             entry.status = "stale"
-            entry.replacement_suggestion = "Re-evaluate this compression pair; replace with a new comparison example reflecting current model behavior."
+            entry.replacement_suggestion = (
+                "Re-evaluate this compression pair; replace with a new comparison example "
+                "reflecting current model behavior."
+            )
         else:
+            entry.effectiveness_score = margin
             entry.status = "active"
         self.save()
         return record
@@ -104,17 +113,27 @@ class Mem0Store:
 
 
 class Mem0Manager:
-    def __init__(self, store: Mem0Store | None = None, rubric: Rubric | None = None, gateway: ModelGateway | None = None):
+    def __init__(
+        self,
+        store: Mem0Store | None = None,
+        rubric: Rubric | None = None,
+        gateway: ModelGateway | None = None,
+    ):
         self.store = store or Mem0Store()
         self.rubric = rubric or Rubric()
         self.gateway = gateway or ModelGateway()
 
-    def ingest_comparison_pair(self, pair: ComparisonPair, expected_winner: Literal["a", "b", "tie"]) -> MemoryEntry:
+    def ingest_comparison_pair(
+        self, pair: ComparisonPair, expected_winner: Literal["a", "b", "tie"]
+    ) -> MemoryEntry:
         return self.store.add_entry(pair, expected_winner)
 
     async def validate_all(self) -> list[MemoryValidationRecord]:
         records = await asyncio.gather(
-            *(self.store.validate_entry(entry_id, self.rubric, self.gateway) for entry_id in list(self.store.entries))
+            *(
+                self.store.validate_entry(entry_id, self.rubric, self.gateway)
+                for entry_id in list(self.store.entries)
+            )
         )
         return list(records)
 

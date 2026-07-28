@@ -22,7 +22,7 @@ import structlog
 
 import app.logging_config  # noqa: F401 -- configures structlog on import, side effect intentional
 from app.config import settings
-from app.schemas import Critique, BaseModel
+from app.schemas import BaseModel, Critique
 
 # Import providers conditionally for async support
 if not settings.mock_mode:
@@ -61,13 +61,29 @@ MODEL_PRICES = {
 TASK_DEFAULT_MODEL = {
     # Cheap model by default for drafting -- the harness's job is to make
     # this viable. Escalate only when the rubric says quality is lacking.
-    "draft": "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001",
-    "critique": "llama-3.1-70b-versatile" if settings.provider == "groq" else "claude-sonnet-5",
-    "revise": "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001",
+    "draft": (
+        "llama-3.1-8b-instant"
+        if settings.provider == "groq"
+        else "claude-haiku-4-5-20251001"
+    ),
+    "critique": (
+        "llama-3.1-70b-versatile"
+        if settings.provider == "groq"
+        else "claude-sonnet-5"
+    ),
+    "revise": (
+        "llama-3.1-8b-instant"
+        if settings.provider == "groq"
+        else "claude-haiku-4-5-20251001"
+    ),
     # Vision-grounded critique needs a model that actually looks at the
     # image, not just describes what it assumes an image like that would
     # show.
-    "visual_critique": "llama-3.2-11b-vision-preview" if settings.provider == "groq" else "claude-sonnet-5",
+    "visual_critique": (
+        "llama-3.2-11b-vision-preview"
+        if settings.provider == "groq"
+        else "claude-sonnet-5"
+    ),
 }
 
 
@@ -181,7 +197,10 @@ class ModelGateway:
         return result
 
     async def call(self, task: str, system: str, user: str, model: str | None = None) -> CallResult:
-        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile")
+        model = model or TASK_DEFAULT_MODEL.get(
+            task,
+            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile"
+        )
         start = time.perf_counter()
 
         if MOCK_MODE:
@@ -233,7 +252,10 @@ class ModelGateway:
         bytes, not a text description of an image, so its judgment about
         composition/lighting/continuity is grounded in what's actually there.
         """
-        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.2-11b-vision-preview")
+        model = model or TASK_DEFAULT_MODEL.get(
+            task,
+            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.2-11b-vision-preview"
+        )
         start = time.perf_counter()
 
         if MOCK_MODE:
@@ -324,7 +346,10 @@ class ModelGateway:
         Returns:
             Validated Pydantic model instance
         """
-        model = model or TASK_DEFAULT_MODEL.get(task, "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile")
+        model = model or TASK_DEFAULT_MODEL.get(
+            task,
+            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile"
+        )
         start = time.perf_counter()
 
         for attempt in range(max_retries):
@@ -442,7 +467,8 @@ class ModelGateway:
                     # Validation error - retry if we have attempts left
                     if attempt < max_retries - 1:
                         # Append error to user prompt for retry
-                        user = f"{user}\n\nPrevious attempt failed validation: {str(e)}. Please correct your response."
+                        error_msg = f"Previous attempt failed validation: {str(e)}. Please correct your response."
+                        user = f"{user}\n\n{error_msg}"
                         continue
                     else:
                         # Max retries exceeded, return error result
@@ -452,7 +478,9 @@ class ModelGateway:
                                 turn=0,  # This would need to be set properly in context
                                 scores=[],
                                 overall=0.0,
-                                revision_notes=f"Parse error after {max_retries} attempts: {str(e)}",
+                                revision_notes=(
+                                    f"Parse error after {max_retries} attempts: {str(e)}"
+                                ),
                                 modality="text"
                             )
                             return error_critique
@@ -463,7 +491,8 @@ class ModelGateway:
             except Exception as e:
                 if attempt < max_retries - 1:
                     # Append error to user prompt for retry
-                    user = f"{user}\n\nPrevious attempt failed: {str(e)}. Please correct your response."
+                    error_msg = f"Previous attempt failed: {str(e)}. Please correct your response."
+                    user = f"{user}\n\n{error_msg}"
                     continue
                 else:
                     # Max retries exceeded

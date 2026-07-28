@@ -19,17 +19,23 @@ from pydantic import BaseModel
 
 from app.agent_loop import CorrectionLoop
 from app.config import settings
-from app.evaluation_harness import run_evaluation_suite
 from app.gateway import ModelGateway
+from app.mem0 import Mem0Manager
 from app.preference_store import PreferenceStore
 from app.prompts import get_prompt
 from app.rubric import Rubric
-from app.schemas import ComparisonPair, MemoryEntry, MemoryValidationRecord, PreferencePair, ReferenceImage, RunTrace
-from app.mem0 import Mem0Manager
-from training.generate_fake_preferences import build_fake_preferences
+from app.evaluation_harness import run_evaluation_suite
+from app.schemas import (
+    ComparisonPair,
+    MemoryEntry,
+    MemoryValidationRecord,
+    PreferencePair,
+    ReferenceImage,
+    RunTrace,
+)
+from app.database import *  # noqa: F401 -- ensure database initialization
 
-# Ensure database tables and SQLAlchemy initialization occur at startup.
-import app.database  # noqa: F401
+from training.generate_fake_preferences import build_fake_preferences
 
 app = FastAPI(title="Creative Harness")
 
@@ -205,4 +211,5 @@ def compare_ui() -> HTMLResponse:
 @app.get("/health")
 def health_check() -> dict:
     """Simple readiness check for Docker and orchestration health checks."""
-    return {"status": "ok", "service": "creative-harness", "mode": "mock" if settings.mock_mode else "live"}
+    mode = "mock" if settings.mock_mode else "live"
+    return {"status": "ok", "service": "creative-harness", "mode": mode}

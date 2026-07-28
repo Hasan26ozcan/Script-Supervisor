@@ -22,7 +22,10 @@ class Settings(BaseSettings):
         default=None, description="Required when mock_mode=False and using Groq."
     )
     # Which provider to use: "anthropic" or "groq"
-    provider: str = Field(default="anthropic", description="LLM provider to use: 'anthropic' or 'groq'")
+    provider: str = Field(
+        default="anthropic",
+        description="LLM provider to use: 'anthropic' or 'groq'"
+    )
 
     # correction loop defaults
     max_turns: int = 3

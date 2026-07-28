@@ -1,11 +1,9 @@
 """Primary SQL database integration for preference storage and evaluation artifacts."""
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 from sqlalchemy import Column, Float, Integer, String, Text, create_engine
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.config import settings
