@@ -4,6 +4,19 @@ from app.evaluation_harness import run_evaluation_suite
 from training.generate_fake_preferences import build_fake_preferences
 
 
+def _matplotlib_usable() -> bool:
+    """Check whether matplotlib can actually be imported (not just installed)."""
+    try:
+        import matplotlib  # noqa: F401
+        import matplotlib.pyplot  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+MATPLOTLIB_USABLE = _matplotlib_usable()
+
+
 def test_run_evaluation_suite_writes_reports_and_charts(tmp_path: Path) -> None:
     preferences = build_fake_preferences()
 
@@ -31,9 +44,12 @@ def test_run_evaluation_suite_writes_reports_and_charts(tmp_path: Path) -> None:
     assert result["report_markdown_path"].exists()
     assert result["report_html_path"].exists()
     assert result["metrics_json_path"].exists()
-    assert result["chart_paths"]["win_rate_ci"].exists()
-    assert result["chart_paths"]["win_rate_trend"].exists()
-    assert result["chart_paths"]["samples_per_rater"].exists()
+
+    # Charts are only written when matplotlib is available and working.
+    if MATPLOTLIB_USABLE:
+        assert result["chart_paths"]["win_rate_ci"].exists()
+        assert result["chart_paths"]["win_rate_trend"].exists()
+        assert result["chart_paths"]["samples_per_rater"].exists()
 
 
 def test_run_evaluation_suite_flags_small_datasets_honestly(tmp_path: Path) -> None:

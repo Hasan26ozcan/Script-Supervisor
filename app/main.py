@@ -103,7 +103,7 @@ async def compare(req: CompareRequest) -> dict:
     }
     if req.pair_id:
         pref_data["pair_id"] = req.pair_id
-    pref = PreferencePair(**pref_data)
+    pref = PreferencePair(**pref_data)  # type: ignore[arg-type]
     pref_store.add(pref)
 
     # Store this human judged pair for Mem0-style compression pair tracking.
@@ -115,7 +115,7 @@ async def compare(req: CompareRequest) -> dict:
         candidate_b=req.candidate_b,
         reference_image=None,
     )
-    mem0_manager.ingest_comparison_pair(comp_pair, req.winner)
+    mem0_manager.ingest_comparison_pair(comp_pair, req.winner)  # type: ignore[arg-type]
 
     # Re-score both candidates against the rubric so the preference can
     # actually move weights (needs criteria scores, not just raw text).

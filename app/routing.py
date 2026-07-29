@@ -89,8 +89,10 @@ class AdaptiveRouter:
             if self._evaluate_condition(rule.condition, trace_so_far):
                 if self.escalation_count[task] < rule.max_escalations:
                     self.escalation_count[task] += 1
-                    return rule.escalate_to
-        return selected
+                    assert rule.escalate_to is not None
+                    return rule.escalate_to  # type: ignore[return-value]
+        # mypy doesn't narrow str | None through loop raise
+        return selected  # type: ignore[incompatible-return-value]
 
     def should_use_vision(self, trace_so_far: list[TraceStep]) -> bool:
         vision_rules = [rule for rule in self.rules if rule.task == "vision"]

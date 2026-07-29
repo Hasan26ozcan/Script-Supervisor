@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -150,7 +151,7 @@ def _heuristic_judge_winner(pref: PreferencePair) -> str:
     return "a" if score_a > score_b else "b"
 
 
-def _cohens_kappa(labels_x: list[str], labels_y: list[str]) -> float | None:
+def _cohens_kappa(labels_x: Sequence[str], labels_y: Sequence[str]) -> float | None:
     if not labels_x or len(labels_x) != len(labels_y):
         return None
     categories = sorted(set(labels_x) | set(labels_y))
@@ -169,10 +170,13 @@ def _cohens_kappa(labels_x: list[str], labels_y: list[str]) -> float | None:
 
 
 def _write_win_rate_ci_chart(path: Path, point: float, lower: float, upper: float) -> None:
-    import matplotlib
+    try:
+        import matplotlib
 
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 4.5))
     plt.bar(
@@ -193,10 +197,13 @@ def _write_win_rate_ci_chart(path: Path, point: float, lower: float, upper: floa
 
 
 def _write_trend_chart(path: Path, title: str, y_values: list[float], ylabel: str) -> None:
-    import matplotlib
+    try:
+        import matplotlib
 
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 4.5))
     x_values = list(range(1, len(y_values) + 1))
@@ -219,10 +226,13 @@ def _write_bar_chart(
     values: list[float],
     ylabel: str,
 ) -> None:
-    import matplotlib
+    try:
+        import matplotlib
 
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 4.5))
     plt.bar(labels, values, color="#22c55e")
@@ -240,8 +250,16 @@ def _persist_run(metrics: dict[str, Any], chart_paths: dict[str, Path]) -> dict[
     rather than an assumed string."""
     from app.db import Base, EvaluationRunModel, create_sessionmaker
 
-    session_local, engine = create_sessionmaker()
-    dialect_name = engine.dialect.name
+    try:
+        session_local, engine = create_sessionmaker()
+        dialect_name = engine.dialect.name
+    except Exception:  # pragma: no cover - offline environments lack DB drivers
+        return {
+            "attempted_backend": "unavailable",
+            "persisted": False,
+            "row_count_after_write": None,
+            "error": "database backend unavailable",
+        }
     persisted = False
     error: str | None = None
     row_count: int | None = None

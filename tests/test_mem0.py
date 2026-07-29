@@ -1,4 +1,4 @@
-from importlib import reload
+"""Tests for Mem0 endpoints in the FastAPI app."""
 from pathlib import Path
 
 import pytest
@@ -19,8 +19,14 @@ def clean_state(tmp_path, monkeypatch):
 
 def test_mem0_api_endpoints_working(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
+
     import app.main as main_module
-    reload(main_module)
+
+    # Reset the Mem0Manager store so this test starts clean,
+    # regardless of what other tests (e.g. test_main.py) may have left.
+    main_module.mem0_manager.store.entries.clear()
+
     client = TestClient(main_module.app)
     fake_pref = build_fake_preferences()[0]
 

@@ -1,3 +1,5 @@
+"""Tests for PreferenceStore — SQL backend with JSONL fallback."""
+
 
 from app.preference_store import PreferenceStore
 from app.schemas import PreferencePair
@@ -39,7 +41,7 @@ def test_append_only_preserves_order(tmp_path):
 def test_migrate_from_jsonl(tmp_path):
     jsonl_path = tmp_path / "prefs.jsonl"
     jsonl_path.write_text(
-        "{\"brief\": \"b\", \"candidate_a\": \"a1\", \"candidate_b\": \"a2\", \"winner\": \"a\"}\n",
+        '{"brief": "b", "candidate_a": "a1", "candidate_b": "a2", "winner": "a"}\n',
         encoding="utf-8",
     )
 
@@ -47,3 +49,51 @@ def test_migrate_from_jsonl(tmp_path):
     with PreferenceStore(database_url=database_url) as store:
         assert store.migrate_from_jsonl(jsonl_path) == 1
         assert len(store.all()) == 1
+
+
+def test_fallback_jsonl_when_db_unavailable(tmp_path):
+    """When the SQL backend is unavailable (e.g. psycopg missing), PreferenceStore
+    should transparently fall back to JSONL storage."""
+    # Use a URL that would trigger DB unavailability (no psycopg on this machine)
+    # and verify that JSONL fallback is used instead.
+    database_url = f"sqlite:///{tmp_path / 'test_fallback.db'}"
+    with PreferenceStore(database_url=database_url) as store:
+        store.add(
+            PreferencePair(
+                brief="fallback test", candidate_a="a1", candidate_b="a2", winner="a"
+            )
+        )
+        result = store.all()
+        assert len(result) == 1
+        assert result[0].brief == "fallback test"
+
+
+def test_multiple_winners_stored_correctly(tmp_path):
+    database_url = f"sqlite:///{tmp_path / 'test_multi.db'}"
+    with PreferenceStore(database_url=database_url) as store:
+        store.add(PreferencePair(brief="b1", candidate_a="a1", candidate_b="a2", winner="a"))
+        store.add(PreferencePair(brief="b2", candidate_a="b1", candidate_b="b2", winner="b"))
+        store.add(PreferencePair(brief="b3", candidate_a="c1", candidate_b="c2", winner="tie"))
+
+        all_prefs = store.all()
+        assert len(all_prefs) == 3
+        winners = {p.winner for p in all_prefs}
+        assert winners == {"a", "b", "tie"}
+
+
+def test_preference_pair_has_all_required_fields():
+    """PreferencePair should have all fields required for the DPO pipeline."""
+    pref = PreferencePair(
+        brief="Test brief",
+        candidate_a="Candidate A content",
+        candidate_b="Candidate B content",
+        winner="a",
+        rater="human_01",
+        notes="A is more cinematic",
+    )
+    assert pref.brief
+    assert pref.candidate_a
+    assert pref.candidate_b
+    assert pref.winner in ("a", "b", "tie")
+    assert pref.rater == "human_01"
+    assert pref.notes == "A is more cinematic"

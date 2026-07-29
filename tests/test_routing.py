@@ -10,7 +10,7 @@ def test_load_from_file_and_select_model(tmp_path):
         "- task: revise\n  condition:\n"
         "    type: score_below\n    metric: overall\n"
         "    threshold: 7.0\n  escalate_to: test-large-model\n"
-        "    max_escalations: 1\n",
+        "  max_escalations: 1\n",
         encoding="utf-8",
     )
 

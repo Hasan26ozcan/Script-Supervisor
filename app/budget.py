@@ -48,7 +48,7 @@ class CostBudget:
         self.current_day = today
         self.daily_used = 0.0
 
-    def to_dict(self) -> dict[str, float | None]:
+    def to_dict(self) -> dict[str, float | str | None]:
         return {
             "per_run_limit": self.per_run_limit,
             "daily_limit": self.daily_limit,

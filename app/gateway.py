@@ -17,6 +17,7 @@ import random
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import structlog
 
@@ -211,7 +212,7 @@ class ModelGateway:
         else:
             if settings.provider == "anthropic":
                 assert self._anthropic_client is not None
-                resp = await self._anthropic_client.messages.create(
+                resp = self._anthropic_client.messages.create(
                     model=model,
                     max_tokens=1024,
                     system=system,
@@ -272,7 +273,7 @@ class ModelGateway:
         else:
             if settings.provider == "anthropic":
                 assert self._anthropic_client is not None
-                content: list[dict] = []
+                content: list[dict[str, Any]] = []
                 for p in image_paths:
                     path = Path(p)
                     media_type = mimetypes.guess_type(path.name)[0] or "image/jpeg"
@@ -285,11 +286,11 @@ class ModelGateway:
                     )
                 content.append({"type": "text", "text": user_text})
 
-                resp = await self._anthropic_client.messages.create(
+                resp = self._anthropic_client.messages.create(
                     model=model,
                     max_tokens=1024,
                     system=system,
-                    messages=[{"role": "user", "content": content}],
+                    messages=[{"role": "user", "content": content}],  # type: ignore[typeddict-item]
                 )
                 text = "".join(b.text for b in resp.content if b.type == "text")
                 prompt_tok = resp.usage.input_tokens
@@ -340,7 +341,7 @@ class ModelGateway:
         schema: type[BaseModel],
         model: str | None = None,
         max_retries: int = 2,
-    ) -> BaseModel:
+    ) -> BaseModel | CallResult:
         """Make a structured call using tool use feature (Anthropic) or
         JSON mode (Groq) for structured output.
 
@@ -364,13 +365,35 @@ class ModelGateway:
         for attempt in range(max_retries):
             try:
                 if MOCK_MODE:
-                    # For mock mode, we'll generate a mock response that fits the schema
+                    # For mock mode, generate a mock response that the
+                    # schema validator can parse (JSON for structured schemas).
+                    import json as _json
+
                     if schema == Critique:
-                        mock_text = (
-                            "clarity: 7/10 - shot descriptions are clear\n"
-                            "tone_match: 8/10 - appropriate tone\n"
-                            "actionability: 6/10 - mostly actionable\n"
-                            "revision_notes: add more specific camera movements"
+                        mock_text = _json.dumps(
+                            {
+                                "turn": 1,
+                                "scores": [
+                                    {
+                                        "criterion": "clarity",
+                                        "score": 7.0,
+                                        "rationale": "shot descriptions are clear",
+                                    },
+                                    {
+                                        "criterion": "tone_match",
+                                        "score": 8.0,
+                                        "rationale": "appropriate tone",
+                                    },
+                                    {
+                                        "criterion": "actionability",
+                                        "score": 6.0,
+                                        "rationale": "mostly actionable",
+                                    },
+                                ],
+                                "overall": 7.0,
+                                "revision_notes": "add more specific camera movements",
+                                "modality": "text",
+                            }
                         )
                         text = mock_text
                         prompt_tok = max(20, len(user) // 4) + 50
@@ -390,14 +413,14 @@ class ModelGateway:
                             "input_schema": schema.model_json_schema()
                         }
 
-                        resp = await self._anthropic_client.messages.create(
+                        resp = self._anthropic_client.messages.create(
                             model=model,
                             max_tokens=1024,
                             system=system,
                             messages=[{"role": "user", "content": user}],
                             tools=[tool_definition],
                             tool_choice={"type": "tool", "name": "submit_critique"}
-                        )
+                        )  # type: ignore[call-overload]
 
                         # Extract the tool use result
                         text = ""

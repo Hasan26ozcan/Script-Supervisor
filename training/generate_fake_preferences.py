@@ -58,7 +58,7 @@ def build_fake_preferences() -> list[PreferencePair]:
                 prompt=prompt,
                 candidate_a=candidate_a,
                 candidate_b=candidate_b,
-                winner=winner,
+                winner=winner,  # type: ignore[arg-type]
                 rater=rater,
                 notes=notes,
             )

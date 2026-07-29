@@ -1,11 +1,7 @@
 """Tests for the FastAPI endpoints, using TestClient against a fresh app
-instance per test. The app module holds process-global state (rubric,
-preference store, traces dir) built from `settings` at import time, so
-each test chdir's into an isolated tmp_path and reloads the module --
-otherwise tests would share (and corrupt) each other's on-disk state.
+instance per test. Each test chdir's into an isolated tmp_path so
+tests don't share (and corrupt) each other's on-disk state.
 """
-import importlib
-import sys
 from pathlib import Path
 
 import pytest
@@ -16,8 +12,6 @@ from fastapi.testclient import TestClient
 def client(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
-    for mod in ("app.main", "app.rubric", "app.preference_store", "app.config", "app.routing"):
-        sys.modules.pop(mod, None)
 
     # Ensure routing config exists for Phase 7 support in tests.
     config_dir = tmp_path / "config"
@@ -26,12 +20,16 @@ def client(tmp_path, monkeypatch):
         "- task: draft\n  condition:\n"
         "    type: score_below\n    metric: overall\n"
         "    threshold: 7.5\n  escalate_to: llama-3.1-70b-versatile\n"
-        "    max_escalations: 1\n",
+        "  max_escalations: 1\n",
         encoding="utf-8",
     )
 
-    main = importlib.import_module("app.main")
-    return TestClient(main.app)
+    # Ensure data/traces exists so the endpoint can write traces.
+    (tmp_path / "data" / "traces").mkdir(parents=True, exist_ok=True)
+
+    from app.main import app
+
+    return TestClient(app)
 
 
 def test_run_endpoint_returns_full_trace(client):

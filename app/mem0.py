@@ -87,7 +87,7 @@ class Mem0Store:
         record = MemoryValidationRecord(
             score_a=score_a,
             score_b=score_b,
-            predicted_winner=predicted,
+            predicted_winner=predicted,  # type: ignore[arg-type]
             expected_winner=entry.expected_winner,
             margin=margin,
             stale=stale,

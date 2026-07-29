@@ -32,19 +32,24 @@ class PreferenceStore:
             or os.environ.get("HARNESS_DATABASE_URL")
             or settings.database_url
         )
-        self.session_local, self.engine = create_sessionmaker(resolved_url)
-        self.session: Session = self.session_local()
-        self._db_available = True
+        try:
+            self.session_local, self.engine = create_sessionmaker(resolved_url)
+            self.session: Session = self.session_local()
+            self._db_available = True
+        except Exception:  # pragma: no cover - offline environments may lack psycopg
+            self.session_local, self.engine = None, None  # type: ignore[misc,assignment]
+            self._db_available = False
         self._fallback_path = Path(settings.preferences_path)
         self._fallback_path.parent.mkdir(parents=True, exist_ok=True)
         self._fallback_records: list[PreferencePair] = []
         self._load_fallback_records()
 
-        try:
-            Base.metadata.create_all(bind=self.engine)
-        except Exception as exc:  # pragma: no cover - exercised in offline environments
-            self._db_available = False
-            self._db_error = str(exc)
+        if self.engine is not None:
+            try:
+                Base.metadata.create_all(bind=self.engine)
+            except Exception as exc:  # pragma: no cover - exercised in offline environments
+                self._db_available = False
+                self._db_error = str(exc)
 
     def add(self, pref: PreferencePair) -> None:
         model = PreferencePairModel(
@@ -108,15 +113,15 @@ class PreferenceStore:
 
     def _row_to_pref(self, row: PreferencePairModel) -> PreferencePair:
         return PreferencePair(
-            pair_id=row.pair_id,
-            created_at=row.created_at,
-            brief=row.brief,
-            prompt=row.prompt,
-            candidate_a=row.candidate_a,
-            candidate_b=row.candidate_b,
-            winner=row.winner,
-            rater=row.rater,
-            notes=row.notes,
+            pair_id=row.pair_id,  # type: ignore[arg-type]
+            created_at=row.created_at,  # type: ignore[arg-type]
+            brief=row.brief,  # type: ignore[arg-type]
+            prompt=row.prompt,  # type: ignore[arg-type]
+            candidate_a=row.candidate_a,  # type: ignore[arg-type]
+            candidate_b=row.candidate_b,  # type: ignore[arg-type]
+            winner=row.winner,  # type: ignore[arg-type]
+            rater=row.rater,  # type: ignore[arg-type]
+            notes=row.notes,  # type: ignore[arg-type]
         )
 
     def _load_fallback_records(self) -> list[PreferencePair]:
@@ -135,6 +140,7 @@ class PreferenceStore:
 
     def _write_fallback_records(self) -> None:
         content = "".join(pref.model_dump_json() + "\n" for pref in self._fallback_records)
+        self._fallback_path.parent.mkdir(parents=True, exist_ok=True)
         self._fallback_path.write_text(content, encoding="utf-8")
 
     def close(self) -> None:

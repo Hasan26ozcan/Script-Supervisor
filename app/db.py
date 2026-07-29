@@ -11,7 +11,7 @@ from app.config import settings
 Base = declarative_base()
 
 
-class PreferencePairModel(Base):
+class PreferencePairModel(Base):  # type: ignore[misc,valid-type]
     __tablename__ = "preferences"
 
     pair_id = Column(String, primary_key=True, index=True)
@@ -25,7 +25,7 @@ class PreferencePairModel(Base):
     notes = Column(Text, nullable=False)
 
 
-class EvaluationRunModel(Base):
+class EvaluationRunModel(Base):  # type: ignore[misc,valid-type]
     __tablename__ = "evaluation_runs"
 
     run_id = Column(String, primary_key=True, index=True)
