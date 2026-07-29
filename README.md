@@ -1,5 +1,7 @@
 # Creative Harness — Script Supervisor
 
+[![CI / Unit tests & coverage](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml/badge.svg)](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml)
+
 A production-grade AI evaluation harness for creative shot list generation. This repository delivers a complete technical release with:
 
 - a FastAPI backend and prompt-driven correction loop
@@ -24,6 +26,33 @@ It is designed as a polished, maintainable release rather than a prototype. The 
 - **Routable escalation logic** through external YAML rules
 - **PostgreSQL migration path** for preference persistence with JSONL fallback
 - **CI/CD pipeline** covering lint, type checks, tests, coverage, dependency audit, and SonarCloud
+
+## CI / Unit tests & coverage
+
+This project includes a full CI pipeline that runs on every push and pull request to `main`:
+
+| Job | What it does |
+|---|---|
+| **Lint** | `ruff check` and `ruff format --check` on all Python source |
+| **Type check** | `mypy app` static type analysis |
+| **Test** | `pytest` with full mock-mode coverage; `--cov=app` reports line coverage to the terminal and as `coverage.xml` |
+| **Coverage gate** | Fails the CI run if overall coverage drops below 70% |
+| **Codecov** | Coverage XML is uploaded to Codecov for historical tracking |
+
+### Running tests locally
+
+```bash
+# Install dev dependencies
+python -m pip install -e ".[dev]"
+
+# Run all unit tests with coverage
+HARNESS_MOCK_MODE=1 pytest tests/ -q --tb=short --cov=app --cov-report=term-missing
+
+# Run with a coverage gate (CI equivalent)
+HARNESS_MOCK_MODE=1 pytest tests/ -q --cov=app --cov-fail-under=70
+```
+
+All tests run in `HARNESS_MOCK_MODE=1` by default so no real API keys or network access are required. Docker-compose services (Postgres + the FastAPI harness) are also tested as part of the full suite when a real database is available.
 
 ## Current state
 

@@ -2,7 +2,7 @@
 import pytest
 
 
-def test_get_prompt_returns_string(monkeypatch):
+def test_get_prompt_returns_string():
     """get_prompt returns the raw YAML content for a known task/version."""
     from app.prompts import get_prompt
 
@@ -12,7 +12,7 @@ def test_get_prompt_returns_string(monkeypatch):
     assert "You are a shot-list generator" in text
 
 
-def test_get_prompt_critique(monkeypatch):
+def test_get_prompt_critique():
     """critique prompt contains the expected rubric criteria."""
     from app.prompts import get_prompt
 
@@ -22,7 +22,7 @@ def test_get_prompt_critique(monkeypatch):
     assert "actionability" in text
 
 
-def test_get_prompt_vision_critique(monkeypatch):
+def test_get_prompt_vision_critique():
     """vision_critique prompt exists and is valid YAML content."""
     from app.prompts import get_prompt
 
@@ -31,7 +31,7 @@ def test_get_prompt_vision_critique(monkeypatch):
     assert len(text) > 0
 
 
-def test_get_prompt_raises_file_not_found(monkeypatch):
+def test_get_prompt_raises_file_not_found():
     """get_prompt raises FileNotFoundError for a non-existent task."""
     from app.prompts import get_prompt
 
@@ -39,7 +39,7 @@ def test_get_prompt_raises_file_not_found(monkeypatch):
         get_prompt("nonexistent_task")
 
 
-def test_get_prompt_unsupported_version(monkeypatch):
+def test_get_prompt_unsupported_version():
     """get_prompt raises FileNotFoundError for a version that doesn't exist."""
     from app.prompts import get_prompt
 
@@ -47,7 +47,7 @@ def test_get_prompt_unsupported_version(monkeypatch):
         get_prompt("draft", version="v999")
 
 
-def test_list_available_prompts_returns_dict(monkeypatch):
+def test_list_available_prompts_returns_dict():
     """list_available_prompts returns a dict mapping task names to version lists."""
     from app.prompts import list_available_prompts
 
@@ -58,7 +58,7 @@ def test_list_available_prompts_returns_dict(monkeypatch):
     assert "revise" in result
 
 
-def test_list_available_prompts_versions_are_sorted(monkeypatch):
+def test_list_available_prompts_versions_are_sorted():
     """list_available_prompts returns version lists in sorted order."""
     from app.prompts import list_available_prompts
 
@@ -67,7 +67,7 @@ def test_list_available_prompts_versions_are_sorted(monkeypatch):
         assert versions == sorted(versions)
 
 
-def test_get_prompt_caching(monkeypatch):
+def test_get_prompt_caching():
     """get_prompt uses lru_cache so repeated calls return the same object."""
     from app.prompts import get_prompt
 
@@ -76,7 +76,7 @@ def test_get_prompt_caching(monkeypatch):
     assert first is second
 
 
-def test_prompt_registry_has_all_required_tasks(monkeypatch):
+def test_prompt_registry_has_all_required_tasks():
     """All task types used by the correction loop should have prompts."""
     from app.prompts import list_available_prompts
 
