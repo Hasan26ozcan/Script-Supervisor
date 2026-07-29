@@ -99,16 +99,21 @@ class PreferenceStore:
         if not source.exists():
             raise FileNotFoundError(f"Preference JSONL file not found: {source}")
 
+        # Read the whole file up front (rather than iterating a live file
+        # handle) since `self.add()` below may rewrite this very same path
+        # via the JSONL fallback -- interleaving reads and writes on the
+        # same file handle can corrupt the iteration or hang indefinitely.
+        lines = source.read_text(encoding="utf-8").splitlines()
+
         count = 0
-        with source.open("r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                data = json.loads(line)
-                pref = PreferencePair(**data)
-                self.add(pref)
-                count += 1
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            data = json.loads(line)
+            pref = PreferencePair(**data)
+            self.add(pref)
+            count += 1
         return count
 
     def _row_to_pref(self, row: PreferencePairModel) -> PreferencePair:
