@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 COPY app ./app
 COPY prompts ./prompts
+COPY training ./training
 
 ENV HARNESS_MOCK_MODE=1 \
     PYTHONUNBUFFERED=1

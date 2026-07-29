@@ -1,0 +1,78 @@
+{
+  "run_id": "51010821ba84",
+  "created_at": "2026-07-29T09:07:07.662227+00:00",
+  "input_brief": "A sunny morning in the garden",
+  "reference_images": [],
+  "steps": [
+    {
+      "draft": {
+        "turn": 1,
+        "content": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A sunny morning in the garden...'",
+        "model": "claude-haiku-4-5-20251001",
+        "prompt_tokens": 20,
+        "completion_tokens": 42,
+        "latency_ms": 50.94090199997936
+      },
+      "critique": {
+        "turn": 1,
+        "scores": [
+          {
+            "criterion": "clarity",
+            "score": 6.0,
+            "rationale": "shot descriptions are generic"
+          },
+          {
+            "criterion": "tone_match",
+            "score": 7.0,
+            "rationale": "reasonable but not distinctive"
+          },
+          {
+            "criterion": "actionability",
+            "score": 5.0,
+            "rationale": "a DP could not shoot this as-is"
+          }
+        ],
+        "overall": 6.0,
+        "revision_notes": "add lens/camera-movement specifics, tighten shot count",
+        "modality": "text"
+      }
+    },
+    {
+      "draft": {
+        "turn": 2,
+        "content": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A sunny morning in the garden\n\nRevision ...'",
+        "model": "claude-haiku-4-5-20251001",
+        "prompt_tokens": 25,
+        "completion_tokens": 54,
+        "latency_ms": 38.99047699997027
+      },
+      "critique": {
+        "turn": 2,
+        "scores": [
+          {
+            "criterion": "clarity",
+            "score": 6.0,
+            "rationale": "shot descriptions are generic"
+          },
+          {
+            "criterion": "tone_match",
+            "score": 7.0,
+            "rationale": "reasonable but not distinctive"
+          },
+          {
+            "criterion": "actionability",
+            "score": 5.0,
+            "rationale": "a DP could not shoot this as-is"
+          }
+        ],
+        "overall": 6.0,
+        "revision_notes": "add lens/camera-movement specifics, tighten shot count",
+        "modality": "text"
+      }
+    }
+  ],
+  "stop_reason": "plateau",
+  "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A sunny morning in the garden\n\nRevision ...'",
+  "total_cost_usd": 0.00243,
+  "total_latency_ms": 230.75909199985745
+}

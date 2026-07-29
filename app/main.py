@@ -31,7 +31,6 @@ from app.schemas import (
     ReferenceImage,
     RunTrace,
 )
-from training.generate_fake_preferences import build_fake_preferences
 
 app = FastAPI(title="Creative Harness")
 
@@ -134,6 +133,8 @@ async def compare(req: CompareRequest) -> dict:
 
 @app.post("/evaluation/run")
 def run_evaluation(req: EvaluationRequest | None = None) -> dict:
+    from training.generate_fake_preferences import build_fake_preferences
+
     preferences = pref_store.all() or build_fake_preferences()
     result = run_evaluation_suite(
         preferences=preferences,

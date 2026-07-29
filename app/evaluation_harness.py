@@ -39,10 +39,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats as scipy_stats
 from scipy.optimize import minimize
@@ -173,6 +169,10 @@ def _cohens_kappa(labels_x: list[str], labels_y: list[str]) -> float | None:
 
 
 def _write_win_rate_ci_chart(path: Path, point: float, lower: float, upper: float) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
     path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 4.5))
     plt.bar(
@@ -193,6 +193,10 @@ def _write_win_rate_ci_chart(path: Path, point: float, lower: float, upper: floa
 
 
 def _write_trend_chart(path: Path, title: str, y_values: list[float], ylabel: str) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
     path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 4.5))
     x_values = list(range(1, len(y_values) + 1))
@@ -215,6 +219,10 @@ def _write_bar_chart(
     values: list[float],
     ylabel: str,
 ) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
     path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 4.5))
     plt.bar(labels, values, color="#22c55e")
