@@ -1,8 +1,5 @@
 import json
-from pathlib import Path
 
-from app.preference_store import PreferenceStore
-from app.schemas import PreferencePair
 from training.dpo_train import load_dpo_dataset, validate_dpo_record
 
 
@@ -26,6 +23,6 @@ def test_validate_dpo_record_rejects_invalid_data():
     bad_record = {"prompt": "", "chosen": "A", "rejected": "B"}
     try:
         validate_dpo_record(bad_record)
-        assert False, "Expected ValueError for empty prompt"
+        raise AssertionError("Expected ValueError for empty prompt")
     except ValueError as exc:
         assert "must be a non-empty string" in str(exc)

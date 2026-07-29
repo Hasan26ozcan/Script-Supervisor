@@ -8,7 +8,6 @@ Endpoints:
 """
 from __future__ import annotations
 
-import asyncio
 import json
 from pathlib import Path
 
@@ -19,22 +18,19 @@ from pydantic import BaseModel
 
 from app.agent_loop import CorrectionLoop
 from app.config import settings
+from app.database import *  # noqa: F403 -- ensure database initialization
+from app.evaluation_harness import run_evaluation_suite
 from app.gateway import ModelGateway
 from app.mem0 import Mem0Manager
 from app.preference_store import PreferenceStore
 from app.prompts import get_prompt
 from app.rubric import Rubric
-from app.evaluation_harness import run_evaluation_suite
 from app.schemas import (
     ComparisonPair,
-    MemoryEntry,
-    MemoryValidationRecord,
     PreferencePair,
     ReferenceImage,
     RunTrace,
 )
-from app.database import *  # noqa: F401 -- ensure database initialization
-
 from training.generate_fake_preferences import build_fake_preferences
 
 app = FastAPI(title="Creative Harness")

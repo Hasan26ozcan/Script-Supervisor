@@ -1,4 +1,3 @@
-from pathlib import Path
 
 from app.preference_store import PreferenceStore
 from app.schemas import PreferencePair
@@ -26,7 +25,11 @@ def test_append_only_preserves_order(tmp_path):
     database_url = f"sqlite:///{tmp_path / 'test_order.db'}"
     with PreferenceStore(database_url=database_url) as store:
         for i in range(5):
-            store.add(PreferencePair(brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a"))
+            store.add(
+                PreferencePair(
+                    brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a"
+                )
+            )
 
         all_prefs = store.all()
         assert len(all_prefs) == 5

@@ -1,17 +1,16 @@
 """Mem0-style compression pair effectiveness tracking and replacement."""
 from __future__ import annotations
 
+import asyncio
 import json
 from pathlib import Path
 from typing import Literal
 
-import asyncio
-
 from app.config import settings
-from app.prompts import get_prompt
-from app.schemas import ComparisonPair, MemoryEntry, MemoryValidationRecord
-from app.rubric import Rubric
 from app.gateway import ModelGateway
+from app.prompts import get_prompt
+from app.rubric import Rubric
+from app.schemas import ComparisonPair, MemoryEntry, MemoryValidationRecord
 
 
 class Mem0Store:

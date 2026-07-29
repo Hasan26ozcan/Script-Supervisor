@@ -208,7 +208,13 @@ def _write_trend_chart(path: Path, title: str, y_values: list[float], ylabel: st
     plt.close()
 
 
-def _write_bar_chart(path: Path, title: str, labels: list[str], values: list[float], ylabel: str) -> None:
+def _write_bar_chart(
+    path: Path,
+    title: str,
+    labels: list[str],
+    values: list[float],
+    ylabel: str,
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 4.5))
     plt.bar(labels, values, color="#22c55e")
@@ -310,7 +316,11 @@ def run_evaluation_suite(
     _write_win_rate_ci_chart(chart_paths["win_rate_ci"], win_point, win_lo, win_hi)
 
     cumulative = (
-        list(np.cumsum(a_win_outcomes) / np.arange(1, len(a_win_outcomes) + 1)) if a_win_outcomes else []
+        list(
+            np.cumsum(a_win_outcomes) / np.arange(1, len(a_win_outcomes) + 1)
+        )
+        if a_win_outcomes
+        else []
     )
     chart_paths["win_rate_trend"] = charts_dir / "win_rate_trend.png"
     _write_trend_chart(
@@ -369,17 +379,27 @@ def run_evaluation_suite(
     if persistence["error"]:
         metrics["database_error"] = persistence["error"]
 
+    ci_range = f"{metrics['win_rate_95ci'][0]:.3f}-{metrics['win_rate_95ci'][1]:.3f}"
+    significance_line = (
+        f"p = {significance.get('p_value')}, "
+        f"significant at 0.05: {significance.get('significant_at_05')}"
+    )
+    database_line = (
+        f"Database backend actually used: {metrics['database_backend']} "
+        f"(write persisted: {metrics['database_write_persisted']})"
+    )
+
     markdown = f"""# Evaluation Report
 
 - Suite: {suite_name}
 - Dataset: {metrics['dataset_name']} (demo dataset included: {demo_dataset_included})
 - Samples: {metrics['n_samples']} (holdout size used for reporting: {metrics['holdout_size']})
-- Candidate A win rate: {metrics['win_rate']:.3f} (95% bootstrap CI: {metrics['win_rate_95ci'][0]:.3f}-{metrics['win_rate_95ci'][1]:.3f})
-- Two-sided binomial test vs 50/50: p = {significance.get('p_value')}, significant at 0.05: {significance.get('significant_at_05')}
+- Candidate A win rate: {metrics['win_rate']:.3f} (95% bootstrap CI: {ci_range})
+- Two-sided binomial test vs 50/50: {significance_line}
 - Bradley-Terry P(A beats B): {bradley_terry.get('p_a_beats_b')}
 - Heuristic judge vs human agreement: {agreement_rate:.3f} (Cohen's kappa: {kappa})
 - Inter-rater reliability: {metrics['inter_rater_reliability']}
-- Database backend actually used: {metrics['database_backend']} (write persisted: {metrics['database_write_persisted']})
+- {database_line}
 
 ## Limitations (read before citing these numbers)
 {chr(10).join('- ' + item for item in metrics['limitations'])}
@@ -391,6 +411,14 @@ fit, and an automated-judge-vs-human agreement check (with Cohen's kappa).
 It is intentionally conservative about what the bundled 20-sample demo
 dataset can and cannot support -- see the limitations above.
 """
+    html_ci_range = (
+        f"{metrics['win_rate_95ci'][0]:.3f}-{metrics['win_rate_95ci'][1]:.3f}"
+    )
+    html_database_line = (
+        f"Database backend: {metrics['database_backend']} "
+        f"(persisted: {metrics['database_write_persisted']})"
+    )
+
     html = f"""<!doctype html>
 <html lang="en">
 <head><meta charset="utf-8"><title>{suite_name} report</title></head>
@@ -398,11 +426,11 @@ dataset can and cannot support -- see the limitations above.
 <h1>Evaluation Report</h1>
 <p>Suite: {suite_name}</p>
 <p>Samples: {metrics['n_samples']}</p>
-<p>Candidate A win rate: {metrics['win_rate']:.3f} (95% CI {metrics['win_rate_95ci'][0]:.3f}-{metrics['win_rate_95ci'][1]:.3f})</p>
+<p>Candidate A win rate: {metrics['win_rate']:.3f} (95% CI {html_ci_range})</p>
 <p>Binomial test p-value: {significance.get('p_value')}</p>
 <p>Bradley-Terry P(A beats B): {bradley_terry.get('p_a_beats_b')}</p>
 <p>Heuristic judge agreement: {agreement_rate:.3f} (kappa: {kappa})</p>
-<p>Database backend: {metrics['database_backend']} (persisted: {metrics['database_write_persisted']})</p>
+<p>{html_database_line}</p>
 <h2>Limitations</h2>
 <ul>
 {''.join(f'<li>{item}</li>' for item in metrics['limitations'])}

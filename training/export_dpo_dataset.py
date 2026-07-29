@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 from app.preference_store import PreferenceStore
-from app.schemas import PreferencePair
 
 DATA_DIR = Path("data")
 EXPORT_PATH = DATA_DIR / "dpo_dataset.jsonl"

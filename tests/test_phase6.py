@@ -1,5 +1,9 @@
 from app.schemas import PreferencePair
-from experiments.phase6_calibration import predict_winner, split_preferences, weighted_overall_for_criteria
+from experiments.phase6_calibration import (
+    predict_winner,
+    split_preferences,
+    weighted_overall_for_criteria,
+)
 
 
 def test_weighted_overall_for_criteria_text_and_vision():
@@ -26,7 +30,12 @@ def test_predict_winner_uses_weighted_overall():
 
 
 def test_split_preferences_preserves_order_and_seed(tmp_path):
-    prefs = [PreferencePair(brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a") for i in range(10)]
+    prefs = [
+        PreferencePair(
+            brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a"
+        )
+        for i in range(10)
+    ]
     train1, holdout1 = split_preferences(prefs, test_fraction=0.2, seed=123)
     train2, holdout2 = split_preferences(prefs, test_fraction=0.2, seed=123)
 

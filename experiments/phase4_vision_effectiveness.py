@@ -25,7 +25,6 @@ from app.logging_config import configure_logging
 from app.rubric import Rubric
 from app.schemas import ReferenceImage
 
-
 DATA_DIR = Path("data")
 BRIEFS_PATH = DATA_DIR / "briefs" / "phase1_briefs.json"
 GROUNDING_DIR = DATA_DIR / "images" / "grounding"

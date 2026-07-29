@@ -20,12 +20,11 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import stats
 
 from app.agent_loop import CorrectionLoop
-from app.gateway import GatewayLedger, ModelGateway, TASK_DEFAULT_MODEL
-from app.rubric import Rubric
+from app.gateway import TASK_DEFAULT_MODEL, GatewayLedger, ModelGateway
 from app.routing import AdaptiveRouter
+from app.rubric import Rubric
 
 DATA_DIR = Path("data")
 BRIEFS_PATH = DATA_DIR / "briefs" / "phase1_briefs.json"

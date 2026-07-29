@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 from app.preference_store import PreferenceStore
 from app.schemas import PreferencePair

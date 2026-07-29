@@ -41,7 +41,8 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from inspect_ai import Task, eval as inspect_eval, task
+    from inspect_ai import Task, task
+    from inspect_ai import eval as inspect_eval
     from inspect_ai.dataset import MemoryDataset, Sample
     from inspect_ai.scorer import Score, Target, accuracy, scorer, stderr
     from inspect_ai.solver import generate

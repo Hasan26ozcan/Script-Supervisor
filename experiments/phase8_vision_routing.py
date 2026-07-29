@@ -19,13 +19,11 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import stats
 
 from app.agent_loop import CorrectionLoop
 from app.gateway import GatewayLedger, ModelGateway
-from app.prompts import get_prompt
-from app.rubric import Rubric
 from app.routing import AdaptiveRouter
+from app.rubric import Rubric
 from app.schemas import ReferenceImage
 
 DATA_DIR = Path("data")

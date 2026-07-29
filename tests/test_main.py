@@ -23,7 +23,10 @@ def client(tmp_path, monkeypatch):
     config_dir = tmp_path / "config"
     config_dir.mkdir(parents=True, exist_ok=True)
     (config_dir / "routing_rules.yaml").write_text(
-        "- task: draft\n  condition:\n    type: score_below\n    metric: overall\n    threshold: 7.5\n  escalate_to: llama-3.1-70b-versatile\n  max_escalations: 1\n",
+        "- task: draft\n  condition:\n"
+        "    type: score_below\n    metric: overall\n"
+        "    threshold: 7.5\n  escalate_to: llama-3.1-70b-versatile\n"
+        "    max_escalations: 1\n",
         encoding="utf-8",
     )
 
@@ -91,7 +94,10 @@ def test_comparison_pairs_endpoint_returns_list(client, tmp_path):
     pairs_dir = tmp_path / "data" / "comparisons"
     pairs_dir.mkdir(parents=True, exist_ok=True)
     (pairs_dir / "phase5_pairs.jsonl").write_text(
-        '{"pair_id": "test-1", "source": "phase5", "brief": "A scene.", "candidate_a": "A1", "candidate_b": "B1"}\n',
+        (
+            '{"pair_id": "test-1", "source": "phase5", "brief": "A scene.", '
+            '"candidate_a": "A1", "candidate_b": "B1"}\n'
+        ),
         encoding="utf-8",
     )
     resp = client.get("/comparison-pairs")

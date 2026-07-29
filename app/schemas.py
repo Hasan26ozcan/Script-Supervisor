@@ -70,7 +70,9 @@ class RunTrace(BaseModel):
     input_brief: str
     reference_images: list[ReferenceImage] = Field(default_factory=list)
     steps: list[TraceStep] = Field(default_factory=list)
-    stop_reason: Literal["max_turns", "plateau", "threshold_met", "cost_threshold", "error"] | None = None
+    stop_reason: Literal[
+        "max_turns", "plateau", "threshold_met", "cost_threshold", "error"
+    ] | None = None
     final_output: str | None = None
     total_cost_usd: float = 0.0
     total_latency_ms: float = 0.0
@@ -84,7 +86,10 @@ class PreferencePair(BaseModel):
     pair_id: str = Field(default_factory=_uid)
     created_at: str = Field(default_factory=_now)
     brief: str
-    prompt: str = Field(default="", description="The exact prompt used to generate the candidate outputs.")
+    prompt: str = Field(
+        default="",
+        description="The exact prompt used to generate the candidate outputs.",
+    )
     candidate_a: str
     candidate_b: str
     winner: Literal["a", "b", "tie"]

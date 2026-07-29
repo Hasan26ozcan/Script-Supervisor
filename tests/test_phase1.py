@@ -1,7 +1,7 @@
 """Tests for Phase 1 implementation: Real API calls + structured output"""
 
 import pytest
-from app.gateway import ModelGateway
+
 from app.config import settings
 
 
@@ -12,7 +12,7 @@ def test_gateway_not_in_mock_mode():
     if not settings.anthropic_api_key:
         pytest.skip("No API key available for testing")
 
-    assert settings.mock_mode == False, "Should be using real API calls, not mock mode"
+    assert not settings.mock_mode, "Should be using real API calls, not mock mode"
 
 
 def test_gateway_has_api_key():

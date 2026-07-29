@@ -1,6 +1,5 @@
 """Phase 3 tests for the correction loop and cost-aware stop condition."""
 
-import pytest
 from app.agent_loop import CorrectionLoop
 from app.gateway import GatewayLedger, ModelGateway
 from app.rubric import Rubric
@@ -13,18 +12,23 @@ def _fresh_loop(tmp_path, **kwargs):
 
 
 async def test_cost_threshold_stop(tmp_path):
-    loop = _fresh_loop(tmp_path, max_turns=3, threshold=999, plateau_epsilon=-1, quality_per_dollar_threshold=0.0001)
+    loop = _fresh_loop(
+        tmp_path, max_turns=3, threshold=999,
+        plateau_epsilon=-1, quality_per_dollar_threshold=0.0001,
+    )
     trace = await loop.run("A tense alleyway argument.")
     assert trace.stop_reason in {"max_turns", "plateau", "threshold_met", "cost_threshold"}
     assert trace.final_output is not None
 
 
 async def test_phase3_script_runs_in_mock_mode(monkeypatch):
-    import importlib
     import sys
 
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
-    for mod in ["app.main", "app.agent_loop", "app.config", "app.prompts", "app.gateway", "app.rubric"]:
+    for mod in (
+        "app.main", "app.agent_loop", "app.config",
+        "app.prompts", "app.gateway", "app.rubric",
+    ):
         sys.modules.pop(mod, None)
 
     import experiments.phase3_correction_effectiveness as phase3

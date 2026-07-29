@@ -22,12 +22,16 @@ from app.db import Base, PreferencePairModel, create_sessionmaker
 from app.schemas import PreferencePair
 
 if TYPE_CHECKING:
-    from sqlalchemy.engine import Engine
+    pass
 
 
 class PreferenceStore:
     def __init__(self, database_url: str | None = None):
-        resolved_url = database_url or os.environ.get("HARNESS_DATABASE_URL") or settings.database_url
+        resolved_url = (
+            database_url
+            or os.environ.get("HARNESS_DATABASE_URL")
+            or settings.database_url
+        )
         self.session_local, self.engine = create_sessionmaker(resolved_url)
         self.session: Session = self.session_local()
         self._db_available = True

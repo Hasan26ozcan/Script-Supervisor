@@ -5,7 +5,6 @@ import argparse
 import json
 import math
 import random
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -13,7 +12,7 @@ from app.gateway import GatewayLedger, ModelGateway
 from app.logging_config import configure_logging
 from app.preference_store import PreferenceStore
 from app.prompts import get_prompt
-from app.rubric import Rubric, DEFAULT_CRITERIA, VISUAL_CRITERIA
+from app.rubric import DEFAULT_CRITERIA, VISUAL_CRITERIA, Rubric
 from app.schemas import PreferencePair, RubricScore
 
 try:

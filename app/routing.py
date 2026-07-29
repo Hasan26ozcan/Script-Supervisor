@@ -5,10 +5,10 @@ policy is auditable and can evolve without changing the correction loop.
 """
 from __future__ import annotations
 
-import yaml
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+
+import yaml
 
 from app.config import settings
 from app.schemas import TraceStep
@@ -53,7 +53,11 @@ class AdaptiveRouter:
             condition = EscalationCondition(
                 type=cond_data["type"],
                 metric=cond_data["metric"],
-                threshold=float(cond_data["threshold"]) if cond_data.get("threshold") is not None else None,
+                threshold=(
+                    float(cond_data["threshold"])
+                    if cond_data.get("threshold") is not None
+                    else None
+                ),
                 lower=float(cond_data["lower"]) if cond_data.get("lower") is not None else None,
                 upper=float(cond_data["upper"]) if cond_data.get("upper") is not None else None,
             )
@@ -101,7 +105,11 @@ class AdaptiveRouter:
                 return rule.escalate_to == "use_vision"
         return False
 
-    def _evaluate_condition(self, condition: EscalationCondition, trace_so_far: list[TraceStep]) -> bool:
+    def _evaluate_condition(
+        self,
+        condition: EscalationCondition,
+        trace_so_far: list[TraceStep],
+    ) -> bool:
         if not trace_so_far:
             return False
 

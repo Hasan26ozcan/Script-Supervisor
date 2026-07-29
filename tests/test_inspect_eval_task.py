@@ -35,7 +35,7 @@ def test_swap_flips_winner_and_relabels_id() -> None:
     normal = _records_to_samples(records)
     swapped = _records_to_samples(records, swap=True)
 
-    for n, s in zip(normal, swapped):
+    for n, s in zip(normal, swapped, strict=False):
         assert s.id == f"{n.id}_swapped"
         if n.target != "TIE":
             assert s.target != n.target  # A/B flips under swap

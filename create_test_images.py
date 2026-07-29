@@ -4,7 +4,6 @@ PIL: gradients + simple geometry evoking each location's color palette,
 lighting and composition, so relevant/irrelevant pairs are visually
 meaningful for the grounding experiment instead of flat color rectangles.
 """
-import math
 import os
 import random
 

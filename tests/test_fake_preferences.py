@@ -1,7 +1,8 @@
 from pathlib import Path
 
 from app.preference_store import PreferenceStore
-from training.generate_fake_preferences import build_fake_preferences, main as generate_fake_main
+from training.generate_fake_preferences import build_fake_preferences
+from training.generate_fake_preferences import main as generate_fake_main
 
 
 def test_build_fake_preferences_has_20_entries():

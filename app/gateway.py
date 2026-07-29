@@ -144,7 +144,10 @@ class ModelGateway:
         if not MOCK_MODE:
             if settings.provider == "anthropic":
                 if not settings.anthropic_api_key:
-                    raise ValueError("ANTHROPIC_API_KEY required when provider=anthropic and mock_mode=False")
+                    raise ValueError(
+                        "ANTHROPIC_API_KEY required when provider=anthropic "
+                        "and mock_mode=False"
+                    )
                 self._anthropic_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
             elif settings.provider == "groq":
                 if not settings.groq_api_key:
@@ -254,12 +257,18 @@ class ModelGateway:
         """
         model = model or TASK_DEFAULT_MODEL.get(
             task,
-            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.2-11b-vision-preview"
+            (
+                "claude-sonnet-5"
+                if settings.provider == "anthropic"
+                else "llama-3.2-11b-vision-preview"
+            ),
         )
         start = time.perf_counter()
 
         if MOCK_MODE:
-            text, prompt_tok, completion_tok = self._mock_vision_response(task, user_text, len(image_paths))
+            text, prompt_tok, completion_tok = self._mock_vision_response(
+                task, user_text, len(image_paths)
+            )
         else:
             if settings.provider == "anthropic":
                 assert self._anthropic_client is not None
@@ -467,7 +476,10 @@ class ModelGateway:
                     # Validation error - retry if we have attempts left
                     if attempt < max_retries - 1:
                         # Append error to user prompt for retry
-                        error_msg = f"Previous attempt failed validation: {str(e)}. Please correct your response."
+                        error_msg = (
+                            f"Previous attempt failed validation: {str(e)}. "
+                            "Please correct your response."
+                        )
                         user = f"{user}\n\n{error_msg}"
                         continue
                     else:

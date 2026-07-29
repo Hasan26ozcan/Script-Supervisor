@@ -21,7 +21,6 @@ from app.gateway import GatewayLedger, ModelGateway
 from app.logging_config import configure_logging
 from app.rubric import Rubric
 
-
 DATA_DIR = Path("data")
 BRIEFS_PATH = DATA_DIR / "briefs" / "phase1_briefs.json"
 RESULTS_DIR = DATA_DIR / "results"

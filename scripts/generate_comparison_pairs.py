@@ -5,10 +5,8 @@ import argparse
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 from app.config import settings
-
 
 DATA_DIR = Path("data")
 PHASE3_RESULTS = DATA_DIR / "results" / "phase3_results.json"

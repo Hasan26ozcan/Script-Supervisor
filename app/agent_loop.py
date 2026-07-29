@@ -41,10 +41,16 @@ class CorrectionLoop:
         self.plateau_epsilon = plateau_epsilon
         self.threshold = threshold
         self.quality_per_dollar_threshold = (
-            quality_per_dollar_threshold if quality_per_dollar_threshold is not None else settings.cost_efficiency_threshold
+            quality_per_dollar_threshold
+            if quality_per_dollar_threshold is not None
+            else settings.cost_efficiency_threshold
         )
 
-    async def run(self, brief: str, reference_images: list[ReferenceImage] | None = None) -> RunTrace:
+    async def run(
+        self,
+        brief: str,
+        reference_images: list[ReferenceImage] | None = None,
+    ) -> RunTrace:
         reference_images = reference_images or []
         trace = RunTrace(input_brief=brief, reference_images=reference_images)
         prev_overall: float | None = None
@@ -66,8 +72,12 @@ class CorrectionLoop:
                 # Fallback to regular critique if vision_critique not available
                 vision_critique_system = get_prompt("critique")
 
-            draft_model = self.model_overrides.get(task) or self.router.select_model(task, trace.steps)
-            draft_call = await self.gateway.call(task, draft_system, draft_prompt, model=draft_model)
+            draft_model = self.model_overrides.get(task) or self.router.select_model(
+                task, trace.steps
+            )
+            draft_call = await self.gateway.call(
+                task, draft_system, draft_prompt, model=draft_model
+            )
             draft = Draft(
                 turn=turn,
                 content=draft_call.text,
@@ -88,8 +98,9 @@ class CorrectionLoop:
                 )
 
                 if self.router.should_use_vision(trace.steps):
-                    critique_model = self.model_overrides.get("visual_critique") or self.router.select_model(
-                        "visual_critique", trace.steps
+                    critique_model = (
+                        self.model_overrides.get("visual_critique")
+                        or self.router.select_model("visual_critique", trace.steps)
                     )
                     critique_call = await self.gateway.call_vision(
                         "visual_critique",
@@ -100,8 +111,9 @@ class CorrectionLoop:
                     )
                     modality = "vision"
                 else:
-                    critique_model = self.model_overrides.get("critique") or self.router.select_model(
-                        "critique", trace.steps
+                    critique_model = (
+                        self.model_overrides.get("critique")
+                        or self.router.select_model("critique", trace.steps)
                     )
                     critique_call = await self.gateway.call(
                         "critique",
