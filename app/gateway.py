@@ -25,7 +25,9 @@ import app.logging_config  # noqa: F401 -- configures structlog on import, side 
 from app.config import settings
 from app.schemas import BaseModel, Critique
 
-# Import providers conditionally for async support
+# Import providers conditionally for async support (only loaded in live
+# non-mock mode; covered via integration tests with real provider env).
+# pragma: no cover
 if not settings.mock_mode:
     if settings.provider == "anthropic":
         import anthropic

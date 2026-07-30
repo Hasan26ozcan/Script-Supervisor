@@ -45,6 +45,7 @@ from scipy import stats as scipy_stats
 from scipy.optimize import minimize
 
 from app.config import settings
+from app.preference_store import PreferenceStore
 from app.schemas import PreferencePair
 
 BOOTSTRAP_RESAMPLES = 5000
@@ -164,6 +165,10 @@ def _cohens_kappa(labels_x: Sequence[str], labels_y: Sequence[str]) -> float | N
     px = {c: labels_x.count(c) / n for c in categories}
     py = {c: labels_y.count(c) / n for c in categories}
     expected_agreement = sum(px[c] * py[c] for c in categories)
+    # With ≥2 categories, max expected_agreement < 1 (all mass on one category
+    # implies the other category has zero probability, making the set have 1 element,
+    # caught earlier). This branch is a defensive no-op.
+    # pragma: no cover
     if expected_agreement >= 1.0:
         return 1.0
     return round((observed_agreement - expected_agreement) / (1 - expected_agreement), 4)
@@ -313,6 +318,10 @@ def run_evaluation_suite(
     suite_name: str = "default-suite",
     include_demo_dataset: bool = True,
 ) -> dict[str, Any]:
+    if not preferences:
+        raise SystemExit(
+            "No preferences found. Run `python -m training.generate_fake_preferences` first."
+        )
     paths = _ensure_output_dirs(workspace_root)
     charts_dir = paths["charts"]
 
@@ -480,8 +489,6 @@ dataset can and cannot support -- see the limitations above.
 
 
 if __name__ == "__main__":
-    from app.preference_store import PreferenceStore
-
     with PreferenceStore() as store:
         prefs = store.all()
     if not prefs:

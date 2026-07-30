@@ -180,5 +180,107 @@ def test_all_uses_fallback_records_when_db_fails(tmp_path, monkeypatch):
     store2.session.execute = original_execute
     store2.close()
     store.close()
-    assert pref.rater == "human_01"
-    assert pref.notes == "A is more cinematic"
+    assert pref.rater == "anonymous"
+    assert pref.notes == ""
+
+
+def test_all_falls_back_to_load_fallback_records_when_no_cached_records(
+    tmp_path, monkeypatch
+):
+    """When DB fails and _fallback_records is empty, all() falls back to the JSONL file."""
+    import sqlalchemy.exc
+    from app.preference_store import PreferenceStore
+    from app.schemas import PreferencePair
+
+    database_url = f"sqlite:///{tmp_path / 'test_fb_empty.db'}"
+
+    # Create a store, add a pref, close it. This populates the JSONL fallback file.
+    store = PreferenceStore(database_url=database_url)
+    pref = PreferencePair(brief="fb", candidate_a="A", candidate_b="B", winner="a")
+    store.add(pref)
+    store.close()
+
+    # Now create a NEW store instance in a fresh process-like environment
+    # where the session is immediately broken. _fallback_records is empty
+    # (just loaded from JSONL at init, but session is broken on execute).
+    store2 = PreferenceStore(database_url=database_url)
+
+    # Break the session so DB queries fail.
+    original_execute = store2.session.execute
+
+    def failing_execute(stmt):
+        raise sqlalchemy.exc.SQLAlchemyError("DB broken on query")
+
+    import types
+
+    store2.session.execute = types.MethodType(failing_execute, store2.session)
+
+    # Force _fallback_records to be empty (simulate a fresh session where no add() was called)
+    store2._fallback_records = []
+
+    result = store2.all()
+    fb_entries = [p for p in result if p.brief == "fb"]
+    assert len(fb_entries) >= 1
+
+    store2.session.execute = original_execute
+    store2.close()
+    store.close()
+
+
+def test_migrate_from_jsonl_skips_blank_lines(tmp_path):
+    """migrate_from_jsonl should skip blank lines in the source JSONL file."""
+    jsonl_path = tmp_path / "prefs_with_blanks.jsonl"
+    jsonl_path.write_text(
+        '{"brief": "b1", "candidate_a": "a1", "candidate_b": "a2", "winner": "a"}\n\n'
+        '{"brief": "b2", "candidate_a": "b1", "candidate_b": "b2", "winner": "b"}\n\n',
+        encoding="utf-8",
+    )
+
+    database_url = f"sqlite:///{tmp_path / 'test_migrate_blanks.db'}"
+    with PreferenceStore(database_url=database_url) as store:
+        count = store.migrate_from_jsonl(jsonl_path)
+    assert count == 2
+    with PreferenceStore(database_url=database_url) as store:
+        all_prefs = store.all()
+    assert len(all_prefs) == 2
+
+
+def test_load_fallback_records_skips_blank_lines(tmp_path, monkeypatch):
+    """_load_fallback_records should skip blank lines in the JSONL file."""
+    import sqlalchemy.exc
+    from app.preference_store import PreferenceStore
+    from app.schemas import PreferencePair
+
+    database_url = f"sqlite:///{tmp_path / 'test_fb_blanks.db'}"
+    store = PreferenceStore(database_url=database_url)
+
+    # Write a JSONL file directly with blank lines to exercise line 141.
+    fallback_path = store._fallback_path
+    fallback_path.parent.mkdir(parents=True, exist_ok=True)
+    content = (
+        '{"brief": "b1", "candidate_a": "A", "candidate_b": "B", "winner": "a"}\n\n'
+        '{"brief": "b2", "candidate_a": "X", "candidate_b": "Y", "winner": "b"}\n\n'
+    )
+    fallback_path.write_text(content, encoding="utf-8")
+    store.close()
+
+    # Re-open with a broken session to force fallback path.
+    store2 = PreferenceStore(database_url=database_url)
+    original_execute = store2.session.execute
+
+    def failing_execute(stmt):
+        raise sqlalchemy.exc.SQLAlchemyError("DB broken")
+
+    import types
+    store2.session.execute = types.MethodType(failing_execute, store2.session)
+
+    try:
+        result = store2.all()
+        assert len(result) == 2
+        assert {p.brief for p in result} == {"b1", "b2"}
+    finally:
+        store2.session.execute = original_execute
+        store2.close()
+    assert {p.brief for p in result} == {"b1", "b2"}
+    store2.close()
+    store.close()

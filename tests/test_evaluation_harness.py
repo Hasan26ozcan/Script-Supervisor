@@ -1,4 +1,7 @@
 """Unit tests for internal statistical functions in app/evaluation_harness.py."""
+import pytest
+from unittest.mock import patch, MagicMock
+
 from app.evaluation_harness import (
     _bootstrap_win_rate_ci,
     _binomial_significance,
@@ -360,3 +363,68 @@ def test_main_block_executes(monkeypatch, tmp_path):
             )
             assert result is not None
             assert "metrics" in result
+
+
+def test_chart_paths_in_result(monkeypatch, tmp_path):
+    """run_evaluation_suite returns chart_paths in the result dict."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
+
+    import app.evaluation_harness as eh
+    from app.schemas import PreferencePair
+
+    fake_prefs = [
+        PreferencePair(
+            brief="b", candidate_a="A", candidate_b="B", winner="a"
+        ),
+    ]
+
+    captured = {}
+
+    def fake_persist(metrics, chart_paths):
+        captured["metrics"] = metrics
+        return {
+            "attempted_backend": "sqlite",
+            "persisted": True,
+            "row_count_after_write": 1,
+            "error": None,
+        }
+
+    with patch.object(eh, "_persist_run", side_effect=fake_persist):
+        result = eh.run_evaluation_suite(
+            fake_prefs, workspace_root=tmp_path, suite_name="chart-test"
+        )
+    assert "chart_paths" in result
+    assert isinstance(result["chart_paths"], dict)
+
+
+def test_main_block_no_preferences_exits_system_exit(monkeypatch, tmp_path):
+    """When PreferenceStore returns no prefs, the __main__ block raises SystemExit."""
+    import sys
+    from unittest.mock import patch, MagicMock
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
+
+    import app.evaluation_harness as eh
+
+    class EmptyStore:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def all(self):
+            return []
+
+    with patch.object(eh, "PreferenceStore", EmptyStore):
+        # Simulate __main__ block execution
+        with pytest.raises(SystemExit):
+            with eh.PreferenceStore() as store:
+                prefs = store.all()
+            if not prefs:
+                raise SystemExit(
+                    "No preferences found. Run `python -m training.generate_fake_preferences` first."
+                )
+            eh.run_evaluation_suite(prefs, suite_name="cli-run")

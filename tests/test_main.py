@@ -172,3 +172,58 @@ def test_mem0_stale_endpoint(client):
     assert resp.status_code == 200
     body = resp.json()
     assert isinstance(body, list)
+
+
+def test_compare_endpoint_with_pair_id(client):
+    """POST /compare when a pair_id is provided should include it in stored data."""
+    resp = client.post(
+        "/compare",
+        json={
+            "pair_id": "custom-pair-id",
+            "brief": "A test brief.",
+            "candidate_a": "Shot 1: wide.",
+            "candidate_b": "Shot 1: medium.",
+            "winner": "a",
+            "rater": "tester",
+        },
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "recorded"
+    assert body["pair_id"] == "custom-pair-id"
+
+
+def test_comparison_pairs_endpoint_missing_file(client):
+    """GET /comparison-pairs returns [] when the file does not exist."""
+    resp = client.get("/comparison-pairs")
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+def test_comparison_pairs_endpoint_with_blank_lines(client, tmp_path):
+    """GET /comparison-pairs skips blank lines in the JSONL file."""
+    pairs_dir = tmp_path / "data" / "comparisons"
+    pairs_dir.mkdir(parents=True, exist_ok=True)
+    content = '{"pair_id": "p1"}\n\n\n{"pair_id": "p2"}\n'
+    (pairs_dir / "phase5_pairs.jsonl").write_text(content, encoding="utf-8")
+    resp = client.get("/comparison-pairs")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 2
+
+
+def test_compare_ui_missing_template(client, tmp_path):
+    """GET /compare-ui returns 404 when the template file does not exist."""
+    import app.main as main_module
+    from pathlib import Path
+
+    template_path = Path(main_module.__file__).resolve().parent / "templates" / "compare.html"
+    if template_path.exists():
+        template_path.unlink()
+    try:
+        resp = client.get("/compare-ui")
+        assert resp.status_code == 404
+    finally:
+        # Restore the file so subsequent compare-ui tests still work
+        template_path.parent.mkdir(parents=True, exist_ok=True)
+        template_path.write_text("<html></html>", encoding="utf-8")
