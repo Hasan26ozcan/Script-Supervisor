@@ -704,3 +704,390 @@ class TestModelGatewayStructuredRetryPaths:
                 )
         finally:
             self._restore(monkeypatch)
+
+
+class TestGroqNonMockPaths:
+    """Non-mock Groq and Anthropic provider paths in ModelGateway."""
+
+    def _setup_nonmock_groq(self, monkeypatch):
+        import app.gateway as gw
+
+        self._old_mock = gw.MOCK_MODE
+        self._old_provider = gw.settings.provider
+        self._old_key = gw.settings.groq_api_key
+        gw.MOCK_MODE = False
+        gw.settings.provider = "groq"
+        gw.settings.groq_api_key = "sk-test-groq"
+        gw.settings.run_budget_usd = None
+        gw.settings.daily_budget_usd = None
+        self._gw = gw
+
+    def _setup_nonmock_anthropic(self, monkeypatch):
+        import app.gateway as gw
+
+        self._old_mock = gw.MOCK_MODE
+        self._old_provider = gw.settings.provider
+        self._old_key = gw.settings.anthropic_api_key
+        gw.MOCK_MODE = False
+        gw.settings.provider = "anthropic"
+        gw.settings.anthropic_api_key = "sk-test-anthropic"
+        gw.settings.run_budget_usd = None
+        gw.settings.daily_budget_usd = None
+        self._gw = gw
+
+    def _restore(self, monkeypatch):
+        gw = self._gw
+        gw.MOCK_MODE = self._old_mock
+        gw.settings.provider = self._old_provider
+        if self._old_key is not None:
+            if gw.settings.provider == "groq":
+                gw.settings.groq_api_key = self._old_key
+            else:
+                gw.settings.anthropic_api_key = self._old_key
+
+    def _preload_groq_module(self, monkeypatch):
+        """Put a mock groq module in sys.modules so lazy import succeeds."""
+        import sys
+        from unittest.mock import MagicMock
+
+        mock_groq = MagicMock()
+        mock_groq.Groq = MagicMock
+        monkeypatch.setitem(sys.modules, "groq", mock_groq)
+
+    def _preload_anthropic_module(self, monkeypatch):
+        """Put a mock anthropic module in sys.modules so lazy import succeeds."""
+        import sys
+        from unittest.mock import MagicMock
+
+        mock_anthropic = MagicMock()
+        mock_anthropic.Anthropic = MagicMock
+        monkeypatch.setitem(sys.modules, "anthropic", mock_anthropic)
+        monkeypatch.setitem(sys.modules, "anthropic.lib", MagicMock())
+
+    def test_groq_client_creation_in_init(self, monkeypatch):
+        """Non-mock __init__ with provider=groq creates a Groq client."""
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        assert gateway._groq_client is not None
+
+        self._restore(monkeypatch)
+
+    def test_anthropic_client_creation_in_init(self, monkeypatch):
+        """Non-mock __init__ with provider=anthropic creates an anthropic client."""
+        self._preload_anthropic_module(monkeypatch)
+        self._setup_nonmock_anthropic(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        assert gateway._anthropic_client is not None
+
+        self._restore(monkeypatch)
+
+    def test_groq_call_returns_text(self, monkeypatch):
+        """Non-mock call() with Groq provider returns CallResult."""
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger, CallResult
+        from unittest.mock import MagicMock
+
+        mock_groq = MagicMock()
+        mock_choice = MagicMock()
+        mock_choice.message.content = "groq response text"
+        mock_groq.Groq.return_value.chat.completions.create.return_value = MagicMock(
+            choices=[mock_choice],
+            usage=MagicMock(prompt_tokens=100, completion_tokens=50),
+        )
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._groq_client = mock_groq.Groq.return_value
+
+        try:
+            result = asyncio.run(gateway.call("draft", "sys", "user"))
+            assert result.text == "groq response text"
+            assert result.prompt_tokens == 100
+            assert result.completion_tokens == 50
+        finally:
+            self._restore(monkeypatch)
+
+    def test_groq_call_vision_returns_text(self, monkeypatch):
+        """Non-mock call_vision() with Groq provider returns CallResult."""
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+        from unittest.mock import MagicMock
+
+        mock_groq = MagicMock()
+        mock_choice = MagicMock()
+        mock_choice.message.content = "vision groq response"
+        mock_groq.Groq.return_value.chat.completions.create.return_value = MagicMock(
+            choices=[mock_choice],
+            usage=MagicMock(prompt_tokens=200, completion_tokens=30),
+        )
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._groq_client = mock_groq.Groq.return_value
+
+        try:
+            result = asyncio.run(
+                gateway.call_vision(
+                    "visual_critique", "sys", "brief", ["/tmp/ref.jpg"]
+                )
+            )
+            assert result.text == "vision groq response"
+        finally:
+            self._restore(monkeypatch)
+
+    def test_groq_structured_call_returns_critique(self, monkeypatch):
+        """Non-mock call_structured() with Groq provider returns a Critique."""
+        import json as _json
+
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+        from app.schemas import Critique
+        from unittest.mock import MagicMock
+
+        mock_groq = MagicMock()
+        mock_choice = MagicMock()
+        mock_choice.message.content = _json.dumps(
+            {
+                "turn": 1,
+                "scores": [
+                    {"criterion": "clarity", "score": 7.0, "rationale": "ok"},
+                    {"criterion": "tone_match", "score": 8.0, "rationale": "good"},
+                    {"criterion": "actionability", "score": 6.0, "rationale": "ok"},
+                ],
+                "overall": 7.0,
+                "revision_notes": "notes",
+                "modality": "text",
+            }
+        )
+        mock_groq.Groq.return_value.chat.completions.create.return_value = MagicMock(
+            choices=[mock_choice],
+            usage=MagicMock(prompt_tokens=10, completion_tokens=10),
+        )
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._groq_client = mock_groq.Groq.return_value
+
+        try:
+            result = asyncio.run(
+                gateway.call_structured("critique", "sys", "user", Critique)
+            )
+            assert isinstance(result, Critique)
+        finally:
+            self._restore(monkeypatch)
+
+    def test_groq_structured_non_critique_schema_returns_call_result(self, monkeypatch):
+        """Non-mock call_structured() with non-Critique Groq schema returns CallResult."""
+        from pydantic import BaseModel
+
+        class SimpleSchema(BaseModel):
+            value: str
+
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger, CallResult
+        from unittest.mock import MagicMock
+
+        mock_groq = MagicMock()
+        mock_choice = MagicMock()
+        mock_choice.message.content = '{"value": "test"}'
+        mock_groq.Groq.return_value.chat.completions.create.return_value = MagicMock(
+            choices=[mock_choice],
+            usage=MagicMock(prompt_tokens=10, completion_tokens=10),
+        )
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._groq_client = mock_groq.Groq.return_value
+
+        try:
+            result = asyncio.run(
+                gateway.call_structured("custom", "sys", "user", SimpleSchema)
+            )
+            assert isinstance(result, CallResult)
+        finally:
+            self._restore(monkeypatch)
+
+    def test_groq_structured_validation_error_retries_then_succeeds(self, monkeypatch):
+        """Groq non-mock: JSON that fails Critique validation causes retry, then succeeds."""
+        import json as _json
+
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+        from app.schemas import Critique
+        from unittest.mock import MagicMock
+
+        call_count = 0
+
+        def fake_create(*args, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            mock_resp = MagicMock()
+            mock_choice = MagicMock()
+            if call_count == 1:
+                # Valid JSON but missing required Critique fields -> validation error -> retry
+                mock_choice.message.content = '{"wrong_field": true}'
+            else:
+                mock_choice.message.content = _json.dumps(
+                    {
+                        "turn": 1,
+                        "scores": [
+                            {"criterion": "clarity", "score": 7.0, "rationale": "ok"},
+                            {"criterion": "tone_match", "score": 8.0, "rationale": "good"},
+                            {"criterion": "actionability", "score": 6.0, "rationale": "ok"},
+                        ],
+                        "overall": 7.0,
+                        "revision_notes": "notes",
+                        "modality": "text",
+                    }
+                )
+            mock_resp.choices = [mock_choice]
+            mock_resp.usage = MagicMock(prompt_tokens=10, completion_tokens=10)
+            return mock_resp
+
+        mock_groq = MagicMock()
+        mock_groq.Groq.return_value.chat.completions.create.side_effect = fake_create
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._groq_client = mock_groq.Groq.return_value
+
+        try:
+            result = asyncio.run(
+                gateway.call_structured("critique", "sys", "user", Critique)
+            )
+            assert isinstance(result, Critique)
+            assert call_count == 2
+        finally:
+            self._restore(monkeypatch)
+
+    def test_groq_structured_max_retries_exceeded_returns_critique_with_parse_error(self, monkeypatch):
+        """Groq non-mock Critique: validation failure with max_retries=1 returns error Critique."""
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+        from app.schemas import Critique
+        from unittest.mock import MagicMock
+
+        mock_groq = MagicMock()
+        mock_choice = MagicMock()
+        # Valid JSON but missing required Critique fields -> validation error
+        mock_choice.message.content = '{"invalid": "critique"}'
+        mock_groq.Groq.return_value.chat.completions.create.return_value = MagicMock(
+            choices=[mock_choice],
+            usage=MagicMock(prompt_tokens=10, completion_tokens=10),
+        )
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._groq_client = mock_groq.Groq.return_value
+
+        try:
+            result = asyncio.run(
+                gateway.call_structured("critique", "sys", "user", Critique, max_retries=1)
+            )
+            assert isinstance(result, Critique)
+            assert result.overall == 0.0
+            assert result.scores == []
+        finally:
+            self._restore(monkeypatch)
+
+    def test_groq_structured_network_error_raises_on_max_retries(self, monkeypatch):
+        """Groq non-mock: network-level errors (e.g. connection failure) retry then raise."""
+        from pydantic import BaseModel
+
+        class SimpleSchema(BaseModel):
+            value: str
+
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+        from unittest.mock import MagicMock
+
+        mock_groq = MagicMock()
+        mock_groq.Groq.return_value.chat.completions.create.side_effect = Exception("network error")
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._groq_client = mock_groq.Groq.return_value
+
+        try:
+            with pytest.raises(Exception, match="network error"):
+                asyncio.run(
+                    gateway.call_structured(
+                        "custom", "sys", "user", SimpleSchema, max_retries=1
+                    )
+                )
+        finally:
+            self._restore(monkeypatch)
+
+    def test_anthropic_tool_use_in_nonmock_structured(self, monkeypatch):
+        """Non-mock call_structured() with anthropic extracts tool_use block."""
+        self._preload_anthropic_module(monkeypatch)
+        self._setup_nonmock_anthropic(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+        from app.schemas import Critique
+        from unittest.mock import MagicMock
+
+        tool_input = {"turn": 1, "scores": [], "overall": 0.0, "revision_notes": "", "modality": "text"}
+        mock_tool_use = MagicMock()
+        mock_tool_use.type = "tool_use"
+        mock_tool_use.name = "submit_critique"
+        mock_tool_use.input = tool_input
+        mock_resp = MagicMock()
+        mock_resp.content = [mock_tool_use]
+        mock_resp.usage.input_tokens = 10
+        mock_resp.usage.output_tokens = 10
+
+        mock_anthropic = MagicMock()
+        mock_anthropic.Anthropic.return_value.messages.create.return_value = mock_resp
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
+
+        try:
+            result = asyncio.run(
+                gateway.call_structured("critique", "sys", "user", Critique)
+            )
+            assert isinstance(result, Critique)
+        finally:
+            self._restore(monkeypatch)
+
+    def test_groq_unsupported_provider_raises_on_call(self, monkeypatch):
+        """Non-mock call() raises ValueError for unsupported provider."""
+        self._preload_groq_module(monkeypatch)
+        self._setup_nonmock_groq(monkeypatch)
+
+        from app.gateway import ModelGateway, GatewayLedger
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        self._gw.settings.provider = "unsupported_provider_xyz"
+
+        try:
+            with pytest.raises(ValueError, match="Unsupported provider"):
+                asyncio.run(gateway.call("draft", "sys", "user"))
+        finally:
+            self._restore(monkeypatch)

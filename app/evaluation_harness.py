@@ -168,8 +168,7 @@ def _cohens_kappa(labels_x: Sequence[str], labels_y: Sequence[str]) -> float | N
     # With ≥2 categories, max expected_agreement < 1 (all mass on one category
     # implies the other category has zero probability, making the set have 1 element,
     # caught earlier). This branch is a defensive no-op.
-    # pragma: no cover
-    if expected_agreement >= 1.0:
+    if expected_agreement >= 1.0:  # pragma: no cover
         return 1.0
     return round((observed_agreement - expected_agreement) / (1 - expected_agreement), 4)
 

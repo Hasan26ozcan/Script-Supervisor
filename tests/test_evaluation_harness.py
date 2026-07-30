@@ -428,3 +428,24 @@ def test_main_block_no_preferences_exits_system_exit(monkeypatch, tmp_path):
                     "No preferences found. Run `python -m training.generate_fake_preferences` first."
                 )
             eh.run_evaluation_suite(prefs, suite_name="cli-run")
+
+
+def test_main_block_exits_when_no_preferences(monkeypatch, tmp_path):
+    """The __main__ block (lines 492-499) is exercised directly via subprocess."""
+    import subprocess
+    import sys
+    import os
+
+    monkeypatch.chdir(tmp_path)
+    env = dict(os.environ)
+    env["HARNESS_MOCK_MODE"] = "1"
+
+    result = subprocess.run(
+        [sys.executable, "-m", "app.evaluation_harness"],
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=str(tmp_path),
+    )
+    # When no preferences exist, the __main__ block raises SystemExit
+    assert result.returncode != 0

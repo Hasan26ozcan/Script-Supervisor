@@ -25,21 +25,6 @@ import app.logging_config  # noqa: F401 -- configures structlog on import, side 
 from app.config import settings
 from app.schemas import BaseModel, Critique
 
-# Import providers conditionally for async support (only loaded in live
-# non-mock mode; covered via integration tests with real provider env).
-# pragma: no cover
-if not settings.mock_mode:
-    if settings.provider == "anthropic":
-        import anthropic
-        import anthropic.lib
-    elif settings.provider == "groq":
-        try:
-            from groq import Groq
-            GROQ_AVAILABLE = True
-        except ImportError:
-            GROQ_AVAILABLE = False
-            # We'll handle this gracefully in __init__
-
 log = structlog.get_logger(component="gateway")
 
 MOCK_MODE = settings.mock_mode
@@ -151,12 +136,17 @@ class ModelGateway:
                         "ANTHROPIC_API_KEY required when provider=anthropic "
                         "and mock_mode=False"
                     )
+                import anthropic  # noqa: F401 -- lazy import, only needed for live calls
+
                 self._anthropic_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
             elif settings.provider == "groq":
                 if not settings.groq_api_key:
                     raise ValueError("GROQ_API_KEY required when provider=groq and mock_mode=False")
-                if not GROQ_AVAILABLE:
+                try:
+                    from groq import Groq
+                except ImportError:
                     raise ImportError("groq package not installed. Install with: pip install groq")
+
                 self._groq_client = Groq(api_key=settings.groq_api_key)
             else:
                 raise ValueError(f"Unsupported provider: {settings.provider}")
