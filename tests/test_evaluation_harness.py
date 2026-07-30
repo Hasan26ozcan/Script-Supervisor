@@ -1,10 +1,12 @@
 """Unit tests for internal statistical functions in app/evaluation_harness.py."""
+
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from app.evaluation_harness import (
-    _bootstrap_win_rate_ci,
     _binomial_significance,
+    _bootstrap_win_rate_ci,
     _cohens_kappa,
     _fit_bradley_terry,
     _heuristic_judge_winner,
@@ -223,7 +225,9 @@ class TestChartFunctionsHandleImportError:
         try:
             from app.evaluation_harness import _write_bar_chart
 
-            result = _write_bar_chart(tmp_path / "bar.png", "Title", ["A", "B"], [0.5, 0.7], "Count")
+            result = _write_bar_chart(
+                tmp_path / "bar.png", "Title", ["A", "B"], [0.5, 0.7], "Count"
+            )
             assert result is None
         finally:
             if saved_matplotlib is not None:
@@ -263,9 +267,7 @@ def test_database_error_in_run_evaluation_suite(tmp_path, monkeypatch):
     from app.schemas import PreferencePair
 
     prefs = [
-        PreferencePair(
-            brief="b", candidate_a="A", candidate_b="B", winner="a"
-        ),
+        PreferencePair(brief="b", candidate_a="A", candidate_b="B", winner="a"),
     ]
 
     # Force _persist_run to raise by making the database URL invalid
@@ -273,6 +275,7 @@ def test_database_error_in_run_evaluation_suite(tmp_path, monkeypatch):
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
 
     import app.evaluation_harness as eh
+
     original_persist = eh._persist_run
 
     def failing_persist(metrics, chart_paths):
@@ -298,14 +301,12 @@ def test_database_error_in_run_evaluation_suite(tmp_path, monkeypatch):
 
 def test_main_block_no_preferences_exits(monkeypatch, tmp_path):
     """When no preferences are found, the __main__ block raises SystemExit."""
-    import sys
 
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
 
     # Monkeypatch PreferenceStore to return empty list
     import app.evaluation_harness as eh
-    from app.preference_store import PreferenceStore
 
     class EmptyStore:
         def __enter__(self):
@@ -325,8 +326,7 @@ def test_main_block_no_preferences_exits(monkeypatch, tmp_path):
 
 def test_main_block_executes(monkeypatch, tmp_path):
     """The __main__ block runs run_evaluation_suite with preferences from store."""
-    import sys
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import patch
 
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
@@ -335,9 +335,7 @@ def test_main_block_executes(monkeypatch, tmp_path):
     from app.schemas import PreferencePair
 
     fake_prefs = [
-        PreferencePair(
-            brief="b", candidate_a="A", candidate_b="B", winner="a"
-        ),
+        PreferencePair(brief="b", candidate_a="A", candidate_b="B", winner="a"),
     ]
 
     captured = {}
@@ -374,9 +372,7 @@ def test_chart_paths_in_result(monkeypatch, tmp_path):
     from app.schemas import PreferencePair
 
     fake_prefs = [
-        PreferencePair(
-            brief="b", candidate_a="A", candidate_b="B", winner="a"
-        ),
+        PreferencePair(brief="b", candidate_a="A", candidate_b="B", winner="a"),
     ]
 
     captured = {}
@@ -400,8 +396,7 @@ def test_chart_paths_in_result(monkeypatch, tmp_path):
 
 def test_main_block_no_preferences_exits_system_exit(monkeypatch, tmp_path):
     """When PreferenceStore returns no prefs, the __main__ block raises SystemExit."""
-    import sys
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import patch
 
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
@@ -425,16 +420,17 @@ def test_main_block_no_preferences_exits_system_exit(monkeypatch, tmp_path):
                 prefs = store.all()
             if not prefs:
                 raise SystemExit(
-                    "No preferences found. Run `python -m training.generate_fake_preferences` first."
+                    "No preferences found. Run `python -m"
+                    " training.generate_fake_preferences` first."
                 )
             eh.run_evaluation_suite(prefs, suite_name="cli-run")
 
 
 def test_main_block_exits_when_no_preferences(monkeypatch, tmp_path):
     """The __main__ block (lines 492-499) is exercised directly via subprocess."""
+    import os
     import subprocess
     import sys
-    import os
 
     monkeypatch.chdir(tmp_path)
     env = dict(os.environ)

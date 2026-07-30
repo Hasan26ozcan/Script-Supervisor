@@ -6,6 +6,7 @@ When PostgreSQL is unavailable, the store transparently falls back to the
 JSONL file used by the training and evaluation scripts so the pipeline remains
 operational in local/offline environments.
 """
+
 from __future__ import annotations
 
 import json
@@ -28,9 +29,7 @@ if TYPE_CHECKING:
 class PreferenceStore:
     def __init__(self, database_url: str | None = None):
         resolved_url = (
-            database_url
-            or os.environ.get("HARNESS_DATABASE_URL")
-            or settings.database_url
+            database_url or os.environ.get("HARNESS_DATABASE_URL") or settings.database_url
         )
         try:
             self.session_local, self.engine = create_sessionmaker(resolved_url)

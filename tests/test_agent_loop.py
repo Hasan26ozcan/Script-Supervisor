@@ -4,6 +4,7 @@ These prove the loop mechanics -- stop conditions, cost tracking, trace
 completeness -- behave correctly, since those are what break silently
 in production.
 """
+
 from app.agent_loop import CorrectionLoop
 from app.gateway import GatewayLedger, ModelGateway
 from app.rubric import DEFAULT_CRITERIA, Rubric
@@ -66,8 +67,11 @@ async def test_stop_reason_is_none_when_no_stopping_condition_triggers(tmp_path)
 async def test_cost_threshold_stop_condition(tmp_path):
     """When quality gain per dollar drops below threshold, loop stops early."""
     loop = _fresh_loop(
-        tmp_path, max_turns=5, threshold=999,
-        plateau_epsilon=-1, quality_per_dollar_threshold=0.0001,
+        tmp_path,
+        max_turns=5,
+        threshold=999,
+        plateau_epsilon=-1,
+        quality_per_dollar_threshold=0.0001,
     )
     trace = await loop.run("A tense alleyway argument.")
     assert trace.stop_reason in {"max_turns", "plateau", "threshold_met", "cost_threshold"}

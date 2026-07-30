@@ -5,6 +5,7 @@ gateway.py, main.py, etc. lives here instead -- one place to see every
 knob the harness exposes, one place to add validation, and a `.env` file
 works out of the box for local dev without extra plumbing.
 """
+
 from __future__ import annotations
 
 from pydantic import Field
@@ -23,8 +24,7 @@ class Settings(BaseSettings):
     )
     # Which provider to use: "anthropic" or "groq"
     provider: str = Field(
-        default="anthropic",
-        description="LLM provider to use: 'anthropic' or 'groq'"
+        default="anthropic", description="LLM provider to use: 'anthropic' or 'groq'"
     )
 
     # correction loop defaults
@@ -46,28 +46,24 @@ class Settings(BaseSettings):
     mem0_state_path: str = "data/mem0_entries.jsonl"
     mem0_stale_margin: float = Field(
         default=1.0,
-        description="Margin threshold below which a compression pair is considered stale."
+        description="Margin threshold below which a compression pair is considered stale.",
     )
     routing_rules_path: str = "config/routing_rules.yaml"
     routing_default_models: dict[str, str] = Field(
-        default_factory=dict,
-        description="Optional fallback routing default models for each task."
+        default_factory=dict, description="Optional fallback routing default models for each task."
     )
     database_url: str = Field(
         default="postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness",
-        description="Primary SQL database URL for preference persistence."
+        description="Primary SQL database URL for preference persistence.",
     )
     database_echo: bool = Field(
-        default=False,
-        description="Enable SQLAlchemy SQL echo for debugging and local development."
+        default=False, description="Enable SQLAlchemy SQL echo for debugging and local development."
     )
     run_budget_usd: float | None = Field(
-        default=None,
-        description="Optional per-run cost budget for model calls."
+        default=None, description="Optional per-run cost budget for model calls."
     )
     daily_budget_usd: float | None = Field(
-        default=None,
-        description="Optional daily cost budget for model calls."
+        default=None, description="Optional daily cost budget for model calls."
     )
 
     # observability -- optional Langfuse export of every gateway call.

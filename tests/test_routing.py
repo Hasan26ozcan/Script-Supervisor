@@ -8,10 +8,12 @@ from app.schemas import Critique, Draft, TraceStep
 def _trace_with(overall: float):
     return [
         TraceStep(
-            draft=Draft(turn=1, content="x", model="", prompt_tokens=0,
-                        completion_tokens=0, latency_ms=0.0),
-            critique=Critique(turn=1, scores=[], overall=overall,
-                              revision_notes="", modality="text"),
+            draft=Draft(
+                turn=1, content="x", model="", prompt_tokens=0, completion_tokens=0, latency_ms=0.0
+            ),
+            critique=Critique(
+                turn=1, scores=[], overall=overall, revision_notes="", modality="text"
+            ),
         )
     ]
 
@@ -33,8 +35,12 @@ def test_load_from_file_and_select_model(tmp_path):
     trace = [
         TraceStep(
             draft=Draft(
-                turn=1, content="", model="", prompt_tokens=0,
-                completion_tokens=0, latency_ms=0.0,
+                turn=1,
+                content="",
+                model="",
+                prompt_tokens=0,
+                completion_tokens=0,
+                latency_ms=0.0,
             ),
             critique=Critique(turn=1, scores=[], overall=6.5, revision_notes="", modality="text"),
         )
@@ -65,8 +71,12 @@ def test_vision_rule_enables_vision_only_in_range(tmp_path):
     mid_trace = [
         TraceStep(
             draft=Draft(
-                turn=1, content="", model="", prompt_tokens=0,
-                completion_tokens=0, latency_ms=0.0,
+                turn=1,
+                content="",
+                model="",
+                prompt_tokens=0,
+                completion_tokens=0,
+                latency_ms=0.0,
             ),
             critique=Critique(turn=1, scores=[], overall=6.0, revision_notes="", modality="text"),
         )
@@ -74,8 +84,12 @@ def test_vision_rule_enables_vision_only_in_range(tmp_path):
     high_trace = [
         TraceStep(
             draft=Draft(
-                turn=1, content="", model="", prompt_tokens=0,
-                completion_tokens=0, latency_ms=0.0,
+                turn=1,
+                content="",
+                model="",
+                prompt_tokens=0,
+                completion_tokens=0,
+                latency_ms=0.0,
             ),
             critique=Critique(turn=1, scores=[], overall=8.0, revision_notes="", modality="text"),
         )
@@ -113,7 +127,9 @@ def test_evaluate_condition_unknown_metric_raises(tmp_path):
     with pytest.raises(ValueError, match=r"Unknown routing metric"):
         router._evaluate_condition(
             EscalationCondition(
-                type="score_below", metric="nonexistent_metric", threshold=5.0,
+                type="score_below",
+                metric="nonexistent_metric",
+                threshold=5.0,
             ),
             trace,
         )
@@ -169,8 +185,10 @@ def test_evaluate_condition_score_between_missing_lower_raises(tmp_path):
     with pytest.raises(ValueError, match=r"Lower and upper bounds"):
         router._evaluate_condition(
             EscalationCondition(
-                type="score_between", metric="overall",
-                lower=None, upper=7.0,
+                type="score_between",
+                metric="overall",
+                lower=None,
+                upper=7.0,
             ),
             _trace_with(5.0),
         )
@@ -190,8 +208,10 @@ def test_evaluate_condition_score_between_missing_upper_raises(tmp_path):
     with pytest.raises(ValueError, match=r"Lower and upper bounds"):
         router._evaluate_condition(
             EscalationCondition(
-                type="score_between", metric="overall",
-                lower=5.0, upper=None,
+                type="score_between",
+                metric="overall",
+                lower=5.0,
+                upper=None,
             ),
             _trace_with(5.0),
         )
@@ -209,8 +229,11 @@ def test_evaluate_condition_score_between_within_bounds(tmp_path):
     )
     router = AdaptiveRouter.load_from_file(rules_path)
     cond = EscalationCondition(
-        type="score_between", metric="overall",
-        lower=5.0, upper=7.0, threshold=None,
+        type="score_between",
+        metric="overall",
+        lower=5.0,
+        upper=7.0,
+        threshold=None,
     )
     assert router._evaluate_condition(cond, _trace_with(6.0)) is True
     assert router._evaluate_condition(cond, _trace_with(8.0)) is False
@@ -246,7 +269,9 @@ def test_evaluate_condition_empty_trace_returns_false(tmp_path):
     )
     router = AdaptiveRouter.load_from_file(rules_path)
     cond = EscalationCondition(
-        type="score_below", metric="overall", threshold=5.0,
+        type="score_below",
+        metric="overall",
+        threshold=5.0,
     )
     assert router._evaluate_condition(cond, []) is False
 

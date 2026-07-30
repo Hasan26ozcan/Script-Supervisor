@@ -4,6 +4,7 @@ Instead of hardcoded strings in agent_loop.py, we load prompts from YAML files
 in the prompts/ directory. This enables prompt versioning and makes it easy
 to A/B test different prompt formulations.
 """
+
 from __future__ import annotations
 
 from functools import lru_cache

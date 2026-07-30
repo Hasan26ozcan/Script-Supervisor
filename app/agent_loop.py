@@ -5,6 +5,7 @@ it's *when to stop*, and whether correction is actually improving anything
 or just producing longer, more confident-sounding output. This module logs
 enough (`RunTrace`) to answer that question later with data, not vibes.
 """
+
 from __future__ import annotations
 
 from typing import Literal
@@ -90,18 +91,17 @@ class CorrectionLoop:
             modality: Literal["text", "vision"]
             if use_vision:
                 captions = "; ".join(
-                    f"[{i+1}] {ri.caption or 'no caption'}" for i, ri in enumerate(reference_images)
+                    f"[{i + 1}] {ri.caption or 'no caption'}"
+                    for i, ri in enumerate(reference_images)
                 )
                 vision_prompt = (
-                    f"Brief: {brief}\n\nReference images: {captions}\n\n"
-                    f"Shot list:\n{draft.content}"
+                    f"Brief: {brief}\n\nReference images: {captions}\n\nShot list:\n{draft.content}"
                 )
 
                 if self.router.should_use_vision(trace.steps):
-                    critique_model = (
-                        self.model_overrides.get("visual_critique")
-                        or self.router.select_model("visual_critique", trace.steps)
-                    )
+                    critique_model = self.model_overrides.get(
+                        "visual_critique"
+                    ) or self.router.select_model("visual_critique", trace.steps)
                     critique_call = await self.gateway.call_vision(
                         "visual_critique",
                         vision_critique_system,
@@ -111,10 +111,9 @@ class CorrectionLoop:
                     )
                     modality = "vision"
                 else:
-                    critique_model = (
-                        self.model_overrides.get("critique")
-                        or self.router.select_model("critique", trace.steps)
-                    )
+                    critique_model = self.model_overrides.get(
+                        "critique"
+                    ) or self.router.select_model("critique", trace.steps)
                     critique_call = await self.gateway.call(
                         "critique",
                         critique_system,

@@ -1,8 +1,9 @@
 """Additional tests for app/agent_loop.py branches with low coverage."""
+
 from app.agent_loop import CorrectionLoop
 from app.gateway import GatewayLedger, ModelGateway
 from app.rubric import Rubric
-from app.schemas import ReferenceImage, TraceStep
+from app.schemas import ReferenceImage
 
 
 def _make_loop(tmp_path, **kwargs):
@@ -21,7 +22,9 @@ async def test_vision_critique_fallback_when_prompt_missing(monkeypatch, tmp_pat
 
     def broken_get_prompt(task, version="v1"):
         if task == "vision_critique":
-            raise FileNotFoundError(f"Prompt file not found: prompts/vision_critique/{version}.yaml")
+            raise FileNotFoundError(
+                f"Prompt file not found: prompts/vision_critique/{version}.yaml"
+            )
         return original_get_prompt(task, version=version)
 
     monkeypatch.setattr(app.agent_loop, "get_prompt", broken_get_prompt)
@@ -37,14 +40,7 @@ async def test_vision_critique_fallback_when_prompt_missing(monkeypatch, tmp_pat
 async def test_vision_modality_when_router_says_no_vision(tmp_path):
     """When the router says not to use vision (high existing scores),
     the critique should be tagged as text modality even with images."""
-    from app.schemas import Critique, Draft
 
-    loop = _make_loop(tmp_path, max_turns=1)
-
-    # Pre-seed the router with a high-scoring trace so should_use_vision returns False
-    trace = loop.gateway.ledger  # just to have a ledger; we need router state
-
-    ref = ReferenceImage(path="nonexistent.jpg", caption="test")
     # With max_turns=1 and default setup, the router hasn't seen prior
     # steps so it defaults to vision=True for the first turn
     # We test that a vision call produces a vision critique here
@@ -60,7 +56,6 @@ async def test_text_critique_with_reference_images_when_router_disabled(tmp_path
     """When router.should_use_vision returns False, the loop uses a text
     critique call even though reference images are present."""
     from app.routing import AdaptiveRouter
-    from app.schemas import Critique as CritiqueSchema, Draft as DraftSchema
 
     # Router with a rule that prevents vision when score is high
     router = AdaptiveRouter(
@@ -89,9 +84,7 @@ async def test_text_critique_with_reference_images_when_router_disabled(tmp_path
         ]
     )
 
-    loop = _make_loop(
-        tmp_path, max_turns=1, router=router
-    )
+    loop = _make_loop(tmp_path, max_turns=1, router=router)
     ref = ReferenceImage(path="nonexistent.jpg", caption="test")
     # First turn has no prior steps so the router hasn't evaluated yet
     # This tests the code path where use_vision=False despite having images

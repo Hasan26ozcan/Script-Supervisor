@@ -31,9 +31,7 @@ def test_predict_winner_uses_weighted_overall():
 
 def test_split_preferences_preserves_order_and_seed(tmp_path):
     prefs = [
-        PreferencePair(
-            brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a"
-        )
+        PreferencePair(brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a")
         for i in range(10)
     ]
     train1, holdout1 = split_preferences(prefs, test_fraction=0.2, seed=123)

@@ -1,7 +1,8 @@
 """Comprehensive tests for app/rubric.py."""
+
 import pytest
 
-from app.rubric import DEFAULT_CRITERIA, Rubric, RubricScore, VISUAL_CRITERIA
+from app.rubric import DEFAULT_CRITERIA, VISUAL_CRITERIA, Rubric, RubricScore
 from app.schemas import PreferencePair
 
 
@@ -139,9 +140,7 @@ def test_update_from_preference_ignores_tie():
     rubric = Rubric(weights_path="/tmp/nonexistent_rubric_weights13.json")
     rubric.weights = {"clarity": 1.0}
 
-    pref = PreferencePair(
-        brief="test", candidate_a="A", candidate_b="B", winner="tie"
-    )
+    pref = PreferencePair(brief="test", candidate_a="A", candidate_b="B", winner="tie")
 
     scores = [RubricScore(criterion="clarity", score=5.0, rationale="ok")]
     before = rubric.weights["clarity"]
@@ -154,9 +153,7 @@ def test_update_from_preference_decreases_wrong_direction_weights():
     rubric = Rubric(weights_path="/tmp/nonexistent_rubric_weights14.json")
     rubric.weights = {"clarity": 1.0}
 
-    pref = PreferencePair(
-        brief="test", candidate_a="A", candidate_b="B", winner="b"
-    )
+    pref = PreferencePair(brief="test", candidate_a="A", candidate_b="B", winner="b")
 
     # A has higher clarity but B wins -> clarity weight should decrease
     scores_a = [RubricScore(criterion="clarity", score=9.0, rationale="clear")]
@@ -173,9 +170,7 @@ def test_update_from_preference_never_below_minimum():
     rubric = Rubric(weights_path="/tmp/nonexistent_rubric_weights15.json")
     rubric.weights = {"clarity": 0.05}
 
-    pref = PreferencePair(
-        brief="test", candidate_a="A", candidate_b="B", winner="b"
-    )
+    pref = PreferencePair(brief="test", candidate_a="A", candidate_b="B", winner="b")
 
     scores_a = [RubricScore(criterion="clarity", score=9.0, rationale="clear")]
     scores_b = [RubricScore(criterion="clarity", score=3.0, rationale="vague")]

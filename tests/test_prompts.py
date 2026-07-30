@@ -1,4 +1,5 @@
 """Tests for the prompt registry (app/prompts.py)."""
+
 import pytest
 
 

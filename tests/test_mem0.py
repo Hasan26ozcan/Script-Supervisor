@@ -1,4 +1,5 @@
 """Tests for Mem0 endpoints in the FastAPI app."""
+
 import asyncio
 from pathlib import Path
 
@@ -116,16 +117,18 @@ def test_mem0_validate_entry_active_non_stale(monkeypatch, tmp_path):
         # candidate_a contains action words ("cut reveal establish"),
         # candidate_b has none — always return strong text for A, weak for B.
         if "cut reveal establish" in user_text:
-            text = (
-                "clarity: 9/10 - very clear\n"
-                "actionability: 8/10 - highly actionable\n"
-            )
+            text = "clarity: 9/10 - very clear\nactionability: 8/10 - highly actionable\n"
         else:
-            text = (
-                "clarity: 2/10 - unclear\n"
-                "actionability: 1/10 - not actionable\n"
-            )
-        return CallResult(text=text, model="test", task="critique", prompt_tokens=10, completion_tokens=10, latency_ms=1.0, cost_usd=0.0)
+            text = "clarity: 2/10 - unclear\nactionability: 1/10 - not actionable\n"
+        return CallResult(
+            text=text,
+            model="test",
+            task="critique",
+            prompt_tokens=10,
+            completion_tokens=10,
+            latency_ms=1.0,
+            cost_usd=0.0,
+        )
 
     monkeypatch.setattr(main_module.mem0_manager.gateway, "call", fake_call)
 

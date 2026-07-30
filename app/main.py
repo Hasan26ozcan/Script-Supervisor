@@ -6,6 +6,7 @@ Endpoints:
   GET  /traces/{id} -> fetch a stored trace
   GET  /rubric      -> current rubric weights (so drift is visible over time)
 """
+
 from __future__ import annotations
 
 import json

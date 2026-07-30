@@ -1,6 +1,6 @@
-import pytest
-
 """Tests for PreferenceStore — SQL backend with JSONL fallback."""
+
+import pytest
 
 from app.preference_store import PreferenceStore
 from app.schemas import PreferencePair
@@ -29,9 +29,7 @@ def test_append_only_preserves_order(tmp_path):
     with PreferenceStore(database_url=database_url) as store:
         for i in range(5):
             store.add(
-                PreferencePair(
-                    brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a"
-                )
+                PreferencePair(brief=f"brief-{i}", candidate_a="a", candidate_b="b", winner="a")
             )
 
         all_prefs = store.all()
@@ -60,9 +58,7 @@ def test_fallback_jsonl_when_db_unavailable(tmp_path):
     database_url = f"sqlite:///{tmp_path / 'test_fallback.db'}"
     with PreferenceStore(database_url=database_url) as store:
         store.add(
-            PreferencePair(
-                brief="fallback test", candidate_a="a1", candidate_b="a2", winner="a"
-            )
+            PreferencePair(brief="fallback test", candidate_a="a1", candidate_b="a2", winner="a")
         )
         result = store.all()
         assert len(result) == 1
@@ -102,6 +98,7 @@ def test_add_sqlalchemy_error_falls_back_to_jsonl(tmp_path, monkeypatch):
     """When session.merge raises SQLAlchemyError, the store falls back
     to JSONL storage."""
     import sqlalchemy.exc
+
     from app.preference_store import PreferenceStore
     from app.schemas import PreferencePair
 
@@ -149,6 +146,7 @@ def test_migrate_from_jsonl_missing_file_raises(tmp_path):
 def test_all_uses_fallback_records_when_db_fails(tmp_path, monkeypatch):
     """When the DB is unavailable at query time, all() returns fallback records."""
     import sqlalchemy.exc
+
     from app.preference_store import PreferenceStore
     from app.schemas import PreferencePair
 
@@ -170,6 +168,7 @@ def test_all_uses_fallback_records_when_db_fails(tmp_path, monkeypatch):
         raise sqlalchemy.exc.SQLAlchemyError("DB broken")
 
     import types
+
     store2.session.execute = types.MethodType(failing_execute, store2.session)
 
     result = store2.all()
@@ -184,11 +183,10 @@ def test_all_uses_fallback_records_when_db_fails(tmp_path, monkeypatch):
     assert pref.notes == ""
 
 
-def test_all_falls_back_to_load_fallback_records_when_no_cached_records(
-    tmp_path, monkeypatch
-):
+def test_all_falls_back_to_load_fallback_records_when_no_cached_records(tmp_path, monkeypatch):
     """When DB fails and _fallback_records is empty, all() falls back to the JSONL file."""
     import sqlalchemy.exc
+
     from app.preference_store import PreferenceStore
     from app.schemas import PreferencePair
 
@@ -248,8 +246,8 @@ def test_migrate_from_jsonl_skips_blank_lines(tmp_path):
 def test_load_fallback_records_skips_blank_lines(tmp_path, monkeypatch):
     """_load_fallback_records should skip blank lines in the JSONL file."""
     import sqlalchemy.exc
+
     from app.preference_store import PreferenceStore
-    from app.schemas import PreferencePair
 
     database_url = f"sqlite:///{tmp_path / 'test_fb_blanks.db'}"
     store = PreferenceStore(database_url=database_url)
@@ -272,6 +270,7 @@ def test_load_fallback_records_skips_blank_lines(tmp_path, monkeypatch):
         raise sqlalchemy.exc.SQLAlchemyError("DB broken")
 
     import types
+
     store2.session.execute = types.MethodType(failing_execute, store2.session)
 
     try:

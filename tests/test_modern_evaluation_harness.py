@@ -9,6 +9,7 @@ def _matplotlib_usable() -> bool:
     try:
         import matplotlib  # noqa: F401
         import matplotlib.pyplot  # noqa: F401
+
         return True
     except ImportError:
         return False

@@ -16,6 +16,7 @@ a simple logistic (Bradley-Terry-style) update. This is intentionally
 simple -- the point of phase 2 is proving the *mechanism* works, not
 building a research-grade preference model on day one.
 """
+
 from __future__ import annotations
 
 import json

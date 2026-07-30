@@ -23,6 +23,7 @@ def gateway():
 
 # ---- async call tests ----
 
+
 async def test_gateway_returns_callresult_for_draft(gateway):
     result = await gateway.call(
         task="draft",
@@ -92,20 +93,14 @@ async def test_gateway_structured_call_handles_parse_error(gateway):
 
 async def test_gateway_cost_accumulates_across_calls(gateway):
     initial_cost = gateway.ledger.total_cost_usd
-    await gateway.call(
-        task="draft", system="", user="Test.", model="claude-sonnet-5"
-    )
-    await gateway.call(
-        task="draft", system="", user="Test again.", model="claude-sonnet-5"
-    )
+    await gateway.call(task="draft", system="", user="Test.", model="claude-sonnet-5")
+    await gateway.call(task="draft", system="", user="Test again.", model="claude-sonnet-5")
     assert gateway.ledger.total_cost_usd >= initial_cost
     assert len(gateway.ledger.calls) == 2
 
 
 async def test_gateway_ledger_tracks_per_call_details(gateway):
-    await gateway.call(
-        task="draft", system="system", user="user", model="claude-sonnet-5"
-    )
+    await gateway.call(task="draft", system="system", user="user", model="claude-sonnet-5")
     call = gateway.ledger.calls[0]
     assert call.model == "claude-sonnet-5"
     assert call.task == "draft"
@@ -170,17 +165,13 @@ async def test_gateway_vision_call_logs_with_image_token_overhead(gateway):
 async def test_gateway_cost_for_unknown_model_is_zero(gateway):
     """Unknown model names get zero token prices but still return a
     valid CallResult."""
-    result = await gateway.call(
-        task="draft", system="", user="Test.", model="unknown-model-xyz"
-    )
+    result = await gateway.call(task="draft", system="", user="Test.", model="unknown-model-xyz")
     assert isinstance(result, CallResult)
     assert result.cost_usd == 0.0
 
 
 async def test_gateway_draft_task_uses_default_model_when_none_provided(gateway):
-    result = await gateway.call(
-        task="draft", system="", user="Test.", model=None
-    )
+    result = await gateway.call(task="draft", system="", user="Test.", model=None)
     assert isinstance(result, CallResult)
     # Default draft model is claude-haiku-4-5-20251001 in anthropic mode
     assert result.model in MODEL_PRICES
@@ -196,9 +187,7 @@ async def test_gateway_multiple_tasks_produce_non_negative_costs(gateway):
 
 
 async def test_gateway_prompt_tokens_scale_with_input_length(gateway):
-    short_result = await gateway.call(
-        task="draft", system="", user="Hi.", model="claude-sonnet-5"
-    )
+    short_result = await gateway.call(task="draft", system="", user="Hi.", model="claude-sonnet-5")
     long_result = await gateway.call(
         task="draft", system="", user="Hi " * 100, model="claude-sonnet-5"
     )
@@ -208,12 +197,8 @@ async def test_gateway_prompt_tokens_scale_with_input_length(gateway):
 async def test_gateway_ledger_total_latency_is_sum_of_individual_latencies(
     gateway,
 ):
-    await gateway.call(
-        task="draft", system="", user="A.", model="claude-sonnet-5"
-    )
-    await gateway.call(
-        task="draft", system="", user="B.", model="claude-sonnet-5"
-    )
+    await gateway.call(task="draft", system="", user="A.", model="claude-sonnet-5")
+    await gateway.call(task="draft", system="", user="B.", model="claude-sonnet-5")
     total_latency = gateway.ledger.total_latency_ms
     individual = sum(c.latency_ms for c in gateway.ledger.calls)
     assert total_latency == individual

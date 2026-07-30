@@ -1,4 +1,5 @@
 """Mem0-style compression pair effectiveness tracking and replacement."""
+
 from __future__ import annotations
 
 import asyncio
@@ -43,10 +44,7 @@ class Mem0Store:
             source_pair_id=pair.pair_id,
             source=pair.source,
             brief=pair.brief,
-            prompt=(
-                f"Brief: {pair.brief}\n\n"
-                "Shot list:\n"
-            ),
+            prompt=(f"Brief: {pair.brief}\n\nShot list:\n"),
             candidate_a=pair.candidate_a,
             candidate_b=pair.candidate_b,
             expected_winner=expected_winner,

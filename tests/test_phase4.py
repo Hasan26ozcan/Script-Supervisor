@@ -1,12 +1,18 @@
 """Tests for Phase 4 vision effectiveness experiment integration."""
 
+
 async def test_phase4_script_runs_in_mock_mode(monkeypatch):
     import sys
 
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
     for mod in (
-        "app.main", "app.agent_loop", "app.config",
-        "app.prompts", "app.gateway", "app.rubric", "app.schemas",
+        "app.main",
+        "app.agent_loop",
+        "app.config",
+        "app.prompts",
+        "app.gateway",
+        "app.rubric",
+        "app.schemas",
     ):
         sys.modules.pop(mod, None)
 

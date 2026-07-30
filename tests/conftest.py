@@ -24,6 +24,7 @@ def tmp_database_url(tmp_path):
 def empty_rubric(tmp_path):
     """Return a Rubric backed by a temporary weights file."""
     from app.rubric import Rubric
+
     return Rubric(weights_path=tmp_path / "weights.json")
 
 
@@ -31,4 +32,5 @@ def empty_rubric(tmp_path):
 def fresh_gateway():
     """Return a ModelGateway with a clean in-memory ledger."""
     from app.gateway import GatewayLedger, ModelGateway
+
     return ModelGateway(GatewayLedger())

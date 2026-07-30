@@ -4,6 +4,7 @@ Kept deliberately small and explicit — every field here is something
 that shows up in the eval, the trace, or the DPO export later. No field
 exists "just in case."
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -45,6 +46,7 @@ class Critique(BaseModel):
     overall: float
     revision_notes: str  # what the critic wants changed, fed back to the generator
     modality: Literal["text", "vision"] = "text"  # was this critique VLM-grounded?
+    parse_error: bool = False  # True when response could not be parsed after max retries
 
 
 class Draft(BaseModel):
@@ -70,9 +72,9 @@ class RunTrace(BaseModel):
     input_brief: str
     reference_images: list[ReferenceImage] = Field(default_factory=list)
     steps: list[TraceStep] = Field(default_factory=list)
-    stop_reason: Literal[
-        "max_turns", "plateau", "threshold_met", "cost_threshold", "error"
-    ] | None = None
+    stop_reason: (
+        Literal["max_turns", "plateau", "threshold_met", "cost_threshold", "error"] | None
+    ) = None
     final_output: str | None = None
     total_cost_usd: float = 0.0
     total_latency_ms: float = 0.0

@@ -1,4 +1,5 @@
 """Primary SQL database integration for preference storage and evaluation artifacts."""
+
 from __future__ import annotations
 
 from typing import Any

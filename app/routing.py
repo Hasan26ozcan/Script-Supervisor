@@ -3,6 +3,7 @@
 This module externalizes escalation rules into YAML so the model-cascade
 policy is auditable and can evolve without changing the correction loop.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

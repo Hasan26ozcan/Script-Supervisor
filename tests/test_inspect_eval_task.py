@@ -4,6 +4,7 @@ Skips cleanly if `inspect-ai` is not installed, since it is an optional
 dependency (`pip install inspect-ai` / the `eval` extra) kept out of the
 core API server's dependency footprint.
 """
+
 from __future__ import annotations
 
 import importlib.util

@@ -1,11 +1,9 @@
 """Unit tests for Mem0Store internals (app/mem0.py)."""
-import tempfile
-from pathlib import Path
 
 import pytest
 
 from app.mem0 import Mem0Store
-from app.schemas import ComparisonPair, MemoryEntry, MemoryValidationRecord
+from app.schemas import ComparisonPair, MemoryEntry
 
 
 @pytest.fixture
@@ -150,7 +148,6 @@ class TestReplaceEntry:
 
 class TestLoadEntries:
     def test_load_existing_file_populates_entries(self, tmp_path):
-        import json
 
         p = tmp_path / "mem0.jsonl"
         entry = MemoryEntry(
@@ -173,7 +170,6 @@ class TestLoadEntries:
         assert store.entries == {}
 
     def test_load_skips_blank_lines(self, tmp_path):
-        import json
 
         p = tmp_path / "mem0.jsonl"
         entry = MemoryEntry(

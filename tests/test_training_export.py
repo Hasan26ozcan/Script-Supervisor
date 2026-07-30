@@ -9,14 +9,14 @@ def test_export_dpo_dataset_writes_records(tmp_path):
     database_url = f"sqlite:///{tmp_path / 'prefs.db'}"
     with PreferenceStore(database_url=database_url) as store:
         store.add(
-        PreferencePair(
-            brief="A moody alley chase.",
-            prompt="Brief: A moody alley chase.\n\nShot list:\n1. low angle",
-            candidate_a="A1",
-            candidate_b="B1",
-            winner="a",
+            PreferencePair(
+                brief="A moody alley chase.",
+                prompt="Brief: A moody alley chase.\n\nShot list:\n1. low angle",
+                candidate_a="A1",
+                candidate_b="B1",
+                winner="a",
+            )
         )
-    )
     store.add(
         PreferencePair(
             brief="A daylit studio.",

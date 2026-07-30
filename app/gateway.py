@@ -9,6 +9,7 @@ This is deliberately the file you'd point to in an interview and say:
 "here's where I made a cost/latency tradeoff decision, and here's the data
 that backed it up" — every call is logged, nothing is invisible.
 """
+
 from __future__ import annotations
 
 import base64
@@ -50,27 +51,17 @@ TASK_DEFAULT_MODEL = {
     # Cheap model by default for drafting -- the harness's job is to make
     # this viable. Escalate only when the rubric says quality is lacking.
     "draft": (
-        "llama-3.1-8b-instant"
-        if settings.provider == "groq"
-        else "claude-haiku-4-5-20251001"
+        "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001"
     ),
-    "critique": (
-        "llama-3.1-70b-versatile"
-        if settings.provider == "groq"
-        else "claude-sonnet-5"
-    ),
+    "critique": ("llama-3.1-70b-versatile" if settings.provider == "groq" else "claude-sonnet-5"),
     "revise": (
-        "llama-3.1-8b-instant"
-        if settings.provider == "groq"
-        else "claude-haiku-4-5-20251001"
+        "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001"
     ),
     # Vision-grounded critique needs a model that actually looks at the
     # image, not just describes what it assumes an image like that would
     # show.
     "visual_critique": (
-        "llama-3.2-11b-vision-preview"
-        if settings.provider == "groq"
-        else "claude-sonnet-5"
+        "llama-3.2-11b-vision-preview" if settings.provider == "groq" else "claude-sonnet-5"
     ),
 }
 
@@ -84,6 +75,7 @@ class CallResult:
     completion_tokens: int
     latency_ms: float
     cost_usd: float
+    n_images: int = 0
 
 
 @dataclass
@@ -133,8 +125,7 @@ class ModelGateway:
             if settings.provider == "anthropic":
                 if not settings.anthropic_api_key:
                     raise ValueError(
-                        "ANTHROPIC_API_KEY required when provider=anthropic "
-                        "and mock_mode=False"
+                        "ANTHROPIC_API_KEY required when provider=anthropic and mock_mode=False"
                     )
                 import anthropic  # noqa: F401 -- lazy import, only needed for live calls
 
@@ -145,7 +136,9 @@ class ModelGateway:
                 try:
                     from groq import Groq
                 except ImportError:
-                    raise ImportError("groq package not installed. Install with: pip install groq")
+                    raise ImportError(
+                        "groq package not installed. Install with: pip install groq"
+                    ) from None
 
                 self._groq_client = Groq(api_key=settings.groq_api_key)
             else:
@@ -170,6 +163,7 @@ class ModelGateway:
             completion_tokens=completion_tok,
             latency_ms=latency_ms,
             cost_usd=cost,
+            n_images=n_images,
         )
         if self.budget is not None:
             self.budget.consume(cost)
@@ -195,7 +189,7 @@ class ModelGateway:
     async def call(self, task: str, system: str, user: str, model: str | None = None) -> CallResult:
         model = model or TASK_DEFAULT_MODEL.get(
             task,
-            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile"
+            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile",
         )
         start = time.perf_counter()
 
@@ -220,15 +214,15 @@ class ModelGateway:
                     model=model,
                     messages=[
                         {"role": "system", "content": system},
-                        {"role": "user", "content": user}
+                        {"role": "user", "content": user},
                     ],
                     max_tokens=1024,
                 )
                 text = resp.choices[0].message.content
                 # Groq doesn't always return token counts in the same way
                 # We'll approximate if not provided
-                prompt_tok = getattr(resp.usage, 'prompt_tokens', len(system) // 4 + len(user) // 4)
-                completion_tok = getattr(resp.usage, 'completion_tokens', len(text) // 4)
+                prompt_tok = getattr(resp.usage, "prompt_tokens", len(system) // 4 + len(user) // 4)
+                completion_tok = getattr(resp.usage, "completion_tokens", len(text) // 4)
             else:
                 raise ValueError(f"Unsupported provider: {settings.provider}")
 
@@ -309,7 +303,7 @@ class ModelGateway:
                     model=model,
                     messages=[
                         {"role": "system", "content": system},
-                        {"role": "user", "content": enhanced_user_text}
+                        {"role": "user", "content": enhanced_user_text},
                     ],
                     max_tokens=1024,
                 )
@@ -350,7 +344,7 @@ class ModelGateway:
         """
         model = model or TASK_DEFAULT_MODEL.get(
             task,
-            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile"
+            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile",
         )
         start = time.perf_counter()
 
@@ -402,7 +396,7 @@ class ModelGateway:
                         tool_definition = {
                             "name": "submit_critique",
                             "description": "Submit a structured critique",
-                            "input_schema": schema.model_json_schema()
+                            "input_schema": schema.model_json_schema(),
                         }
 
                         resp = self._anthropic_client.messages.create(
@@ -411,7 +405,7 @@ class ModelGateway:
                             system=system,
                             messages=[{"role": "user", "content": user}],
                             tools=[tool_definition],
-                            tool_choice={"type": "tool", "name": "submit_critique"}
+                            tool_choice={"type": "tool", "name": "submit_critique"},
                         )  # type: ignore[call-overload]
 
                         # Extract the tool use result
@@ -420,6 +414,7 @@ class ModelGateway:
                             if block.type == "tool_use" and block.name == "submit_critique":
                                 # The tool use block contains the structured input
                                 import json
+
                                 tool_input = block.input
                                 text = json.dumps(tool_input)
                                 break
@@ -439,6 +434,7 @@ class ModelGateway:
                         # Add JSON formatting instructions to the system prompt
                         json_schema = schema.model_json_schema()
                         import json
+
                         schema_str = json.dumps(json_schema, indent=2)
 
                         enhanced_system = f"""{system}
@@ -452,7 +448,7 @@ class ModelGateway:
                             model=model,
                             messages=[
                                 {"role": "system", "content": enhanced_system},
-                                {"role": "user", "content": user}
+                                {"role": "user", "content": user},
                             ],
                             max_tokens=1024,
                             temperature=0.1,  # Lower temperature for more consistent JSON
@@ -462,7 +458,8 @@ class ModelGateway:
                         # Try to extract JSON from the response
                         # Look for JSON-like content between curly braces
                         import re
-                        json_match = re.search(r'\{.*\}', text, re.DOTALL)
+
+                        json_match = re.search(r"\{.*\}", text, re.DOTALL)
                         if json_match:
                             text = json_match.group(0)
                         # If no JSON found, we'll let the validation fail and retry
@@ -475,18 +472,16 @@ class ModelGateway:
                 latency_ms = (time.perf_counter() - start) * 1000
                 result = self._record(task, model, text, prompt_tok, completion_tok, latency_ms)
 
-                # Try to parse and validate the response
+                # Try to parse and validate the response against the schema
                 try:
                     import json
-                    if schema == Critique and text.startswith('{'):
-                        # Parse JSON and validate against schema
-                        data = json.loads(text)
-                        validated = schema(**data)
-                        return validated
-                    else:
-                        # For other schemas or non-JSON responses, return raw result
-                        # In a real implementation, we'd want to parse based on schema
+
+                    # Non-Critique schemas in mock mode always return raw result
+                    if MOCK_MODE and schema != Critique:
                         return result
+                    data = json.loads(text)
+                    validated = schema(**data)
+                    return validated
                 except Exception as e:
                     # Validation error - retry if we have attempts left
                     if attempt < max_retries - 1:
@@ -508,7 +503,8 @@ class ModelGateway:
                                 revision_notes=(
                                     f"Parse error after {max_retries} attempts: {str(e)}"
                                 ),
-                                modality="text"
+                                modality="text",
+                                parse_error=True,
                             )
                             return error_critique
                         else:
@@ -526,7 +522,7 @@ class ModelGateway:
                     raise
 
         # This shouldn't be reached, but just in case
-        raise RuntimeError("Failed to get valid response after retries")
+        raise RuntimeError("Failed to get valid response after retries")  # pragma: no cover
 
     @staticmethod
     def _mock_vision_response(task: str, user_text: str, n_images: int) -> tuple[str, int, int]:

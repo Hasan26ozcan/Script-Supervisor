@@ -1,4 +1,5 @@
 """Tests for the CostBudget module."""
+
 from datetime import date
 
 import pytest

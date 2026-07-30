@@ -13,8 +13,11 @@ def _fresh_loop(tmp_path, **kwargs):
 
 async def test_cost_threshold_stop(tmp_path):
     loop = _fresh_loop(
-        tmp_path, max_turns=3, threshold=999,
-        plateau_epsilon=-1, quality_per_dollar_threshold=0.0001,
+        tmp_path,
+        max_turns=3,
+        threshold=999,
+        plateau_epsilon=-1,
+        quality_per_dollar_threshold=0.0001,
     )
     trace = await loop.run("A tense alleyway argument.")
     assert trace.stop_reason in {"max_turns", "plateau", "threshold_met", "cost_threshold"}
@@ -26,8 +29,12 @@ async def test_phase3_script_runs_in_mock_mode(monkeypatch):
 
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
     for mod in (
-        "app.main", "app.agent_loop", "app.config",
-        "app.prompts", "app.gateway", "app.rubric",
+        "app.main",
+        "app.agent_loop",
+        "app.config",
+        "app.prompts",
+        "app.gateway",
+        "app.rubric",
     ):
         sys.modules.pop(mod, None)
 

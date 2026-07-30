@@ -1,4 +1,5 @@
 """Architecture hardening helpers for cost budgeting."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

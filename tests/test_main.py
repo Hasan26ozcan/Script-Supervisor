@@ -2,6 +2,7 @@
 instance per test. Each test chdir's into an isolated tmp_path so
 tests don't share (and corrupt) each other's on-disk state.
 """
+
 from pathlib import Path
 
 import pytest
@@ -214,8 +215,9 @@ def test_comparison_pairs_endpoint_with_blank_lines(client, tmp_path):
 
 def test_compare_ui_missing_template(client, tmp_path):
     """GET /compare-ui returns 404 when the template file does not exist."""
-    import app.main as main_module
     from pathlib import Path
+
+    import app.main as main_module
 
     template_path = Path(main_module.__file__).resolve().parent / "templates" / "compare.html"
     if template_path.exists():

@@ -2,6 +2,7 @@
 directly ingestible by Langfuse/Datadog/whatever without a regex parser
 standing between the harness and observability.
 """
+
 from __future__ import annotations
 
 import logging

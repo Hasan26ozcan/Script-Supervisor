@@ -1,9 +1,10 @@
 """Tests for app/gateway.py."""
+
 import asyncio
 
 import pytest
 
-from app.gateway import MODEL_PRICES, TASK_DEFAULT_MODEL, CallResult, GatewayLedger, ModelGateway
+from app.gateway import TASK_DEFAULT_MODEL, CallResult, GatewayLedger, ModelGateway
 
 
 class TestGatewayLedger:
@@ -59,8 +60,8 @@ class TestGatewayLedger:
 class TestModelGatewayRecordWithBudget:
     def test_record_with_budget(self, monkeypatch):
         """_record should call budget.consume when a budget is set."""
-        from app.gateway import ModelGateway, GatewayLedger
         from app.budget import CostBudget
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -73,7 +74,7 @@ class TestModelGatewayRecordWithBudget:
 
     def test_record_without_budget(self, monkeypatch):
         """_record should work fine when there's no budget."""
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -85,7 +86,7 @@ class TestModelGatewayRecordWithBudget:
 
     def test_record_tracks_cost(self, monkeypatch):
         """_record tracks cost via _price helper."""
-        from app.gateway import ModelGateway, GatewayLedger, _price
+        from app.gateway import GatewayLedger, ModelGateway, _price
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -99,10 +100,11 @@ class TestModelGatewayMockCall:
     def test_mock_call(self):
         """In mock mode, call() returns a mock draft response."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         gw.MOCK_MODE = True
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -116,10 +118,11 @@ class TestModelGatewayMockCall:
     def test_mock_call_records_in_ledger(self):
         """Mock call should record in ledger."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         gw.MOCK_MODE = True
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -136,10 +139,11 @@ class TestModelGatewayMockVision:
     def test_mock_vision_call(self):
         """In mock mode, call_vision() returns a mock vision response."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         gw.MOCK_MODE = True
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -161,18 +165,17 @@ class TestModelGatewayCallStructured:
     def test_structured_call_returns_critique_in_mock(self):
         """In mock mode, call_structured with Critique returns a Critique instance."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         gw.MOCK_MODE = True
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
         from app.schemas import Critique
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
 
-        result = asyncio.run(
-            gateway.call_structured("critique", "sys", "user", Critique)
-        )
+        result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
         assert isinstance(result, Critique)
         assert result.turn == 1
 
@@ -181,11 +184,13 @@ class TestModelGatewayCallStructured:
     def test_structured_call_non_critique_schema(self):
         """Non-Critique mock schema returns raw CallResult."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         gw.MOCK_MODE = True
 
-        from app.gateway import ModelGateway, GatewayLedger
         from pydantic import BaseModel
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         class SimpleModel(BaseModel):
             value: str
@@ -193,9 +198,7 @@ class TestModelGatewayCallStructured:
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
 
-        result = asyncio.run(
-            gateway.call_structured("custom", "sys", "user", SimpleModel)
-        )
+        result = asyncio.run(gateway.call_structured("custom", "sys", "user", SimpleModel))
         assert isinstance(result, CallResult)
 
         gw.MOCK_MODE = old_mock
@@ -205,18 +208,17 @@ class TestModelGatewayCallStructuredRetries:
     def test_structured_call_critique_retry_on_validation_failure(self):
         """Retry logic in call_structured - mock mode always succeeds for Critique."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         gw.MOCK_MODE = True
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
         from app.schemas import Critique
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
 
-        result = asyncio.run(
-            gateway.call_structured("critique", "sys", "user", Critique)
-        )
+        result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
         assert isinstance(result, Critique)
 
         gw.MOCK_MODE = old_mock
@@ -258,12 +260,13 @@ class TestUnsupportedProviderError:
     def test_unsupported_provider_raises_on_init(self, monkeypatch):
         """ModelGateway raises ValueError for unsupported provider in non-mock mode."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         old_provider = gw.settings.provider
         gw.MOCK_MODE = False
         gw.settings.provider = "unsupported_provider_xyz"
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
@@ -275,16 +278,68 @@ class TestUnsupportedProviderError:
     def test_unsupported_provider_raises_on_call(self, monkeypatch):
         """call() raises ValueError for unsupported provider."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         old_provider = gw.settings.provider
         gw.MOCK_MODE = False
         gw.settings.provider = "unsupported_provider_xyz"
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
                 ModelGateway(GatewayLedger())
+        finally:
+            gw.MOCK_MODE = old_mock
+            gw.settings.provider = old_provider
+
+    def test_unsupported_provider_raises_on_vision_call(self, monkeypatch):
+        """call_vision() raises ValueError for unsupported provider."""
+        import app.gateway as gw
+
+        old_mock = gw.MOCK_MODE
+        old_provider = gw.settings.provider
+        gw.MOCK_MODE = True
+        gw.settings.provider = "anthropic"
+        gw.settings.anthropic_api_key = "sk-test"
+
+        from app.gateway import GatewayLedger, ModelGateway
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gw.MOCK_MODE = False
+        gw.settings.provider = "unsupported_provider_xyz"
+        try:
+            with pytest.raises(ValueError, match="Unsupported provider"):
+                asyncio.run(gateway.call_vision("draft", "sys", "user", ["img.jpg"]))
+        finally:
+            gw.MOCK_MODE = old_mock
+            gw.settings.provider = old_provider
+
+    def test_unsupported_provider_raises_on_structured_call(self, monkeypatch):
+        """call_structured() raises ValueError for unsupported provider."""
+        from pydantic import BaseModel
+
+        import app.gateway as gw
+
+        class SimpleSchema(BaseModel):
+            value: str
+
+        old_mock = gw.MOCK_MODE
+        old_provider = gw.settings.provider
+        gw.MOCK_MODE = True
+        gw.settings.provider = "anthropic"
+        gw.settings.anthropic_api_key = "sk-test"
+
+        from app.gateway import GatewayLedger, ModelGateway
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        gw.MOCK_MODE = False
+        gw.settings.provider = "unsupported_provider_xyz"
+        try:
+            with pytest.raises(ValueError, match="Unsupported provider"):
+                asyncio.run(gateway.call_structured("custom", "sys", "user", SimpleSchema))
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -294,12 +349,13 @@ class TestAnthropicProviderMissingKey:
     def test_anthropic_missing_api_key_raises(self, monkeypatch):
         """ModelGateway raises ValueError when Anthropic key is missing."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         old_provider = gw.settings.provider
         gw.MOCK_MODE = False
         gw.settings.provider = "anthropic"
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         try:
             with pytest.raises(ValueError, match="ANTHROPIC_API_KEY"):
@@ -313,12 +369,13 @@ class TestGroqProviderMissingKey:
     def test_groq_missing_api_key_raises(self, monkeypatch):
         """ModelGateway raises ValueError when Groq key is missing."""
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         old_provider = gw.settings.provider
         gw.MOCK_MODE = False
         gw.settings.provider = "groq"
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         try:
             with pytest.raises(ValueError, match="GROQ_API_KEY"):
@@ -334,6 +391,7 @@ class TestGroqNotInstalled:
         import sys as _sys
 
         import app.gateway as gw
+
         old_mock = gw.MOCK_MODE
         old_provider = gw.settings.provider
         old_key = gw.settings.groq_api_key
@@ -346,7 +404,7 @@ class TestGroqNotInstalled:
         _sys.modules["groq"] = None  # type: ignore[assignment]
         gw.GROQ_AVAILABLE = False
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         try:
             with pytest.raises(ImportError, match="groq package not installed"):
@@ -384,7 +442,6 @@ class TestBudgetInitAndConsume:
     def test_gateway_with_daily_budget(self, tmp_path, monkeypatch):
         """ModelGateway with a non-None daily_budget_usd creates a CostBudget."""
         import app.gateway as gw
-        from app.budget import CostBudget
 
         old_budget = gw.settings.daily_budget_usd
         gw.settings.daily_budget_usd = 100.0
@@ -421,8 +478,9 @@ class TestModelGatewayLiveAnthropicCall:
     def test_live_anthropic_call_returns_text(self, monkeypatch):
         """Non-mock call() returns CallResult via anthropic client."""
         self._setup_nonmock(monkeypatch)
-        from app.gateway import ModelGateway, GatewayLedger, CallResult
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -438,7 +496,7 @@ class TestModelGatewayLiveAnthropicCall:
         mock_usage.output_tokens = 5
         mock_resp.usage = mock_usage
         mock_anthropic.Anthropic.return_value.messages.create.return_value = mock_resp
-        gateway._anthropic_client = mock_anthropic
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
 
         try:
             self._gw.MOCK_MODE = False
@@ -452,9 +510,11 @@ class TestModelGatewayLiveAnthropicCall:
     def test_live_anthropic_call_prices_via_provider(self, monkeypatch):
         """Non-mock call() records cost using provider pricing."""
         from app.gateway import _price
+
         self._setup_nonmock(monkeypatch)
-        from app.gateway import ModelGateway, GatewayLedger
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -467,7 +527,7 @@ class TestModelGatewayLiveAnthropicCall:
         mock_resp.usage.input_tokens = 1000
         mock_resp.usage.output_tokens = 500
         mock_anthropic.Anthropic.return_value.messages.create.return_value = mock_resp
-        gateway._anthropic_client = mock_anthropic
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
 
         try:
             self._gw.MOCK_MODE = False
@@ -478,11 +538,12 @@ class TestModelGatewayLiveAnthropicCall:
         finally:
             self._restore(monkeypatch)
 
-    def test_live_anthropic_call_vision_returns_text(self, monkeypatch):
+    def test_live_anthropic_call_vision_returns_text(self, monkeypatch, tmp_path):
         """Non-mock call_vision() returns text with n_images tracked."""
         self._setup_nonmock(monkeypatch)
-        from app.gateway import ModelGateway, GatewayLedger
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -495,7 +556,11 @@ class TestModelGatewayLiveAnthropicCall:
         mock_resp.usage.input_tokens = 200
         mock_resp.usage.output_tokens = 30
         mock_anthropic.Anthropic.return_value.messages.create.return_value = mock_resp
-        gateway._anthropic_client = mock_anthropic
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
+
+        # Create a fake image file so call_vision can read it
+        fake_image = tmp_path / "ref.jpg"
+        fake_image.write_bytes(b"\xff\xd8\xff" + b"\x00" * 100)
 
         try:
             self._gw.MOCK_MODE = False
@@ -504,7 +569,7 @@ class TestModelGatewayLiveAnthropicCall:
                     "visual_critique",
                     "sys",
                     "brief",
-                    ["/tmp/ref.jpg"],
+                    [str(fake_image)],
                 )
             )
             assert result.text == "vision response"
@@ -514,17 +579,23 @@ class TestModelGatewayLiveAnthropicCall:
 
     def test_live_anthropic_call_structured_tool_use(self, monkeypatch):
         """Non-mock structured call() uses tool definitions for anthropic."""
-        import json as _json
-        from app.gateway import ModelGateway, GatewayLedger
-        from app.schemas import Critique
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
 
         self._setup_nonmock(monkeypatch)
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
 
-        tool_input = {"turn": 1, "scores": [], "overall": 0.0, "revision_notes": "", "modality": "text"}
+        tool_input = {
+            "turn": 1,
+            "scores": [],
+            "overall": 0.0,
+            "revision_notes": "",
+            "modality": "text",
+        }
         mock_anthropic = MagicMock()
         mock_content = MagicMock()
         mock_content.type = "tool_use"
@@ -535,13 +606,11 @@ class TestModelGatewayLiveAnthropicCall:
         mock_resp.usage.input_tokens = 10
         mock_resp.usage.output_tokens = 10
         mock_anthropic.Anthropic.return_value.messages.create.return_value = mock_resp
-        gateway._anthropic_client = mock_anthropic
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
 
         try:
             self._gw.MOCK_MODE = False
-            result = asyncio.run(
-                gateway.call_structured("critique", "sys", "user", Critique)
-            )
+            result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
             assert isinstance(result, Critique)
         finally:
             self._restore(monkeypatch)
@@ -549,12 +618,12 @@ class TestModelGatewayLiveAnthropicCall:
     def test_nonmock_unsupported_provider_raises(self, monkeypatch):
         """Non-mock call() raises ValueError for unsupported provider."""
         self._setup_nonmock(monkeypatch)
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
-        gw.MOCK_MODE = False
-        gw.settings.provider = "unsupported_provider_xyz"
+        self._gw.MOCK_MODE = False
+        self._gw.settings.provider = "unsupported_provider_xyz"
 
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
@@ -588,9 +657,10 @@ class TestModelGatewayStructuredRetryPaths:
         """After a validation error, call_structured retries and succeeds."""
         self._setup_nonmock_anthropic(monkeypatch)
         import json as _json
-        from app.gateway import ModelGateway, GatewayLedger
-        from app.schemas import Critique
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
 
         call_count = 0
 
@@ -629,13 +699,11 @@ class TestModelGatewayStructuredRetryPaths:
         gateway = ModelGateway(ledger)
         mock_anthropic = MagicMock()
         mock_anthropic.Anthropic.return_value.messages.create.side_effect = fake_create
-        gateway._anthropic_client = mock_anthropic
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
 
         try:
             self._gw.MOCK_MODE = False
-            result = asyncio.run(
-                gateway.call_structured("critique", "sys", "user", Critique)
-            )
+            result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
             assert isinstance(result, Critique)
             assert call_count == 2
         finally:
@@ -644,9 +712,10 @@ class TestModelGatewayStructuredRetryPaths:
     def test_structured_max_retries_exceeded_returns_critique_with_parse_error(self, monkeypatch):
         """When all retries yield invalid JSON for Critique, return Critique with parse_error."""
         self._setup_nonmock_anthropic(monkeypatch)
-        from app.gateway import ModelGateway, GatewayLedger
-        from app.schemas import Critique
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -659,7 +728,7 @@ class TestModelGatewayStructuredRetryPaths:
         mock_resp.usage.input_tokens = 10
         mock_resp.usage.output_tokens = 10
         mock_anthropic.Anthropic.return_value.messages.create.return_value = mock_resp
-        gateway._anthropic_client = mock_anthropic
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
 
         try:
             self._gw.MOCK_MODE = False
@@ -674,9 +743,11 @@ class TestModelGatewayStructuredRetryPaths:
     def test_structured_non_critique_schema_error_raises_on_max_retries(self, monkeypatch):
         """Non-Critique schema: after max retries, raise the exception."""
         self._setup_nonmock_anthropic(monkeypatch)
-        from app.gateway import ModelGateway, GatewayLedger
-        from pydantic import BaseModel
         from unittest.mock import MagicMock
+
+        from pydantic import BaseModel
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         class SimpleSchema(BaseModel):
             value: str
@@ -692,16 +763,66 @@ class TestModelGatewayStructuredRetryPaths:
         mock_resp.usage.input_tokens = 10
         mock_resp.usage.output_tokens = 10
         mock_anthropic.Anthropic.return_value.messages.create.return_value = mock_resp
-        gateway._anthropic_client = mock_anthropic
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
 
         try:
             self._gw.MOCK_MODE = False
-            with pytest.raises(Exception):
+            with pytest.raises(Exception):  # noqa: B017
                 asyncio.run(
-                    gateway.call_structured(
-                        "custom", "sys", "user", SimpleSchema, max_retries=1
-                    )
+                    gateway.call_structured("custom", "sys", "user", SimpleSchema, max_retries=1)
                 )
+        finally:
+            self._restore(monkeypatch)
+
+    def test_structured_network_error_retries_then_succeeds(self, monkeypatch):
+        """After a network error, call_structured retries and succeeds."""
+        self._setup_nonmock_anthropic(monkeypatch)
+        import json as _json
+        from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
+
+        call_count = 0
+
+        def fake_create(*args, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise Exception("network error")
+            else:
+                mock_resp = MagicMock()
+                mock_content = MagicMock()
+                mock_content.type = "text"
+                mock_content.text = _json.dumps(
+                    {
+                        "turn": 1,
+                        "scores": [
+                            {"criterion": "clarity", "score": 7.0, "rationale": "ok"},
+                            {"criterion": "tone_match", "score": 8.0, "rationale": "good"},
+                            {"criterion": "actionability", "score": 6.0, "rationale": "ok"},
+                        ],
+                        "overall": 7.0,
+                        "revision_notes": "notes",
+                        "modality": "text",
+                    }
+                )
+                mock_resp.content = [mock_content]
+                mock_resp.usage.input_tokens = 10
+                mock_resp.usage.output_tokens = 10
+                return mock_resp
+
+        ledger = GatewayLedger()
+        gateway = ModelGateway(ledger)
+        mock_anthropic = MagicMock()
+        mock_anthropic.Anthropic.return_value.messages.create.side_effect = fake_create
+        gateway._anthropic_client = mock_anthropic.Anthropic.return_value
+
+        try:
+            self._gw.MOCK_MODE = False
+            result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
+            assert isinstance(result, Critique)
+            assert call_count == 2
         finally:
             self._restore(monkeypatch)
 
@@ -769,7 +890,7 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -782,7 +903,7 @@ class TestGroqNonMockPaths:
         self._preload_anthropic_module(monkeypatch)
         self._setup_nonmock_anthropic(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
@@ -795,8 +916,9 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger, CallResult
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         mock_groq = MagicMock()
         mock_choice = MagicMock()
@@ -823,8 +945,9 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         mock_groq = MagicMock()
         mock_choice = MagicMock()
@@ -840,9 +963,7 @@ class TestGroqNonMockPaths:
 
         try:
             result = asyncio.run(
-                gateway.call_vision(
-                    "visual_critique", "sys", "brief", ["/tmp/ref.jpg"]
-                )
+                gateway.call_vision("visual_critique", "sys", "brief", ["/tmp/ref.jpg"])
             )
             assert result.text == "vision groq response"
         finally:
@@ -855,9 +976,10 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
-        from app.schemas import Critique
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
 
         mock_groq = MagicMock()
         mock_choice = MagicMock()
@@ -884,15 +1006,13 @@ class TestGroqNonMockPaths:
         gateway._groq_client = mock_groq.Groq.return_value
 
         try:
-            result = asyncio.run(
-                gateway.call_structured("critique", "sys", "user", Critique)
-            )
+            result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
             assert isinstance(result, Critique)
         finally:
             self._restore(monkeypatch)
 
-    def test_groq_structured_non_critique_schema_returns_call_result(self, monkeypatch):
-        """Non-mock call_structured() with non-Critique Groq schema returns CallResult."""
+    def test_groq_structured_non_critique_schema_returns_validated(self, monkeypatch):
+        """Non-mock call_structured() with non-Critique Groq schema returns validated instance."""
         from pydantic import BaseModel
 
         class SimpleSchema(BaseModel):
@@ -901,8 +1021,9 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger, CallResult
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         mock_groq = MagicMock()
         mock_choice = MagicMock()
@@ -917,10 +1038,9 @@ class TestGroqNonMockPaths:
         gateway._groq_client = mock_groq.Groq.return_value
 
         try:
-            result = asyncio.run(
-                gateway.call_structured("custom", "sys", "user", SimpleSchema)
-            )
-            assert isinstance(result, CallResult)
+            result = asyncio.run(gateway.call_structured("custom", "sys", "user", SimpleSchema))
+            assert isinstance(result, SimpleSchema)
+            assert result.value == "test"
         finally:
             self._restore(monkeypatch)
 
@@ -931,9 +1051,10 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
-        from app.schemas import Critique
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
 
         call_count = 0
 
@@ -971,22 +1092,21 @@ class TestGroqNonMockPaths:
         gateway._groq_client = mock_groq.Groq.return_value
 
         try:
-            result = asyncio.run(
-                gateway.call_structured("critique", "sys", "user", Critique)
-            )
+            result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
             assert isinstance(result, Critique)
             assert call_count == 2
         finally:
             self._restore(monkeypatch)
 
-    def test_groq_structured_max_retries_exceeded_returns_critique_with_parse_error(self, monkeypatch):
+    def test_groq_max_retries_exceeded_returns_parse_error_critique(self, monkeypatch):
         """Groq non-mock Critique: validation failure with max_retries=1 returns error Critique."""
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
-        from app.schemas import Critique
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
 
         mock_groq = MagicMock()
         mock_choice = MagicMock()
@@ -1021,8 +1141,9 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
         from unittest.mock import MagicMock
+
+        from app.gateway import GatewayLedger, ModelGateway
 
         mock_groq = MagicMock()
         mock_groq.Groq.return_value.chat.completions.create.side_effect = Exception("network error")
@@ -1034,9 +1155,7 @@ class TestGroqNonMockPaths:
         try:
             with pytest.raises(Exception, match="network error"):
                 asyncio.run(
-                    gateway.call_structured(
-                        "custom", "sys", "user", SimpleSchema, max_retries=1
-                    )
+                    gateway.call_structured("custom", "sys", "user", SimpleSchema, max_retries=1)
                 )
         finally:
             self._restore(monkeypatch)
@@ -1046,11 +1165,18 @@ class TestGroqNonMockPaths:
         self._preload_anthropic_module(monkeypatch)
         self._setup_nonmock_anthropic(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
-        from app.schemas import Critique
         from unittest.mock import MagicMock
 
-        tool_input = {"turn": 1, "scores": [], "overall": 0.0, "revision_notes": "", "modality": "text"}
+        from app.gateway import GatewayLedger, ModelGateway
+        from app.schemas import Critique
+
+        tool_input = {
+            "turn": 1,
+            "scores": [],
+            "overall": 0.0,
+            "revision_notes": "",
+            "modality": "text",
+        }
         mock_tool_use = MagicMock()
         mock_tool_use.type = "tool_use"
         mock_tool_use.name = "submit_critique"
@@ -1068,9 +1194,7 @@ class TestGroqNonMockPaths:
         gateway._anthropic_client = mock_anthropic.Anthropic.return_value
 
         try:
-            result = asyncio.run(
-                gateway.call_structured("critique", "sys", "user", Critique)
-            )
+            result = asyncio.run(gateway.call_structured("critique", "sys", "user", Critique))
             assert isinstance(result, Critique)
         finally:
             self._restore(monkeypatch)
@@ -1080,7 +1204,7 @@ class TestGroqNonMockPaths:
         self._preload_groq_module(monkeypatch)
         self._setup_nonmock_groq(monkeypatch)
 
-        from app.gateway import ModelGateway, GatewayLedger
+        from app.gateway import GatewayLedger, ModelGateway
 
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)

@@ -5,6 +5,7 @@ through call_vision (not call), the resulting critique is tagged
 modality="vision", and the visual-specific rubric criteria show up in the
 scores -- not the text-only criteria.
 """
+
 import base64
 
 from app.agent_loop import CorrectionLoop
@@ -15,8 +16,7 @@ from app.schemas import ReferenceImage
 # Smallest possible valid PNG (1x1 transparent pixel), just so a real file
 # exists on disk for the path-based ReferenceImage to point at.
 _TINY_PNG = base64.b64decode(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk"
-    "+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
 )
 
 
