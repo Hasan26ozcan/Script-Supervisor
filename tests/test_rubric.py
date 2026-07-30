@@ -217,3 +217,58 @@ def test_rubric_all_criteria_included():
         assert crit in rubric.criteria
     for crit in VISUAL_CRITERIA:
         assert crit in rubric.criteria
+
+
+def test_parse_critique_text_valueerror_skipped(tmp_path):
+    """Score that can't be parsed as float is skipped, not raised."""
+    rubric = Rubric(weights_path=tmp_path / "w.json")
+    raw = "clarity: not-a-number/10 - bad score\nactionability: 5/10 - ok\n"
+    scores, _ = rubric.parse_critique_text(raw)
+    assert len(scores) == 1
+    assert scores[0].criterion == "actionability"
+
+
+def test_parse_critique_text_indexerror_skipped(tmp_path):
+    """A line with a colon but no slash in the score is skipped."""
+    rubric = Rubric(weights_path=tmp_path / "w.json")
+    raw = "clarity: 7.0 (no slash) - something\nactionability: 5/10 - ok\n"
+    scores, _ = rubric.parse_critique_text(raw)
+    assert len(scores) == 1
+
+
+def test_weighted_overall_all_zero_weights(tmp_path):
+    """When all weights are zero, falls back to simple average."""
+    rubric = Rubric(weights_path=tmp_path / "w.json")
+    rubric.weights = {"clarity": 0.0, "tone_match": 0.0, "actionability": 0.0}
+    scores = [
+        RubricScore(criterion="clarity", score=8.0, rationale="clear"),
+        RubricScore(criterion="tone_match", score=6.0, rationale="ok"),
+        RubricScore(criterion="actionability", score=4.0, rationale="vague"),
+    ]
+    # Simple average: (8+6+4)/3 = 6.0
+    assert rubric.weighted_overall(scores) == 6.0
+
+
+def test_load_history_from_existing_file(tmp_path):
+    """Loading a rubric from a path where history already exists
+    should populate weight_history from the file."""
+    import json
+
+    history_path = tmp_path / "rubric_weight_history.jsonl"
+    entry = {
+        "timestamp": "2026-01-01T00:00:00+00:00",
+        "pair_id": "test",
+        "brief": "test brief",
+        "winner": "a",
+        "weights": {"clarity": 2.0, "tone_match": 1.0},
+    }
+    # Include a blank line to exercise line 71 (continue on blank lines)
+    history_path.write_text("\n" + json.dumps(entry) + "\n\n", encoding="utf-8")
+
+    # Create a rubric with this history file already present
+    rubric = Rubric(weights_path=tmp_path / "w.json")
+    rubric.weight_history_path = history_path
+    rubric.weight_history = rubric._load_history()
+
+    assert len(rubric.weight_history) == 1
+    assert rubric.weight_history[0]["pair_id"] == "test"

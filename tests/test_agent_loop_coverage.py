@@ -14,20 +14,21 @@ def _make_loop(tmp_path, **kwargs):
 async def test_vision_critique_fallback_when_prompt_missing(monkeypatch, tmp_path):
     """When vision_critique prompt file is missing, the loop falls back
     to the regular critique prompt and still completes without error."""
-    import app.prompts
+    import app.agent_loop
 
-    # Simulate missing vision_critique prompt by temporarily patching
-    original_get_prompt = app.prompts.get_prompt
+    # Simulate missing vision_critique prompt by patching agent_loop's reference
+    original_get_prompt = app.agent_loop.get_prompt
 
     def broken_get_prompt(task, version="v1"):
         if task == "vision_critique":
             raise FileNotFoundError(f"Prompt file not found: prompts/vision_critique/{version}.yaml")
         return original_get_prompt(task, version=version)
 
-    monkeypatch.setattr(app.prompts, "get_prompt", broken_get_prompt)
+    monkeypatch.setattr(app.agent_loop, "get_prompt", broken_get_prompt)
 
     loop = _make_loop(tmp_path, max_turns=1)
-    trace = await loop.run("A scene with reference image.", reference_images=[])
+    ref = ReferenceImage(path="nonexistent.jpg", caption="test")
+    trace = await loop.run("A scene with reference image.", reference_images=[ref])
     # Should complete with a valid trace even with the fallback
     assert trace.final_output is not None
     assert trace.stop_reason in {"max_turns", "plateau", "threshold_met"}

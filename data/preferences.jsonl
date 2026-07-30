@@ -172,3 +172,387 @@
 {"pair_id":"15660b9c6dc4","created_at":"2026-07-29T13:05:29.126020+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
 {"pair_id":"1f5960d8a37d","created_at":"2026-07-29T13:05:29.235938+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
 {"pair_id":"1118c8f7337b","created_at":"2026-07-29T13:05:29.246126+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"b000ae462557","created_at":"2026-07-30T09:15:13.287028+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6c04b5a921a7","created_at":"2026-07-30T09:15:13.372139+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"12676bb1d9e1","created_at":"2026-07-30T09:15:13.384165+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"8198c5a0910a","created_at":"2026-07-30T09:15:13.393280+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"175fb586ff54","created_at":"2026-07-30T09:15:13.402800+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"962531939994","created_at":"2026-07-30T09:15:13.413330+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"680790f051f0","created_at":"2026-07-30T09:15:13.459963+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"cf7c483c8e0b","created_at":"2026-07-30T09:15:13.513646+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b29be5725d26","created_at":"2026-07-30T09:15:13.568242+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0baaaa4bf71e","created_at":"2026-07-30T09:15:13.580753+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"351ca7a16616","created_at":"2026-07-30T09:15:13.588265+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"07372171dd35","created_at":"2026-07-30T09:15:13.832183+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"581055c758c7","created_at":"2026-07-30T09:15:13.846218+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"ee1b1ad6298f","created_at":"2026-07-30T09:15:47.102802+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"56a0cc586b96","created_at":"2026-07-30T09:15:47.205626+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"862f32282692","created_at":"2026-07-30T09:15:47.223389+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"887662668518","created_at":"2026-07-30T09:15:47.234895+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"40e1147bf098","created_at":"2026-07-30T09:15:47.246408+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2ecb04afc208","created_at":"2026-07-30T09:15:47.255475+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"208c3d3db8e8","created_at":"2026-07-30T09:15:47.302860+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a0f51fa2bc5c","created_at":"2026-07-30T09:15:47.358848+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"32e045e51033","created_at":"2026-07-30T09:15:47.409082+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3062048d09cc","created_at":"2026-07-30T09:15:47.421649+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"0fb4e796351d","created_at":"2026-07-30T09:15:47.433354+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"72a7083c500a","created_at":"2026-07-30T09:15:47.675832+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6527922432b1","created_at":"2026-07-30T09:15:47.694638+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"b5dffc284deb","created_at":"2026-07-30T09:32:48.924533+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"36da386bf1c9","created_at":"2026-07-30T09:32:48.997268+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"90d2f0ad7123","created_at":"2026-07-30T09:32:49.007586+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ee4db3d8f6eb","created_at":"2026-07-30T09:32:49.015655+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d7fd4f76f278","created_at":"2026-07-30T09:32:49.024183+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"156ce9cac1e0","created_at":"2026-07-30T09:32:49.033707+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3411488756f8","created_at":"2026-07-30T09:32:49.072069+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2180f9578066","created_at":"2026-07-30T09:32:49.113516+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1e4aad93a604","created_at":"2026-07-30T09:32:49.149837+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4023ebede192","created_at":"2026-07-30T09:32:49.158350+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"1631bd72553b","created_at":"2026-07-30T09:32:49.166359+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"5881e18e6dc9","created_at":"2026-07-30T09:32:49.296428+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"077621b0c56a","created_at":"2026-07-30T09:32:49.307495+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"122c9c560ba0","created_at":"2026-07-30T09:33:15.499741+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3908474410ac","created_at":"2026-07-30T09:33:15.577846+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0e709a809e05","created_at":"2026-07-30T09:33:15.590413+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"365ac80f382f","created_at":"2026-07-30T09:33:15.597926+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"eee6dac908a5","created_at":"2026-07-30T09:33:15.604943+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c5f3bd4e00c3","created_at":"2026-07-30T09:33:15.612097+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ba4948f1bc8a","created_at":"2026-07-30T09:33:15.651922+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6d1595991b8b","created_at":"2026-07-30T09:33:15.690122+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"9c0d035df6d5","created_at":"2026-07-30T09:33:15.725550+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6d569af89559","created_at":"2026-07-30T09:33:15.734724+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"ac615902a414","created_at":"2026-07-30T09:33:15.741770+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"495b1069e1cc","created_at":"2026-07-30T09:33:15.865744+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4d7a4f033b82","created_at":"2026-07-30T09:33:15.875256+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"1ff123987832","created_at":"2026-07-30T09:38:57.692790+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"cc8eb0e3036a","created_at":"2026-07-30T09:38:57.877582+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"53113053bd7c","created_at":"2026-07-30T09:38:57.898750+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"08ea59772341","created_at":"2026-07-30T09:38:57.911551+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"cc43bf3ad89c","created_at":"2026-07-30T09:38:57.922538+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"16435ca0a302","created_at":"2026-07-30T09:38:57.935684+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d2054164b555","created_at":"2026-07-30T09:38:57.996294+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e36e2846e723","created_at":"2026-07-30T09:38:58.072606+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"449c0c36ccf5","created_at":"2026-07-30T09:38:58.130014+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b709558bf136","created_at":"2026-07-30T09:38:58.147696+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"4bec9bd7273e","created_at":"2026-07-30T09:38:58.157799+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"4f5b9547d7be","created_at":"2026-07-30T09:39:08.337774+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e744a6acbcf6","created_at":"2026-07-30T09:39:08.423138+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a9d45842a23e","created_at":"2026-07-30T09:39:08.434455+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"74c2631a1552","created_at":"2026-07-30T09:39:08.442497+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f2dbe845e939","created_at":"2026-07-30T09:39:08.449509+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"52d9c3a2fb1a","created_at":"2026-07-30T09:39:08.456669+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"63172fbf4855","created_at":"2026-07-30T09:39:08.492402+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"214265cc79ba","created_at":"2026-07-30T09:39:08.534644+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"9c1df951b7b9","created_at":"2026-07-30T09:39:08.583717+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"14e1272fe78d","created_at":"2026-07-30T09:39:08.592723+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"173eb3eb4102","created_at":"2026-07-30T09:39:08.598774+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"11a37b986f5b","created_at":"2026-07-30T09:39:53.248760+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b32ba5cfde04","created_at":"2026-07-30T09:39:53.318035+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6654e3b6f355","created_at":"2026-07-30T09:39:53.326099+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"30a77d2eedd6","created_at":"2026-07-30T09:39:53.333105+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"5d5d9a28233d","created_at":"2026-07-30T09:39:53.343142+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ba0c7e38a38e","created_at":"2026-07-30T09:39:53.351154+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"47978ff7ab93","created_at":"2026-07-30T09:39:53.397103+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0260cc1b736b","created_at":"2026-07-30T09:39:53.441305+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e78cdb1f653e","created_at":"2026-07-30T09:39:53.483904+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"129dbccd1156","created_at":"2026-07-30T09:39:53.493938+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"2c1b3789833a","created_at":"2026-07-30T09:39:53.501475+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"b354c9e10d02","created_at":"2026-07-30T09:39:53.715166+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"fd50d05054b9","created_at":"2026-07-30T09:39:53.725334+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"ec1d6bb29ee4","created_at":"2026-07-30T09:40:19.858858+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"82e498693ad2","created_at":"2026-07-30T09:40:19.973665+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"9475f0960a14","created_at":"2026-07-30T09:40:19.991272+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"988f8de60f38","created_at":"2026-07-30T09:40:20.002308+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"5118aba447d5","created_at":"2026-07-30T09:40:20.013599+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"883cdbc6fb78","created_at":"2026-07-30T09:40:20.023111+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e458fae1bb5e","created_at":"2026-07-30T09:40:20.080618+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"03ab40b27a28","created_at":"2026-07-30T09:40:20.144753+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3c329300127a","created_at":"2026-07-30T09:40:20.215476+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"38ed43761869","created_at":"2026-07-30T09:40:20.234676+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"73a9ad7ea2f3","created_at":"2026-07-30T09:40:20.245370+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"467a300fa2f7","created_at":"2026-07-30T09:40:20.780403+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1558680ec452","created_at":"2026-07-30T09:40:20.799688+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"334b63bcd63c","created_at":"2026-07-30T09:41:27.135703+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d4b35ce200ad","created_at":"2026-07-30T09:41:27.253460+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6929b618f3b0","created_at":"2026-07-30T09:41:27.272048+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3c4ffb844311","created_at":"2026-07-30T09:41:27.282556+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e7c46212c41d","created_at":"2026-07-30T09:41:27.293077+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"692552545f92","created_at":"2026-07-30T09:41:27.305651+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"40ceedb1db47","created_at":"2026-07-30T09:41:27.369613+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"26c3da498d7d","created_at":"2026-07-30T09:41:27.437196+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a252dd8dfd94","created_at":"2026-07-30T09:41:27.506165+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"37868fbfa2ed","created_at":"2026-07-30T09:41:27.525820+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"ef93f27b6358","created_at":"2026-07-30T09:41:27.543397+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"9db56d29c6a3","created_at":"2026-07-30T09:41:28.092035+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1bad3e01531e","created_at":"2026-07-30T09:41:28.111712+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"b6632a0fbffb","created_at":"2026-07-30T09:41:57.682842+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"dc744fbd9248","created_at":"2026-07-30T09:41:57.804831+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2787e2fc1cc8","created_at":"2026-07-30T09:41:57.819864+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ab1a9214e123","created_at":"2026-07-30T09:41:57.830379+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a861a4689181","created_at":"2026-07-30T09:41:57.840890+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b1b277f76358","created_at":"2026-07-30T09:41:57.852208+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"be0aa1e5dc93","created_at":"2026-07-30T09:41:57.914515+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0de03eee3839","created_at":"2026-07-30T09:41:57.985213+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3cd4edbee4a4","created_at":"2026-07-30T09:41:58.058686+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f5f865eb7869","created_at":"2026-07-30T09:41:58.078833+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"ba8cdf856abf","created_at":"2026-07-30T09:41:58.090890+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"0cdd22eb1e33","created_at":"2026-07-30T09:41:58.590984+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2cf6c0660696","created_at":"2026-07-30T09:41:58.613020+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"18e21c46e343","created_at":"2026-07-30T09:42:29.560548+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c964d4ee31cc","created_at":"2026-07-30T09:42:29.697239+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c2aa6da1cb0a","created_at":"2026-07-30T09:42:29.714760+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"86c98187de05","created_at":"2026-07-30T09:42:29.725066+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3e5c2a6b0ef0","created_at":"2026-07-30T09:42:29.734188+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"607500431eef","created_at":"2026-07-30T09:42:29.743707+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f1609ce479c7","created_at":"2026-07-30T09:42:29.805764+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ab82652417be","created_at":"2026-07-30T09:42:29.876644+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b1ba231bd9b2","created_at":"2026-07-30T09:42:29.951489+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0ec70f985ba9","created_at":"2026-07-30T09:42:29.969545+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"7cd6dc53da14","created_at":"2026-07-30T09:42:29.982074+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"6f066ae591fa","created_at":"2026-07-30T09:42:30.489571+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1618cf5ed6c9","created_at":"2026-07-30T09:42:30.510236+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"1ff0769fa9e0","created_at":"2026-07-30T09:43:29.366069+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"be8524268d42","created_at":"2026-07-30T09:43:29.449031+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"813269f661a6","created_at":"2026-07-30T09:43:29.460739+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"889cb2d997cd","created_at":"2026-07-30T09:43:29.469260+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"5deb7856027d","created_at":"2026-07-30T09:43:29.478776+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"85818643d303","created_at":"2026-07-30T09:43:29.487309+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"04038f8e96a0","created_at":"2026-07-30T09:43:29.533849+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c4fc60addac6","created_at":"2026-07-30T09:43:29.579168+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4473f92fa7b7","created_at":"2026-07-30T09:43:29.654107+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c90f668d105a","created_at":"2026-07-30T09:43:29.665195+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"95ed109de6ac","created_at":"2026-07-30T09:43:29.671712+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"095583b1e0f2","created_at":"2026-07-30T09:44:54.609412+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b19de2130bba","created_at":"2026-07-30T09:44:54.685921+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"aa135e1b602e","created_at":"2026-07-30T09:44:54.696067+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2891b237ac40","created_at":"2026-07-30T09:44:54.704596+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0734292eb7b8","created_at":"2026-07-30T09:44:54.715529+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3107a3dd1924","created_at":"2026-07-30T09:44:54.724419+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"63b58634c812","created_at":"2026-07-30T09:44:54.767148+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"8b648a8248da","created_at":"2026-07-30T09:44:54.808572+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3b8f995f1de1","created_at":"2026-07-30T09:44:54.850746+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"20809c9770c4","created_at":"2026-07-30T09:44:54.861266+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"e803c88e49fa","created_at":"2026-07-30T09:44:54.870809+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"e0c1d2228db7","created_at":"2026-07-30T09:44:55.098280+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"74fa0a5041f1","created_at":"2026-07-30T09:44:55.108810+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"a48bcc9cf358","created_at":"2026-07-30T09:46:23.413721+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"656c28425894","created_at":"2026-07-30T09:46:23.485615+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"5758dcc3dc8f","created_at":"2026-07-30T09:46:23.499683+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"429b4a579524","created_at":"2026-07-30T09:46:23.510797+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3578e2aea799","created_at":"2026-07-30T09:46:23.517848+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d659209e83ac","created_at":"2026-07-30T09:46:23.526367+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3ac7392b8848","created_at":"2026-07-30T09:46:23.571460+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"955eb75855a6","created_at":"2026-07-30T09:46:23.613972+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"72a6491f81cb","created_at":"2026-07-30T09:46:23.674652+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"dd13029f267b","created_at":"2026-07-30T09:46:23.687423+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"27ac72c6b8b3","created_at":"2026-07-30T09:46:23.695437+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"e1badd54e39e","created_at":"2026-07-30T09:49:06.067261+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"9b50ac16a3ce","created_at":"2026-07-30T09:49:06.138593+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0bda959e3553","created_at":"2026-07-30T09:49:06.150266+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3427c2abd6c4","created_at":"2026-07-30T09:49:06.157311+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"574091619374","created_at":"2026-07-30T09:49:06.166402+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"24bb817325dd","created_at":"2026-07-30T09:49:06.175643+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f4b2e6a40174","created_at":"2026-07-30T09:49:06.216040+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"36703bec3f2f","created_at":"2026-07-30T09:49:06.259481+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"09d663810425","created_at":"2026-07-30T09:49:06.305832+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"750808d09447","created_at":"2026-07-30T09:49:06.317350+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"a3aa3a055322","created_at":"2026-07-30T09:49:06.324871+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"0845049c1d14","created_at":"2026-07-30T09:49:06.368933+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b50ca80c3a28","created_at":"2026-07-30T09:49:06.436233+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"46977a5d0e96","created_at":"2026-07-30T09:49:06.668103+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"de09210912a4","created_at":"2026-07-30T09:49:06.677614+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"269af74531c2","created_at":"2026-07-30T09:52:17.798837+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"775e4b0f8947","created_at":"2026-07-30T09:52:17.881100+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"fe956b70a916","created_at":"2026-07-30T09:52:17.888619+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1316dec836ec","created_at":"2026-07-30T09:52:17.898241+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"31436ebb866f","created_at":"2026-07-30T09:52:17.905892+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"77ea60f40cef","created_at":"2026-07-30T09:52:17.916632+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"bec018c69e28","created_at":"2026-07-30T09:52:17.961528+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"84a2eea64c65","created_at":"2026-07-30T09:52:18.003217+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3da472776714","created_at":"2026-07-30T09:52:18.045040+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"88a27f813b53","created_at":"2026-07-30T09:52:18.056581+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"f9d537d76825","created_at":"2026-07-30T09:52:18.063804+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"3174e1cbd6c2","created_at":"2026-07-30T09:52:18.102102+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f14cdb173419","created_at":"2026-07-30T09:52:18.171955+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7f69b9f63ebe","created_at":"2026-07-30T09:52:18.402216+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1ae3c10e1b2e","created_at":"2026-07-30T09:52:18.414285+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"d51818a61b40","created_at":"2026-07-30T09:52:31.481244+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7afd932ee7dc","created_at":"2026-07-30T09:52:57.962775+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e591d0b2b872","created_at":"2026-07-30T09:52:58.028877+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e2792d04da6f","created_at":"2026-07-30T09:52:58.036463+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"45ab8ddfd50b","created_at":"2026-07-30T09:52:58.042462+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6ea500a1acdd","created_at":"2026-07-30T09:52:58.048471+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b68897c41d04","created_at":"2026-07-30T09:52:58.055472+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"8c1dc9f8d86b","created_at":"2026-07-30T09:52:58.090765+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"221bfe03572f","created_at":"2026-07-30T09:52:58.127815+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"67516c8baefe","created_at":"2026-07-30T09:52:58.168823+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c682a4beacde","created_at":"2026-07-30T09:52:58.177340+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"c1abb3ff97e9","created_at":"2026-07-30T09:52:58.184980+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"44a46dcccf4f","created_at":"2026-07-30T09:52:58.223341+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b4522f07f240","created_at":"2026-07-30T09:52:58.291956+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"50fe5a71ff54","created_at":"2026-07-30T09:52:58.517072+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0c2d8ab57504","created_at":"2026-07-30T09:52:58.528073+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"59e788e03713","created_at":"2026-07-30T09:53:15.679206+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0491b54ae589","created_at":"2026-07-30T09:53:15.754632+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"68dfb86db796","created_at":"2026-07-30T09:53:15.763814+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"02fbcda629bc","created_at":"2026-07-30T09:53:15.770817+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b58789a9b40b","created_at":"2026-07-30T09:53:15.776962+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c007ffa1eec0","created_at":"2026-07-30T09:53:15.784502+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"855aeda9a6fb","created_at":"2026-07-30T09:53:15.822784+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"02e43cb156a1","created_at":"2026-07-30T09:53:15.862946+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6d0bb95924da","created_at":"2026-07-30T09:53:15.899131+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7d8d381c427b","created_at":"2026-07-30T09:53:15.908688+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"987a89376830","created_at":"2026-07-30T09:53:15.915210+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"b8dd7a37b5a3","created_at":"2026-07-30T09:53:15.952274+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"424e6bd660d1","created_at":"2026-07-30T09:53:16.152906+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a678ff6e90f8","created_at":"2026-07-30T09:54:00.307941+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"88efbb5e935d","created_at":"2026-07-30T09:54:00.391480+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c0be5338bb02","created_at":"2026-07-30T09:54:00.402478+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"22bd8e88f962","created_at":"2026-07-30T09:54:00.409480+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2a32c1361eba","created_at":"2026-07-30T09:54:00.416666+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a6cc3c314ed0","created_at":"2026-07-30T09:54:00.424481+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d3d548531706","created_at":"2026-07-30T09:54:00.464008+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e6c9366ca25d","created_at":"2026-07-30T09:54:00.508106+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"175a2613122f","created_at":"2026-07-30T09:54:00.555304+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0b07b157c898","created_at":"2026-07-30T09:54:00.564305+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"744ede94927c","created_at":"2026-07-30T09:54:00.570874+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"9ddf803d7e73","created_at":"2026-07-30T09:54:00.607877+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"df92612fd31d","created_at":"2026-07-30T09:54:00.669929+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7de464f3433b","created_at":"2026-07-30T09:54:00.882073+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6ba1d4732fd0","created_at":"2026-07-30T09:54:00.891070+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"24dae9a389c1","created_at":"2026-07-30T09:54:53.918846+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1007d8d22970","created_at":"2026-07-30T09:55:28.008633+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2ec4d5c9c705","created_at":"2026-07-30T09:55:28.095237+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7b4d6f0f4048","created_at":"2026-07-30T09:55:28.111782+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d9095808ddc8","created_at":"2026-07-30T09:55:28.123315+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4cacbfde647e","created_at":"2026-07-30T09:55:28.131845+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"8ac9fde56497","created_at":"2026-07-30T09:55:28.141630+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"36bcfc7a57e4","created_at":"2026-07-30T09:55:28.188138+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"cb41887d1775","created_at":"2026-07-30T09:55:28.231204+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a5140cb8d8f4","created_at":"2026-07-30T09:55:28.276965+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ac11138fbff9","created_at":"2026-07-30T09:55:28.287550+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"c1ca324d2bff","created_at":"2026-07-30T09:55:28.297077+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"dc0fb6159e6b","created_at":"2026-07-30T09:55:28.336717+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c24b2eb07c17","created_at":"2026-07-30T09:55:28.403654+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"63720be31f96","created_at":"2026-07-30T09:55:28.654115+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"30bb807bff93","created_at":"2026-07-30T09:55:28.664640+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"09cb7c72f0ba","created_at":"2026-07-30T09:56:27.932240+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0524b20cd2d6","created_at":"2026-07-30T09:56:28.076440+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"419221be54c0","created_at":"2026-07-30T09:56:28.097100+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7cc58c9cc1d8","created_at":"2026-07-30T09:56:28.112134+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b6ab649831f5","created_at":"2026-07-30T09:56:28.124666+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"fb3cd8185233","created_at":"2026-07-30T09:56:28.138180+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4eefad10496c","created_at":"2026-07-30T09:56:28.204234+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"586c5651c52a","created_at":"2026-07-30T09:56:28.282561+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4230220225a4","created_at":"2026-07-30T09:56:28.351353+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3d3eb73a8f82","created_at":"2026-07-30T09:56:28.373465+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"931cde3e0995","created_at":"2026-07-30T09:56:28.385487+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"ac215d2cd5ad","created_at":"2026-07-30T09:56:28.452305+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4b425c0d07da","created_at":"2026-07-30T09:56:28.552240+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"554b66123cc3","created_at":"2026-07-30T09:56:29.114842+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"8d3b6d222dfd","created_at":"2026-07-30T09:56:29.134870+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"287b25317399","created_at":"2026-07-30T09:57:04.111388+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"de07bc0d7059","created_at":"2026-07-30T09:57:04.223042+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"00d5a2fefc88","created_at":"2026-07-30T09:57:04.243197+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ec4f25ebddaa","created_at":"2026-07-30T09:57:04.256270+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c74f6002d997","created_at":"2026-07-30T09:57:04.268800+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d6b03c858356","created_at":"2026-07-30T09:57:04.281834+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"bf2309cad66b","created_at":"2026-07-30T09:57:04.345393+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7bcd38a19c54","created_at":"2026-07-30T09:57:04.406957+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"cef3e713cc6b","created_at":"2026-07-30T09:57:04.465372+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f2347f84dc7c","created_at":"2026-07-30T09:57:04.483395+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"f3f8029ec46b","created_at":"2026-07-30T09:57:04.496945+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"1fd49321a5c3","created_at":"2026-07-30T09:57:04.582725+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1be3ce034db9","created_at":"2026-07-30T09:57:04.686770+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"962f23d030c9","created_at":"2026-07-30T09:57:05.161488+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"63ede80c351b","created_at":"2026-07-30T09:57:05.181535+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"d88c1f8b2207","created_at":"2026-07-30T09:57:39.422202+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"65f46983b04a","created_at":"2026-07-30T09:57:39.543669+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"5388ba75121e","created_at":"2026-07-30T09:57:39.562304+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c4857380870d","created_at":"2026-07-30T09:57:39.576068+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"db1952945719","created_at":"2026-07-30T09:57:39.591510+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b4e507de1ed3","created_at":"2026-07-30T09:57:39.603039+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"40b22025afe7","created_at":"2026-07-30T09:57:39.670723+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3e7b4719946e","created_at":"2026-07-30T09:57:39.736914+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c8567fc32dfc","created_at":"2026-07-30T09:57:39.808792+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2b3e436bba12","created_at":"2026-07-30T09:57:39.832133+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"3a37bc8cd42a","created_at":"2026-07-30T09:57:39.844754+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"f0f9b3e8fb7d","created_at":"2026-07-30T09:57:39.916819+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c28e4456e5d0","created_at":"2026-07-30T09:57:40.014121+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d94219fec3b1","created_at":"2026-07-30T09:57:40.519182+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7f7862aa9ce6","created_at":"2026-07-30T09:57:40.537138+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"51dedbfaaa6e","created_at":"2026-07-30T09:58:14.612763+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7bf8d0bbb0a3","created_at":"2026-07-30T09:58:14.733957+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e3cfd42ba798","created_at":"2026-07-30T09:58:14.758001+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"bb7343972662","created_at":"2026-07-30T09:58:14.774861+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d38b1d0459f2","created_at":"2026-07-30T09:58:14.792463+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"66bf38b80377","created_at":"2026-07-30T09:58:14.803985+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0b863ec58212","created_at":"2026-07-30T09:58:14.862975+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d85761482699","created_at":"2026-07-30T09:58:14.930734+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2b679f3efe0c","created_at":"2026-07-30T09:58:15.010980+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6111823c4226","created_at":"2026-07-30T09:58:15.031168+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"66502244c3fb","created_at":"2026-07-30T09:58:15.043683+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"1b5cb715352b","created_at":"2026-07-30T09:58:15.115795+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"7ed78293c37f","created_at":"2026-07-30T09:58:15.220842+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"065c89119174","created_at":"2026-07-30T09:58:15.740901+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b649e92481e1","created_at":"2026-07-30T09:58:15.764541+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"b880a2690d99","created_at":"2026-07-30T09:59:19.546848+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"5a4cd85a9f42","created_at":"2026-07-30T09:59:19.668468+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"436162b2b633","created_at":"2026-07-30T09:59:19.684437+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b565a27841c6","created_at":"2026-07-30T09:59:19.696515+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"a57beb0967d3","created_at":"2026-07-30T09:59:19.708037+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3f37fc6d0722","created_at":"2026-07-30T09:59:19.719564+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"82e1658be5f5","created_at":"2026-07-30T09:59:19.786521+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f6568a27f544","created_at":"2026-07-30T09:59:19.849351+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3649aaa60da8","created_at":"2026-07-30T09:59:19.916220+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3ef204ec791e","created_at":"2026-07-30T09:59:19.941682+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"86029f6dc833","created_at":"2026-07-30T09:59:19.957367+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"d228312f139a","created_at":"2026-07-30T09:59:20.026026+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"1b5dcf6db8e0","created_at":"2026-07-30T09:59:20.131932+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"dd729b5aaccf","created_at":"2026-07-30T09:59:20.633473+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6179530b9bf2","created_at":"2026-07-30T09:59:20.653008+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"c8f4b6751b82","created_at":"2026-07-30T10:00:13.358442+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"3c8db5a73258","created_at":"2026-07-30T10:00:13.481624+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"496fe153ae5a","created_at":"2026-07-30T10:00:13.499326+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0e9ac4a5de6a","created_at":"2026-07-30T10:00:13.518110+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"9c2472b01014","created_at":"2026-07-30T10:00:13.531177+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"f68e7c2bfbea","created_at":"2026-07-30T10:00:13.547215+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"151335191587","created_at":"2026-07-30T10:00:13.623152+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"e0a7304f7ed6","created_at":"2026-07-30T10:00:13.690517+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"0440589932e3","created_at":"2026-07-30T10:00:13.772359+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"d81b099d50fa","created_at":"2026-07-30T10:00:13.790402+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"a62bcf476690","created_at":"2026-07-30T10:00:13.802929+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"e3b92882c4cc","created_at":"2026-07-30T10:00:13.874791+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ee0c3ee4767e","created_at":"2026-07-30T10:00:13.972343+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6ab4f508dc1a","created_at":"2026-07-30T10:00:14.481139+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"067405c3f617","created_at":"2026-07-30T10:00:14.506105+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"91ee51f76749","created_at":"2026-07-30T10:00:47.358057+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"468de736395c","created_at":"2026-07-30T10:00:47.486010+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"9e3c32d94bb3","created_at":"2026-07-30T10:00:47.503544+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"cf5ee6abc0e7","created_at":"2026-07-30T10:00:47.515641+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"895e07e640d7","created_at":"2026-07-30T10:00:47.531265+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"5c1d22a36fd6","created_at":"2026-07-30T10:00:47.544955+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"26a6f76c8396","created_at":"2026-07-30T10:00:47.610414+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"74b452a97ea3","created_at":"2026-07-30T10:00:47.678433+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"db48d0f3552d","created_at":"2026-07-30T10:00:47.753005+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c36e6d52aa63","created_at":"2026-07-30T10:00:47.771677+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"688c6fa12053","created_at":"2026-07-30T10:00:47.785195+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"e3ff69b77070","created_at":"2026-07-30T10:00:47.851195+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6fba5fd99db7","created_at":"2026-07-30T10:00:47.958272+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"2be00104dd46","created_at":"2026-07-30T10:00:48.478711+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"4e4f7f3b43bd","created_at":"2026-07-30T10:00:48.500338+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"3d4a43a76318","created_at":"2026-07-30T10:01:14.828937+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"6afa5929420a","created_at":"2026-07-30T10:01:14.979405+00:00","brief":"brief-0","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"271064c8de6b","created_at":"2026-07-30T10:01:15.004162+00:00","brief":"brief-1","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"c54702a4e8c3","created_at":"2026-07-30T10:01:15.024163+00:00","brief":"brief-2","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"97870ebbf9c4","created_at":"2026-07-30T10:01:15.040162+00:00","brief":"brief-3","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"fe1dff7cbf50","created_at":"2026-07-30T10:01:15.056161+00:00","brief":"brief-4","prompt":"","candidate_a":"a","candidate_b":"b","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"63de1225fd21","created_at":"2026-07-30T10:01:15.156235+00:00","brief":"b","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"653f81f60ce4","created_at":"2026-07-30T10:01:15.245522+00:00","brief":"fallback test","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"41b34084a68d","created_at":"2026-07-30T10:01:15.346582+00:00","brief":"b1","prompt":"","candidate_a":"a1","candidate_b":"a2","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"15b6f2d3aafe","created_at":"2026-07-30T10:01:15.377708+00:00","brief":"b2","prompt":"","candidate_a":"b1","candidate_b":"b2","winner":"b","rater":"anonymous","notes":""}
+{"pair_id":"8231911e8d74","created_at":"2026-07-30T10:01:15.392223+00:00","brief":"b3","prompt":"","candidate_a":"c1","candidate_b":"c2","winner":"tie","rater":"anonymous","notes":""}
+{"pair_id":"74f502aaadc6","created_at":"2026-07-30T10:01:15.496708+00:00","brief":"fallback test","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"ed29f38b9696","created_at":"2026-07-30T10:01:15.621406+00:00","brief":"fb","prompt":"","candidate_a":"A","candidate_b":"B","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"b88bdd4c8720","created_at":"2026-07-30T10:01:16.295198+00:00","brief":"A moody alley chase.","prompt":"Brief: A moody alley chase.\n\nShot list:\n1. low angle","candidate_a":"A1","candidate_b":"B1","winner":"a","rater":"anonymous","notes":""}
+{"pair_id":"cb3b91d22879","created_at":"2026-07-30T10:01:16.319263+00:00","brief":"A daylit studio.","prompt":"","candidate_a":"A2","candidate_b":"B2","winner":"b","rater":"anonymous","notes":""}

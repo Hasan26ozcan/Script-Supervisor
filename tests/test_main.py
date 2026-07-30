@@ -135,3 +135,40 @@ def test_run_endpoint_with_reference_images(client, tmp_path):
     assert resp.status_code == 200
     body = resp.json()
     assert body["steps"][0]["critique"]["modality"] == "vision"
+
+
+def test_health_endpoint(client):
+    resp = client.get("/health")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "ok"
+    assert body["service"] == "creative-harness"
+    assert body["mode"] == "mock"
+
+
+def test_evaluation_run_endpoint(client):
+    resp = client.post("/evaluation/run", json={"suite_name": "test-suite"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "metrics" in body
+
+
+def test_evaluation_run_endpoint_with_no_body(client):
+    resp = client.post("/evaluation/run")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "metrics" in body
+
+
+def test_mem0_refresh_endpoint(client):
+    resp = client.post("/mem0/refresh")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "refreshed" in body
+
+
+def test_mem0_stale_endpoint(client):
+    resp = client.get("/mem0/stale")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert isinstance(body, list)

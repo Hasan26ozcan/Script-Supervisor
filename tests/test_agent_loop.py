@@ -7,6 +7,7 @@ in production.
 from app.agent_loop import CorrectionLoop
 from app.gateway import GatewayLedger, ModelGateway
 from app.rubric import DEFAULT_CRITERIA, Rubric
+from app.schemas import ReferenceImage
 
 
 def _fresh_loop(tmp_path, **kwargs):
@@ -105,3 +106,45 @@ async def test_rubric_weighted_overall_is_weighted_average(tmp_path):
 async def test_empty_scores_returns_zero_overall(tmp_path):
     rubric = Rubric(weights_path=tmp_path / "weights.json")
     assert rubric.weighted_overall([]) == 0.0
+
+
+async def test_threshold_met_stop_reason(tmp_path):
+    """When overall score meets the threshold, loop stops with threshold_met."""
+    # Mock scores give overall=6.0; set threshold below that to trigger threshold_met
+    loop = _fresh_loop(tmp_path, max_turns=5, threshold=5.0, plateau_epsilon=-1)
+    trace = await loop.run("A beautiful sunset scene.")
+    assert trace.stop_reason == "threshold_met"
+    assert trace.final_output is not None
+
+
+async def test_text_critique_with_images_when_router_says_no_vision(tmp_path):
+    """On a subsequent turn, when the router disables vision, the loop
+    uses a text critique call even though reference images are present."""
+    from app.routing import AdaptiveRouter, EscalationCondition, RoutingRule
+
+    # Router that blocks vision when overall score is HIGH (we got high scores)
+    router = AdaptiveRouter(
+        [
+            RoutingRule(
+                task="vision",
+                condition=EscalationCondition(
+                    type="score_above",
+                    metric="overall",
+                    threshold=5.0,
+                ),
+                escalate_to="skip_vision",
+                max_escalations=1,
+            )
+        ]
+    )
+
+    loop = _fresh_loop(tmp_path, max_turns=3, threshold=999, plateau_epsilon=-1, router=router)
+    ref = ReferenceImage(path="nonexistent.jpg", caption="test")
+    # First turn goes vision (no prior steps), second turn router blocks vision
+    trace = await loop.run("A warehouse scene.", reference_images=[ref])
+    # We should have at least 2 steps
+    assert len(trace.steps) >= 2
+    # The first step should be vision modality
+    assert trace.steps[0].critique.modality == "vision"
+    # The second step should be text modality (router blocked vision)
+    assert trace.steps[1].critique.modality == "text"

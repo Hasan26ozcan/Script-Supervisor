@@ -1,5 +1,6 @@
-"""Tests for PreferenceStore — SQL backend with JSONL fallback."""
+import pytest
 
+"""Tests for PreferenceStore — SQL backend with JSONL fallback."""
 
 from app.preference_store import PreferenceStore
 from app.schemas import PreferencePair
@@ -95,5 +96,89 @@ def test_preference_pair_has_all_required_fields():
     assert pref.candidate_a
     assert pref.candidate_b
     assert pref.winner in ("a", "b", "tie")
+
+
+def test_add_sqlalchemy_error_falls_back_to_jsonl(tmp_path, monkeypatch):
+    """When session.merge raises SQLAlchemyError, the store falls back
+    to JSONL storage."""
+    import sqlalchemy.exc
+    from app.preference_store import PreferenceStore
+    from app.schemas import PreferencePair
+
+    database_url = f"sqlite:///{tmp_path / 'test_err.db'}"
+    store = PreferenceStore(database_url=database_url)
+
+    # Force SQLAlchemyError on merge by patching session.merge
+    original_merge = store.session.merge
+
+    def failing_merge(model):
+        raise sqlalchemy.exc.SQLAlchemyError("forced error")
+
+    store.session.merge = failing_merge
+
+    pref = PreferencePair(
+        brief="fallback test",
+        candidate_a="A",
+        candidate_b="B",
+        winner="a",
+    )
+    store.add(pref)
+
+    # After the error, _db_available should be False and fallback should be used
+    assert not store._db_available
+    fallback_prefs = store.all()
+    assert len(fallback_prefs) >= 1
+    assert fallback_prefs[-1].brief == "fallback test"
+
+    store.session.merge = original_merge
+    store.close()
+
+
+def test_migrate_from_jsonl_missing_file_raises(tmp_path):
+    """migrate_from_jsonl raises FileNotFoundError when source file missing."""
+    database_url = f"sqlite:///{tmp_path / 'test_migrate_err.db'}"
+    store = PreferenceStore(database_url=database_url)
+
+    missing = tmp_path / "nonexistent.jsonl"
+    with pytest.raises(FileNotFoundError):
+        store.migrate_from_jsonl(missing)
+
+    store.close()
+
+
+def test_all_uses_fallback_records_when_db_fails(tmp_path, monkeypatch):
+    """When the DB is unavailable at query time, all() returns fallback records."""
+    import sqlalchemy.exc
+    from app.preference_store import PreferenceStore
+    from app.schemas import PreferencePair
+
+    database_url = f"sqlite:///{tmp_path / 'test_fb.db'}"
+    store = PreferenceStore(database_url=database_url)
+
+    pref = PreferencePair(brief="fb", candidate_a="A", candidate_b="B", winner="a")
+    store.add(pref)
+
+    # Close the store to simulate DB unavailability
+    store.close()
+
+    # Re-create with a broken session that raises on execute
+    store2 = PreferenceStore(database_url=database_url)
+
+    original_execute = store2.session.execute
+
+    def failing_execute(stmt):
+        raise sqlalchemy.exc.SQLAlchemyError("DB broken")
+
+    import types
+    store2.session.execute = types.MethodType(failing_execute, store2.session)
+
+    result = store2.all()
+    # Should fall back to the JSONL fallback records that were written
+    fb_entries = [p for p in result if p.brief == "fb"]
+    assert len(fb_entries) >= 1
+
+    store2.session.execute = original_execute
+    store2.close()
+    store.close()
     assert pref.rater == "human_01"
     assert pref.notes == "A is more cinematic"

@@ -54,3 +54,31 @@ def test_mem0_api_endpoints_working(monkeypatch, tmp_path):
     summary = validate_resp.json()["summary"]
     assert "total" in summary
     assert summary["total"] == 1
+
+
+def test_mem0_stale_endpoint(monkeypatch, tmp_path):
+    """GET /mem0/stale should return a list (possibly empty) of stale entries."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
+
+    import app.main as main_module
+
+    main_module.mem0_manager.store.entries.clear()
+    client = TestClient(main_module.app)
+    resp = client.get("/mem0/stale")
+    assert resp.status_code == 200
+    assert isinstance(resp.json(), list)
+
+
+def test_mem0_refresh_endpoint(monkeypatch, tmp_path):
+    """POST /mem0/refresh should return refreshed entries list."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("HARNESS_MOCK_MODE", "1")
+
+    import app.main as main_module
+
+    main_module.mem0_manager.store.entries.clear()
+    client = TestClient(main_module.app)
+    resp = client.post("/mem0/refresh")
+    assert resp.status_code == 200
+    assert "refreshed" in resp.json()
