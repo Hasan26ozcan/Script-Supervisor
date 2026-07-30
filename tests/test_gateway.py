@@ -352,8 +352,10 @@ class TestAnthropicProviderMissingKey:
 
         old_mock = gw.MOCK_MODE
         old_provider = gw.settings.provider
+        old_key = gw.settings.anthropic_api_key
         gw.MOCK_MODE = False
         gw.settings.provider = "anthropic"
+        monkeypatch.setattr(gw.settings, "anthropic_api_key", None)
 
         from app.gateway import GatewayLedger, ModelGateway
 
@@ -363,6 +365,7 @@ class TestAnthropicProviderMissingKey:
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
+            gw.settings.anthropic_api_key = old_key
 
 
 class TestGroqProviderMissingKey:
@@ -372,8 +375,10 @@ class TestGroqProviderMissingKey:
 
         old_mock = gw.MOCK_MODE
         old_provider = gw.settings.provider
+        old_key = gw.settings.groq_api_key
         gw.MOCK_MODE = False
         gw.settings.provider = "groq"
+        monkeypatch.setattr(gw.settings, "groq_api_key", None)
 
         from app.gateway import GatewayLedger, ModelGateway
 
@@ -383,6 +388,7 @@ class TestGroqProviderMissingKey:
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
+            gw.settings.groq_api_key = old_key
 
 
 class TestGroqNotInstalled:
