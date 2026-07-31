@@ -1,6 +1,8 @@
 # Creative Harness — Script Supervisor
 
 [![CI / Unit tests & coverage](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml/badge.svg)](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml)
+[![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=hasan26ozcan_Script-Supervisor&metric=alert_status)](https://sonarcloud.io/summary/overall?id=hasan26ozcan_Script-Supervisor)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=hasan26ozcan_Script-Supervisor&metric=coverage)](https://sonarcloud.io/summary/overall?id=hasan26ozcan_Script-Supervisor)
 
 A production-grade AI evaluation harness for creative shot list generation. This repository delivers a complete technical release with:
 
@@ -161,12 +163,22 @@ make format
 This repository includes GitHub Actions workflows for:
 
 - `ci.yml` — lint, type checks, tests, coverage, and dependency audit on push and PR
-- `sonarcloud.yml` — SonarCloud analysis for code quality and metrics
+- `sonarcloud.yml` — SonarQube (SonarCloud) analysis for code quality and metrics on push and pull requests
 
-Configure SonarCloud secrets in the repository settings:
-- `SONAR_PROJECT_KEY`
-- `SONAR_ORGANIZATION`
-- `SONAR_TOKEN`
+### SonarQube setup
+
+The project is registered on SonarQube with the following identifiers:
+
+| Field | Value |
+|---|---|
+| Project key | `Hasan26ozcan_Script-Supervisor` |
+| Organization | `hasan26ozcan` |
+
+To enable analysis, add the following secret to the repository settings:
+
+- `SONAR_TOKEN` — a SonarQube token generated in your SonarQube account settings
+
+The `sonar-project.properties` file at the repository root defines the project key, organization, source directories, test directories, coverage report path, and source encoding. No additional configuration is needed.
 
 ## Architecture
 
@@ -206,7 +218,7 @@ The project is now in a final release state for the harness and evaluation infra
 - Preference ingestion and persistence: complete
 - Mem0 lifecycle management: complete
 - DPO data export and training wrapper: complete
-- CI/CD and code quality pipeline: complete
+- CI/CD and code quality pipeline: complete (lint, tests, coverage, SonarQube analysis)
 
 Experimental work and deployment notes are captured in the roadmap and phase note documents.
 

@@ -1,0 +1,44 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests with coverage
+        env:
+          HARNESS_MOCK_MODE: 1
+          HARNESS_DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness
+        run: |
+          pytest tests/ \
+            -q \
+            --tb=short \
+            --cov=app \
+            --cov-report=xml \
+            --cov-fail-under=0
+
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: .
+        timeout-minutes: 5
