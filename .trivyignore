@@ -1,0 +1,22 @@
+# Trivy ignore file — base-image CVEs outside our control
+# These are vulnerabilities in the Debian base image (python:3.12-slim-bookworm)
+# that require fixes from the Debian/python image maintainers.
+#
+# Format: CVE_ID or GHSA_ID
+# Prefix with "CVE-" or "GHSA-" to match by type.
+
+# perl-base — critical Perl interpreter vulnerabilities in Debian base image
+CVE-2026-13221
+CVE-2026-42496
+CVE-2026-57433
+CVE-2026-8376
+
+# OS utilities — integer overflow and buffer overflow in Debian system packages
+CVE-2026-53615
+CVE-2026-41992
+CVE-2026-54369
+CVE-2025-69720
+CVE-2026-42497
+CVE-2026-48962
+CVE-2026-57432
+CVE-2026-9538
