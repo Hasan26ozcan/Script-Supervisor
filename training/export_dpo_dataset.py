@@ -16,6 +16,7 @@ def export_dpo_dataset(store: PreferenceStore, export_path: Path) -> int:
     if not prefs:
         raise ValueError("No preference data available to export.")
 
+    export_path = export_path.resolve()
     export_path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
     with export_path.open("w", encoding="utf-8") as f:

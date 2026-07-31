@@ -67,6 +67,18 @@ def build_phase4_pairs(results: dict) -> list[ComparisonPair]:
     return pairs
 
 
+def _validate_within_dir(path: Path, allowed: Path) -> Path:
+    resolved = path.resolve()
+    root = allowed.resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as err:
+        raise ValueError(
+            f"Path escapes allowed directory: {path} is not within {allowed}"
+        ) from err
+    return resolved
+
+
 def generate_pairs(output: Path) -> list[ComparisonPair]:
     pairs: list[ComparisonPair] = []
     if PHASE3_RESULTS.exists():
@@ -76,6 +88,7 @@ def generate_pairs(output: Path) -> list[ComparisonPair]:
         phase4 = load_json(PHASE4_RESULTS)
         pairs.extend(build_phase4_pairs(phase4))
 
+    _validate_within_dir(output, Path.cwd())
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8") as f:
         for pair in pairs:

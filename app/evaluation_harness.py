@@ -53,8 +53,20 @@ BOOTSTRAP_RESAMPLES = 5000
 RNG_SEED = 20260726  # fixed for reproducible reports
 
 
+def _validate_path_within(path: Path, allowed_root: Path) -> Path:
+    resolved = path.resolve()
+    root = allowed_root.resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as err:
+        raise RuntimeError(
+            f"Path escapes allowed directory: {path} is not within {allowed_root}"
+        ) from err
+    return resolved
+
+
 def _ensure_output_dirs(workspace_root: Path | None = None) -> dict[str, Path]:
-    root = workspace_root or Path.cwd()
+    root = (workspace_root or Path.cwd()).resolve()
     reports_dir = root / settings.evaluation_reports_dir
     charts_dir = reports_dir / "charts"
     reports_dir.mkdir(parents=True, exist_ok=True)
@@ -466,6 +478,10 @@ dataset can and cannot support -- see the limitations above.
 </html>
 """
 
+    report_root = paths["root"]
+    _validate_path_within(paths["markdown"], report_root)
+    _validate_path_within(paths["html"], report_root)
+    _validate_path_within(paths["metrics"], report_root)
     paths["markdown"].write_text(markdown, encoding="utf-8")
     paths["html"].write_text(html, encoding="utf-8")
     (paths["metrics"]).write_text(json.dumps(metrics, indent=2), encoding="utf-8")

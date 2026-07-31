@@ -97,9 +97,10 @@ def neon_alley():
     d.rectangle([580, 180, 760, 210], fill=(0, 255, 255, 220))
     # wet pavement reflection
     d.rectangle([0, 480, 800, 600], fill=(20, 12, 28, 255))
+    rng = random.Random(1)
     for i in range(30):
-        x = random.randint(0, 800)
-        d.line([(x, 480), (x + random.randint(-5, 5), 600)], fill=(120, 60, 120, 60))
+        x = rng.randint(0, 800)
+        d.line([(x, 480), (x + rng.randint(-5, 5), 600)], fill=(120, 60, 120, 60))
     return img
 
 
@@ -113,8 +114,9 @@ def forest_clearing():
         x = 150 + i * 120
         d.polygon([(x, 0), (x + 40, 0), (x - 60, 600), (x - 140, 600)], fill=(255, 250, 220, 35))
     # tree trunks
+    rng = random.Random(2)
     for i in range(6):
-        x = 30 + i * 140 + random.randint(-10, 10)
+        x = 30 + i * 140 + rng.randint(-10, 10)
         d.rectangle([x, 180, x + 34, 600], fill=(45, 33, 22, 255))
     return img
 
@@ -165,13 +167,13 @@ def rooftop_sunset():
     d = ImageDraw.Draw(img, "RGBA")
     d.ellipse([350, 90, 450, 190], fill=(255, 244, 214, 255))
     # skyline silhouette
+    rng = random.Random(7)
     xs = 0
-    random.seed(7)
     while xs < 800:
-        w = random.randint(40, 90)
-        h = random.randint(80, 260)
+        w = rng.randint(40, 90)
+        h = rng.randint(80, 260)
         d.rectangle([xs, 600 - h, xs + w, 600], fill=(25, 15, 30, 255))
-        xs += w + random.randint(4, 14)
+        xs += w + rng.randint(4, 14)
     # foreground rooftop ledge
     d.rectangle([0, 560, 800, 600], fill=(20, 12, 18, 255))
     return img
@@ -203,7 +205,6 @@ IRRELEVANT_PAIRING = {
 
 
 def main():
-    random.seed(42)
     cache = {}
     for name, fn in GENERATORS.items():
         cache[name] = fn()

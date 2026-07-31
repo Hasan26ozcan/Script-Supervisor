@@ -51,7 +51,7 @@ def load_preferences(store: PreferenceStore) -> list[PreferencePair]:
 
 
 def split_preferences(prefs: list[PreferencePair], test_fraction: float, seed: int) -> tuple[list[PreferencePair], list[PreferencePair]]:
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # noqa: S311 -- non-cryptographic; used for deterministic partitioning
     prefs_copy = prefs.copy()
     rng.shuffle(prefs_copy)
     cut = max(1, int(len(prefs_copy) * (1 - test_fraction)))

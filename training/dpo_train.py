@@ -120,6 +120,18 @@ def real_dpo_train(
     logger.info("Real DPO training finished and checkpoints saved to %s", output_dir)
 
 
+def _validate_path_within(path: Path, allowed: Path) -> Path:
+    resolved = path.resolve()
+    root = allowed.resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as err:
+        raise ValueError(
+            f"Path escapes allowed directory: {path} is not within {allowed}"
+        ) from err
+    return resolved
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Phase 10 DPO training wrapper.")
     parser.add_argument("--dataset", type=Path, default=Path("data/dpo_dataset.jsonl"))
@@ -135,6 +147,9 @@ def main() -> int:
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    _validate_path_within(args.dataset, Path.cwd())
+    _validate_path_within(args.output_dir, Path.cwd())
 
     if not args.skip_export:
         from app.preference_store import PreferenceStore
