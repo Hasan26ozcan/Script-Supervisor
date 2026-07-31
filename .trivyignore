@@ -20,3 +20,9 @@ CVE-2026-42497
 CVE-2026-48962
 CVE-2026-57432
 CVE-2026-9538
+
+# sqlite — integer overflow (no fix available in Debian 12)
+CVE-2025-7458
+
+# zlib — integer overflow / heap buffer overflow in zipOpenNewFileInZip4_6 (will_not_fix)
+CVE-2023-45853
