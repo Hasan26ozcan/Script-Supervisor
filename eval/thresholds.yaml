@@ -1,0 +1,22 @@
+# Minimum acceptable RAGAS-style eval metrics.
+# Every PR runs the eval regression harness against this file.
+# If any metric drops below its threshold, the CI job fails.
+#
+# Metrics reference: app/evaluation_harness.py
+#   win_rate                    - Candidate A win rate (bootstrap mean)
+#   heuristic_judge_agreement   - Heuristic judge vs human agreement rate
+#   bradley_terry_p_a_beats_b   - Bradley-Terry P(A beats B)
+
+win_rate:
+  min: 0.55
+  description: "Candidate A must win >55% of pairwise comparisons on the golden dataset."
+
+heuristic_judge_agreement:
+  min: 0.25
+  description: "Heuristic judge must agree with human labels at least 25% of the time.
+    The heuristic is a simple text-feature proxy (sentence count + action words);
+    raise this threshold as the judge improves or the dataset is refined."
+
+bradley_terry_p_a_beats_b:
+  min: 0.65
+  description: "Bradley-Terry model must assign >65% probability that A beats B."

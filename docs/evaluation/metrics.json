@@ -1,50 +1,65 @@
 {
-  "suite_name": "proof-run-standalone",
+  "suite_name": "ci-regression",
   "dataset_name": "fake_human_judgments_20_samples",
   "n_samples": 20,
   "holdout_size": 4,
-  "demo_dataset_included": true,
-  "win_rate": 0.5,
+  "demo_dataset_included": false,
+  "win_rate": 0.95,
   "win_rate_95ci": [
-    0.3,
-    0.7
+    0.85,
+    1.0
   ],
   "significance_vs_50_50": {
-    "p_value": 1.0,
-    "significant_at_05": false
+    "p_value": 0.0,
+    "significant_at_05": true,
+    "null_hypothesis": "win_rate == 0.5"
   },
   "bradley_terry": {
-    "strength_gap_logit": 0.0,
-    "p_a_beats_b": 0.5
+    "strength_gap_logit": 2.9444,
+    "std_error": 1.0253971508334512,
+    "p_a_beats_b": 0.95
   },
-  "heuristic_judge_agreement_rate": 0.5,
-  "heuristic_judge_cohens_kappa": 0.0,
+  "heuristic_judge_agreement_rate": 0.3,
+  "heuristic_judge_cohens_kappa": -0.0108,
   "inter_rater_reliability": "not computable: every item in this dataset has exactly one rater",
   "preferences_by_winner": {
-    "a": 10,
-    "b": 10
+    "a": 19,
+    "b": 1
   },
   "preferences_by_rater": {
-    "rater_01": 1,
-    "rater_02": 1,
-    "rater_03": 1,
-    "rater_04": 1,
-    "rater_05": 1,
-    "rater_06": 1,
-    "rater_07": 1,
-    "rater_08": 1,
-    "rater_09": 1,
-    "rater_10": 1,
-    "rater_11": 1,
-    "rater_12": 1,
-    "rater_13": 1,
-    "rater_14": 1,
-    "rater_15": 1,
-    "rater_16": 1,
-    "rater_17": 1,
-    "rater_18": 1,
-    "rater_19": 1,
-    "rater_20": 1
+    "golden-rater-01": 1,
+    "golden-rater-02": 1,
+    "golden-rater-03": 1,
+    "golden-rater-04": 1,
+    "golden-rater-05": 1,
+    "golden-rater-06": 1,
+    "golden-rater-07": 1,
+    "golden-rater-08": 1,
+    "golden-rater-09": 1,
+    "golden-rater-10": 1,
+    "golden-rater-11": 1,
+    "golden-rater-12": 1,
+    "golden-rater-13": 1,
+    "golden-rater-14": 1,
+    "golden-rater-15": 1,
+    "golden-rater-16": 1,
+    "golden-rater-17": 1,
+    "golden-rater-18": 1,
+    "golden-rater-19": 1,
+    "golden-rater-20": 1
   },
-  "note": "Produced by a standalone proof-runner (no pydantic/sqlalchemy available in this analysis sandbox, no network). Identical statistical/plotting logic to app/evaluation_harness.py. DB persistence step was not exercised here -- run the real module locally per docs/evaluation/HARNESS_NOTES.md."
+  "reporting_format": [
+    "markdown",
+    "html",
+    "json"
+  ],
+  "limitations": [
+    "Demo dataset uses only two fixed candidate templates repeated across all 20 briefs, so the Bradley-Terry strength gap reflects template style, not per-brief quality.",
+    "One rater per item: no real inter-rater reliability (kappa) is possible on this dataset; collect >=2 raters/item for that.",
+    "heuristic_judge_* metrics come from a deterministic offline text-feature judge, not a live LLM-graded judge -- see module docstring."
+  ],
+  "database_backend": "unavailable",
+  "database_write_persisted": false,
+  "database_row_count_after_write": null,
+  "database_error": "database backend unavailable"
 }

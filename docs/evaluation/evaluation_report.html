@@ -1,11 +1,18 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Evaluation Report (proof-run)</title></head>
+<html lang="en">
+<head><meta charset="utf-8"><title>ci-regression report</title></head>
 <body>
-<h1>Evaluation Report (standalone proof-run)</h1>
+<h1>Evaluation Report</h1>
+<p>Suite: ci-regression</p>
 <p>Samples: 20</p>
-<p>Candidate A win rate: 0.500 (95% CI 0.300-0.700)</p>
-<p>Binomial test p-value: 1.0</p>
-<p>Bradley-Terry P(A beats B): 0.5</p>
-<p>Heuristic judge agreement: 0.500 (kappa: 0.0)</p>
-<p><em>Produced by a standalone proof-runner (no pydantic/sqlalchemy available in this analysis sandbox, no network). Identical statistical/plotting logic to app/evaluation_harness.py. DB persistence step was not exercised here -- run the real module locally per docs/evaluation/HARNESS_NOTES.md.</em></p>
-</body></html>
+<p>Candidate A win rate: 0.950 (95% CI 0.850-1.000)</p>
+<p>Binomial test p-value: 0.0</p>
+<p>Bradley-Terry P(A beats B): 0.95</p>
+<p>Heuristic judge agreement: 0.300 (kappa: -0.0108)</p>
+<p>Database backend: unavailable (persisted: False)</p>
+<h2>Limitations</h2>
+<ul>
+<li>Demo dataset uses only two fixed candidate templates repeated across all 20 briefs, so the Bradley-Terry strength gap reflects template style, not per-brief quality.</li><li>One rater per item: no real inter-rater reliability (kappa) is possible on this dataset; collect >=2 raters/item for that.</li><li>heuristic_judge_* metrics come from a deterministic offline text-feature judge, not a live LLM-graded judge -- see module docstring.</li>
+</ul>
+</body>
+</html>
