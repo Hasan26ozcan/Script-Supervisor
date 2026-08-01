@@ -7,8 +7,8 @@ WORKDIR /app
 COPY pyproject.toml ./
 COPY uv.lock ./
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir --only-binary :all: . \
-    && pip install --no-cache-dir --upgrade "setuptools>=78.1.1" "msgpack>=1.2.1"
+    && pip install --no-cache-dir "setuptools>=78.1.1" "msgpack>=1.2.1" \
+    && pip install --no-cache-dir --only-binary :all: .
 
 COPY app ./app
 COPY prompts ./prompts

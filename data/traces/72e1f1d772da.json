@@ -1,0 +1,80 @@
+{
+  "run_id": "72e1f1d772da",
+  "created_at": "2026-08-01T09:10:02.424487+00:00",
+  "input_brief": "Write a short poem about coding",
+  "reference_images": [],
+  "steps": [
+    {
+      "draft": {
+        "turn": 1,
+        "content": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'Write a short poem about coding...'",
+        "model": "claude-haiku-4-5-20251001",
+        "prompt_tokens": 20,
+        "completion_tokens": 43,
+        "latency_ms": 39.570000022649765
+      },
+      "critique": {
+        "turn": 1,
+        "scores": [
+          {
+            "criterion": "clarity",
+            "score": 6.0,
+            "rationale": "shot descriptions are generic"
+          },
+          {
+            "criterion": "tone_match",
+            "score": 7.0,
+            "rationale": "reasonable but not distinctive"
+          },
+          {
+            "criterion": "actionability",
+            "score": 5.0,
+            "rationale": "a DP could not shoot this as-is"
+          }
+        ],
+        "overall": 6.0,
+        "revision_notes": "add lens/camera-movement specifics, tighten shot count",
+        "modality": "text",
+        "parse_error": false
+      }
+    },
+    {
+      "draft": {
+        "turn": 2,
+        "content": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'Write a short poem about coding\n\nRevisio...'",
+        "model": "claude-sonnet-5",
+        "prompt_tokens": 25,
+        "completion_tokens": 54,
+        "latency_ms": 64.5425000693649
+      },
+      "critique": {
+        "turn": 2,
+        "scores": [
+          {
+            "criterion": "clarity",
+            "score": 6.0,
+            "rationale": "shot descriptions are generic"
+          },
+          {
+            "criterion": "tone_match",
+            "score": 7.0,
+            "rationale": "reasonable but not distinctive"
+          },
+          {
+            "criterion": "actionability",
+            "score": 5.0,
+            "rationale": "a DP could not shoot this as-is"
+          }
+        ],
+        "overall": 6.0,
+        "revision_notes": "add lens/camera-movement specifics, tighten shot count",
+        "modality": "text",
+        "parse_error": false
+      }
+    }
+  ],
+  "stop_reason": "plateau",
+  "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'Write a short poem about coding\n\nRevisio...'",
+  "total_cost_usd": 0.0030889999999999997,
+  "total_latency_ms": 203.6996998358518
+}
