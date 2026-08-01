@@ -2,8 +2,6 @@
 
 [![CI](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml/badge.svg)](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/codeql.yml/badge.svg)](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/codeql.yml)
-[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=hasan26ozcan_Script-Supervisor&metric=alert_status)](https://sonarcloud.io/summary/overall?id=hasan26ozcan_Script-Supervisor)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=hasan26ozcan_Script-Supervisor&metric=coverage)](https://sonarcloud.io/summary/overall?id=hasan26ozcan_Script-Supervisor)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 
@@ -197,20 +195,12 @@ Script-Supervisor/
 
 All settings use the `HARNESS_` prefix, managed by `pydantic-settings`. A `.env` file works out of the box.
 
-### Essential
-
 | Variable | Default | Description |
 |---|---|---|
 | `HARNESS_MOCK_MODE` | `1` | Mock responses; set `0` for live API calls |
 | `HARNESS_ANTHROPIC_API_KEY` | — | Required when mock=0 |
 | `HARNESS_PROVIDER` | `anthropic` | `anthropic` or `groq` |
-| `HARNESS_DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness` | PostgreSQL connection |
-
-### Optional
-
-| Variable | Default | Description |
-|---|---|---|
-| `HARNESS_GROQ_API_KEY` | — | Required if provider is `groq` |
+| `HARNESS_DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness` | PostgreSQL connection string |
 | `HARNESS_MAX_TURNS` | `3` | Max correction-loop iterations |
 | `HARNESS_THRESHOLD` | `8.0` | Quality score to stop the loop |
 | `HARNESS_RUN_BUDGET_USD` | — | Per-run cost cap |
