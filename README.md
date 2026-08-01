@@ -42,7 +42,6 @@ The system is organized into five architectural layers, each with a clear respon
 - [Testing & Quality](#testing--quality)
 - [CI/CD](#cicd)
 - [Deployment](#deployment)
-- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -151,22 +150,6 @@ pip install inspect-ai
 uv run inspect eval evals/inspect_preference_task.py --model anthropic/claude-sonnet-4-6
 inspect view
 ```
-
----
-
-## Architecture
-
-The system is organized into five layers:
-
-```mermaid
-graph TD
-    A["🎨 Presentation Layer<br/>FastAPI REST API<br/>Comparison UI (HTML)<br/>Inspect AI CLI"] --> B["⚙️ Orchestration Layer<br/>CorrectionLoop<br/>AdaptiveRouter<br/>EvaluationHarness"]
-    B --> C["🔧 Service Layer<br/>ModelGateway<br/>Rubric<br/>Mem0<br/>PreferenceStore<br/>Budget"]
-    C --> D["💾 Persistence Layer<br/>PostgreSQL (primary)<br/>JSONL (offline fallback)"]
-    D --> E["🏗️ Infrastructure Layer<br/>Docker<br/>Postgres 16<br/>Langfuse (optional)<br/>GitHub Actions"]
-```
-
-See [docs/PROJECT_ARCHITECTURE.md](docs/PROJECT_ARCHITECTURE.md) for a detailed component breakdown.
 
 ---
 
@@ -290,26 +273,6 @@ Set these in `.env` or GitHub Actions secrets:
 - `HARNESS_GROQ_API_KEY`
 - `HARNESS_DATABASE_URL`
 - `SONAR_PROJECT_KEY`, `SONAR_ORGANIZATION`, `SONAR_TOKEN`
-
----
-
-## Roadmap
-
-The project follows a phased roadmap from prototype to production. See [ROADMAP.md](ROADMAP.md) for the full plan with all 12 phases (0–11), implementation history, and the masterpiece checklist.
-
-| Phase | Focus | Status |
-|---|---|---|
-| 1 | Brief set and baseline generation | Complete |
-| 2 | VLM grounding | Complete |
-| 3 | Text correction-loop effectiveness | Complete |
-| 4 | Vision-critique effectiveness | Complete |
-| 5 | Comparison pair generation | Complete |
-| 6 | Rubric calibration | Complete |
-| 7 | Text routing | Complete |
-| 8 | Vision routing | Complete |
-| 9 | DPO dataset export | Complete |
-| 10 | DPO training (TRL) | Complete |
-| 11 | Architecture hardening (PostgreSQL, budgets) | Complete |
 
 ---
 
