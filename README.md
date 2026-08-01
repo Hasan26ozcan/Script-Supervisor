@@ -195,19 +195,26 @@ Script-Supervisor/
 
 ## Configuration
 
-All configuration is managed through environment variables with a `HARNESS_` prefix, defined in `app/config.py` using `pydantic-settings`. A `.env` file works out of the box for local development.
+All settings use the `HARNESS_` prefix, managed by `pydantic-settings`. A `.env` file works out of the box.
+
+### Essential
 
 | Variable | Default | Description |
 |---|---|---|
-| `HARNESS_MOCK_MODE` | `1` | Use mock responses instead of real API calls |
-| `HARNESS_ANTHROPIC_API_KEY` | — | API key for Anthropic (required when mock=0) |
-| `HARNESS_GROQ_API_KEY` | — | API key for Groq |
-| `HARNESS_PROVIDER` | `anthropic` | LLM provider (`anthropic` or `groq`) |
-| `HARNESS_DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness` | PostgreSQL connection string |
-| `HARNESS_MAX_TURNS` | `3` | Maximum correction-loop iterations |
-| `HARNESS_THRESHOLD` | `8.0` | Quality threshold to stop the correction loop |
-| `HARNESS_RUN_BUDGET_USD` | — | Optional per-run cost cap |
-| `HARNESS_DAILY_BUDGET_USD` | — | Optional daily cost cap |
+| `HARNESS_MOCK_MODE` | `1` | Mock responses; set `0` for live API calls |
+| `HARNESS_ANTHROPIC_API_KEY` | — | Required when mock=0 |
+| `HARNESS_PROVIDER` | `anthropic` | `anthropic` or `groq` |
+| `HARNESS_DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness` | PostgreSQL connection |
+
+### Optional
+
+| Variable | Default | Description |
+|---|---|---|
+| `HARNESS_GROQ_API_KEY` | — | Required if provider is `groq` |
+| `HARNESS_MAX_TURNS` | `3` | Max correction-loop iterations |
+| `HARNESS_THRESHOLD` | `8.0` | Quality score to stop the loop |
+| `HARNESS_RUN_BUDGET_USD` | — | Per-run cost cap |
+| `HARNESS_DAILY_BUDGET_USD` | — | Daily cost cap |
 | `HARNESS_LANGFUSE_ENABLED` | `false` | Enable Langfuse trace export |
 
 ---
