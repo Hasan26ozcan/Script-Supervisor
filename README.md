@@ -1,22 +1,56 @@
 # Creative Harness — Script Supervisor
 
-[![CI / Unit tests & coverage](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml/badge.svg)](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml)
-[![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=hasan26ozcan_Script-Supervisor&metric=alert_status)](https://sonarcloud.io/summary/overall?id=hasan26ozcan_Script-Supervisor)
+[![CI](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml/badge.svg)](https://github.com/Hasan26ozcan/Script-Supervisor/actions/workflows/ci.yml)
+[![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=hasan26ozcan_Script-Supervisor&metric=alert_status)](https://sonarcloud.io/summary/overall?id=hasan26ozcan_Script-Supervisor)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=hasan26ozcan_Script-Supervisor&metric=coverage)](https://sonarcloud.io/summary/overall?id=hasan26ozcan_Script-Supervisor)
 
-A production-grade AI evaluation harness for creative shot list generation. This repository delivers a complete technical release with:
+A production-grade AI evaluation harness for creative shot list generation. It delivers a complete technical release with a FastAPI backend, prompt-driven correction loop, human preference collection, DPO dataset export, Mem0-style compression pair validation, PostgreSQL-backed persistence, and structured CI/CD.
 
-- a FastAPI backend and prompt-driven correction loop
-- human preference collection and DPO dataset export
-- Mem0-style compression pair validation and stale replacement
-- PostgreSQL-backed preference storage and JSONL migration fallback
-- structured CI/CD, pre-commit hooks, type checking, linting, coverage, and dependency security
+---
 
-## Project vision
+## Table of Contents
 
-This project is built to answer a concrete research question with measurable evidence: can a structured correction loop, calibrated rubric, and vision-aware critique outperform a simple single-pass generation strategy while remaining cost-effective and auditable?
+- [About](#about)
+- [Current state](#current-state)
+- [Key features](#key-features)
+- [Quick start](#quick-start)
+- [Development workflow](#development-workflow)
+- [Testing & quality](#testing--quality)
+- [Architecture](#architecture)
+- [Repository layout](#repository-layout)
+- [CI/CD](#cicd)
+- [Roadmap](#roadmap)
+- [License](#license)
 
-It is designed as a polished, maintainable release rather than a prototype. The core system is production-ready for internal evaluation and experimentation; real model usage and training runs require API keys and optional GPU resources.
+---
+
+## About
+
+This project answers a concrete research question with measurable evidence: can a structured correction loop, calibrated rubric, and vision-aware critique outperform a simple single-pass generation strategy while remaining cost-effective and auditable?
+
+It is designed as a polished, maintainable release rather than a prototype. The core system is production-ready for internal evaluation and experimentation; real model usage and GPU training runs require API keys and optional GPU resources.
+
+---
+
+## Current state
+
+| Area | Status |
+|---|---|
+| Core API (FastAPI + correction loop) | Complete |
+| Mock & live gateway (async) | Complete |
+| Vision-grounded critique | Complete |
+| Rubric scoring + Bradley-Terry weight updates | Complete |
+| Mem0 compression pair tracking | Complete |
+| Preference persistence (PostgreSQL + JSONL fallback) | Complete |
+| DPO dataset export + training wrapper | Complete |
+| Cost-aware routing with YAML rules | Complete |
+| Modern eval harness (Inspect AI adapter) | Complete |
+| Statistical evaluation (bootstrap CI, Bradley-Terry, Cohen's κ) | Complete |
+| Comparison UI | Complete |
+| CI/CD (ruff, mypy, pytest, coverage, pip-audit, SonarCloud) | Complete |
+| Phase notes (2, 4, 6, 7, 8, 11) | Present |
+
+---
 
 ## Key features
 
@@ -27,57 +61,12 @@ It is designed as a polished, maintainable release rather than a prototype. The 
 - **Async gateway abstraction** supporting mock and live providers
 - **Routable escalation logic** through external YAML rules
 - **PostgreSQL migration path** for preference persistence with JSONL fallback
-- **CI/CD pipeline** covering lint, type checks, tests, coverage, dependency audit, and SonarCloud
+- **Modern eval framework** — optional [Inspect AI](https://inspect.aisi.org.uk/) adapter for real model-graded pairwise runs with position-bias-checked scoring
+- **Statistical evaluation** — bootstrap confidence intervals, binomial significance tests, Bradley-Terry fit, and judge/human agreement (Cohen's κ)
 
-## CI / Unit tests & coverage
+---
 
-This project includes a full CI pipeline that runs on every push and pull request to `main`:
-
-| Job | What it does |
-|---|---|
-| **Lint** | `ruff check` and `ruff format --check` on all Python source |
-| **Type check** | `mypy app` static type analysis |
-| **Test** | `pytest` with full mock-mode coverage; `--cov=app` reports line coverage to the terminal and as `coverage.xml` |
-| **Coverage gate** | Fails the CI run if overall coverage drops below 70% |
-| **Codecov** | Coverage XML is uploaded to Codecov for historical tracking |
-
-### Running tests locally
-
-```bash
-# Install dev dependencies
-python -m pip install -e ".[dev]"
-
-# Run all unit tests with coverage
-HARNESS_MOCK_MODE=1 pytest tests/ -q --tb=short --cov=app --cov-report=term-missing
-
-# Run with a coverage gate (CI equivalent)
-HARNESS_MOCK_MODE=1 pytest tests/ -q --cov=app --cov-fail-under=70
-```
-
-All tests run in `HARNESS_MOCK_MODE=1` by default so no real API keys or network access are required. Docker-compose services (Postgres + the FastAPI harness) are also tested as part of the full suite when a real database is available.
-
-## Current state
-
-- Core API: complete
-- Preference persistence: complete with PostgreSQL as the primary backend and JSONL fallback
-- Evaluation harness: rewritten to use real statistical methodology (bootstrap
-  confidence intervals, a binomial significance test, a Bradley-Terry fit, and
-  judge/human agreement with Cohen's kappa) instead of a cosmetic accuracy
-  number, and to actually run and persist charts/reports -- see
-  `docs/evaluation/HARNESS_NOTES.md` for the full methodology, its honest
-  limitations on the bundled 20-sample demo dataset, and exact commands to
-  run it against real PostgreSQL
-- Modern eval framework: an optional [Inspect AI](https://inspect.aisi.org.uk/)
-  adapter (`evals/inspect_preference_task.py`) for real model-graded pairwise
-  runs with position-bias-checked scoring, matching current industry practice
-  at Anthropic/DeepMind/UK AISI
-- Mem0 entry lifecycle: complete
-- DPO export and training wrapper: implemented
-- CI/CD and code quality automation: implemented
-- Experimental analysis notes: present for Phases 2, 4, 6, 7, 8, 11
-- Real model keys / GPU training: optional and controlled by environment
-
-## Getting started
+## Quick start
 
 ### Prerequisites
 
@@ -88,7 +77,7 @@ All tests run in `HARNESS_MOCK_MODE=1` by default so no real API keys or network
 ### Install
 
 ```bash
-cd path/to/Script-Supervisor-main
+cd Script-Supervisor
 python -m pip install --upgrade pip
 python -m pip install -e .[dev]
 ```
@@ -108,14 +97,9 @@ python -m training.generate_fake_preferences
 python -m app.evaluation_harness
 ```
 
-This writes `docs/evaluation/evaluation_report.{md,html}`, `docs/evaluation/metrics.json`,
-and `docs/evaluation/charts/*.png` from the 20-sample fake human judgment dataset,
-and persists a run row to the configured SQL backend. Read
-`docs/evaluation/HARNESS_NOTES.md` first -- it documents exactly what the
-statistics can and can't tell you about this demo dataset, and how to run
-the same pipeline against real PostgreSQL via Docker Compose.
+This writes `docs/evaluation/evaluation_report.{md,html}`, `docs/evaluation/metrics.json`, and `docs/evaluation/charts/*.png` from the 20-sample fake human judgment dataset, and persists a run row to the configured SQL backend. Read `docs/evaluation/HARNESS_NOTES.md` first — it documents exactly what the statistics can and can't tell you about this demo dataset, and how to run the same pipeline against real PostgreSQL via Docker Compose.
 
-For a real model-graded run via [Inspect AI](https://inspect.aisi.org.uk/):
+For a real model-graded run via Inspect AI:
 
 ```bash
 pip install inspect-ai
@@ -125,8 +109,6 @@ inspect view
 
 ### Run with real model calls
 
-Set environment variables and disable mock mode:
-
 ```bash
 export HARNESS_MOCK_MODE=0
 export HARNESS_ANTHROPIC_API_KEY="your_key"
@@ -134,96 +116,131 @@ export HARNESS_ANTHROPIC_API_KEY="your_key"
 
 Then start the app as above.
 
+---
+
 ## Development workflow
 
-- `make install` — install the project and dev requirements
-- `make lint` — run `ruff` and `mypy`
-- `make test` — run the test suite with coverage
-- `make audit` — run dependency security checks with `pip-audit`
-- `make precommit` — install git pre-commit hooks
-- `make coverage` — generate `coverage.xml`
+| Command | What it does |
+|---|---|
+| `make install` | Install the project and dev requirements |
+| `make lint` | Run `ruff` and `mypy` |
+| `make test` | Run the test suite with coverage |
+| `make audit` | Run dependency security checks with `pip-audit` |
+| `make precommit` | Install git pre-commit hooks |
+| `make coverage` | Generate `coverage.xml` |
+| `make format` | Format code with `ruff` |
 
-To format code:
+To run a specific phase experiment:
 
 ```bash
-make format
+make phase3   # text correction-loop effectiveness
+make phase4   # vision-critique effectiveness
+make phase6   # rubric calibration
+make phase7   # text routing
+make phase8   # vision routing
 ```
 
-## Testing and quality
+---
 
-- Unit and integration tests are in `tests/`
-- `pytest` is configured with coverage support
+## Testing & quality
+
+- Unit and integration tests are in `tests/` (200+ tests)
+- `pytest` is configured with coverage support (`--cov=app`)
 - `ruff` enforces linting and formatting rules
 - `mypy` performs static typing checks
 - `pre-commit` ensures checks run before commits
 - `pip-audit` flags high-severity dependency issues
+- Coverage gate: CI fails if overall coverage drops below 70%
 
-## CI/CD
-
-This repository includes GitHub Actions workflows for:
-
-- `ci.yml` — lint, type checks, tests, coverage, and dependency audit on push and PR
-- `sonarcloud.yml` — SonarQube (SonarCloud) analysis for code quality and metrics on push and pull requests
-
-### SonarQube setup
-
-The project is registered on SonarQube with the following identifiers:
-
-| Field | Value |
-|---|---|
-| Project key | `Hasan26ozcan_Script-Supervisor` |
-| Organization | `hasan26ozcan` |
-
-To enable analysis, add the following secret to the repository settings:
-
-- `SONAR_TOKEN` — a SonarQube token generated in your SonarQube account settings
-
-The `sonar-project.properties` file at the repository root defines the project key, organization, source directories, test directories, coverage report path, and source encoding. No additional configuration is needed.
+---
 
 ## Architecture
 
-The app is structured around:
+```
+app/
+├── main.py              # FastAPI entrypoints (run, compare, evaluation, rubric, mem0)
+├── gateway.py           # Async model gateway (mock + live, structured output, vision)
+├── agent_loop.py        # Correction loop (draft → critique → revise)
+├── rubric.py            # Rubric scoring + Bradley-Terry weight updates
+├── mem0.py              # Mem0 compression pair tracking + validation
+├── preference_store.py  # Preference persistence (PostgreSQL + JSONL fallback)
+├── db.py                # Database initialization
+├── config.py            # Settings (pydantic-settings)
+├── routing.py           # AdaptiveRouter with YAML-based escalation rules
+├── schemas.py           # Pydantic v2 schemas
+├── prompts.py           # Prompt registry
+├── budget.py            # Cost budget tracking
+├── evaluation_harness.py # Statistical evaluation suite
+├── logging_config.py    # structlog configuration
+└── templates/           # Comparison UI HTML
 
-- `app/main.py` — FastAPI application entrypoints
-- `app/gateway.py` — model gateway with mock/live support
-- `app/rubric.py` — rubric scoring and weight updates
-- `app/mem0.py` — memory compression entry tracking and validation
-- `app/preference_store.py` / `app/db.py` — preference persistence
-- `training/export_dpo_dataset.py` — DPO export pipeline
-- `training/dpo_train.py` — DPO training wrapper
-- `prompts/` — versioned prompt templates
-- `config/routing_rules.yaml` — external model routing rules
+config/
+└── routing_rules.yaml   # External model routing rules
+
+data/
+├── briefs/              # Phase 1 brief set
+├── images/              # Reference images for VLM experiments
+├── traces/              # Stored correction-loop traces
+├── preferences.jsonl    # Human preference pairs
+├── dpo_dataset.jsonl    # Exported DPO dataset
+├── rubric_weights.json  # Current rubric weights
+└── rubric_weight_history.jsonl  # Weight evolution over time
+
+training/
+├── export_dpo_dataset.py  # DPO dataset exporter
+├── dpo_train.py           # DPO training wrapper (TRL)
+├── run_dpo.py             # Quick dry-run entry point
+├── generate_fake_preferences.py  # Fake data generator
+└── migrate_preferences_to_db.py  # JSONL → PostgreSQL migration
+
+evals/
+└── inspect_preference_task.py  # Inspect AI adapter
+
+experiments/
+├── phase2_grounding.py           # VLM grounding experiment
+├── phase3_correction_effectiveness.py  # Text correction study
+├── phase4_vision_effectiveness.py      # Vision critique study
+├── phase6_calibration.py             # Rubric calibration
+├── phase7_routing.py                 # Text routing experiment
+└── phase8_vision_routing.py          # Vision routing experiment
+
+scripts/
+├── generate_comparison_pairs.py  # Phase 5 pair generator
+└── run_eval_regression.py        # Eval regression gate
+
+tests/                             # 200+ unit and integration tests
+prompts/                           # Versioned prompt templates
+docs/                              # Architecture, CI/CD, and evaluation guides
+```
 
 For architecture and CI documentation, see `docs/PROJECT_ARCHITECTURE.md` and `docs/CI_CD_GUIDE.md`.
+
+---
 
 ## Repository layout
 
 ```
 app/                FastAPI app, gateway, rubric, and services
-config/             routing and runtime configuration files
-data/               briefs, preferences, images, and generated state
-docs/               architecture, CI/CD, and operational guides
+config/             routing and runtime configuration
+data/               briefs, preferences, images, traces, and generated state
+docs/               architecture, CI/CD, and evaluation guides
+evals/              Inspect AI eval adapter
 experiments/        evaluation and grounding experiment scripts
-training/           DPO export and training wrapper
+scripts/            utility scripts for pair generation and regression gates
+training/           DPO export, training wrapper, and migration
 tests/              unit and integration test coverage
 prompts/            versioned prompt templates
-.github/            CI/CD workflow definitions
+.github/            CI/CD workflow definitions (ci, sonarcloud, codeql, gitleaks, trivy)
 ```
+
+---
 
 ## Roadmap
 
-The project is now in a final release state for the harness and evaluation infrastructure:
+See [`ROADMAP.md`](ROADMAP.md) for the full strategic plan with all 12 phases (0–11), implementation history, research updates, and the masterpiece checklist.
 
-- Core evaluation API: complete
-- Preference ingestion and persistence: complete
-- Mem0 lifecycle management: complete
-- DPO data export and training wrapper: complete
-- CI/CD and code quality pipeline: complete (lint, tests, coverage, SonarQube analysis)
-
-Experimental work and deployment notes are captured in the roadmap and phase note documents.
-
-See `ROADMAP.md` for the full strategic plan and implementation history.
+---
 
 ## License
 
-This project is released under the `MIT` license.
+This project is released under the [MIT](LICENSE) license.

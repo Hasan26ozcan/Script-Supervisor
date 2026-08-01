@@ -1,13 +1,13 @@
 # Evaluation Report
 
-- Suite: ci-regression
-- Dataset: fake_human_judgments_20_samples (demo dataset included: False)
-- Samples: 20 (holdout size used for reporting: 4)
-- Candidate A win rate: 0.950 (95% bootstrap CI: 0.850-1.000)
-- Two-sided binomial test vs 50/50: p = 0.0, significant at 0.05: True
-- Bradley-Terry P(A beats B): 0.95
-- Heuristic judge vs human agreement: 0.300 (Cohen's kappa: -0.0108)
-- Inter-rater reliability: not computable: every item in this dataset has exactly one rater
+- Suite: cli-run
+- Dataset: fake_human_judgments_20_samples (demo dataset included: True)
+- Samples: 40 (holdout size used for reporting: 8)
+- Candidate A win rate: 0.500 (95% bootstrap CI: 0.350-0.650)
+- Two-sided binomial test vs 50/50: p = 1.0, significant at 0.05: False
+- Bradley-Terry P(A beats B): 0.5
+- Heuristic judge vs human agreement: 0.500 (Cohen's kappa: 0.0)
+- Inter-rater reliability: computed
 - Database backend actually used: unavailable (write persisted: False)
 
 ## Limitations (read before citing these numbers)

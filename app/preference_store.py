@@ -148,7 +148,8 @@ class PreferenceStore:
         self._fallback_path.write_text(content, encoding="utf-8")
 
     def close(self) -> None:
-        self.session.close()
+        if hasattr(self, "session") and self.session is not None:
+            self.session.close()
 
     def __enter__(self) -> PreferenceStore:
         return self
