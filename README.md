@@ -230,7 +230,7 @@ scripts/            utility scripts for pair generation and regression gates
 training/           DPO export, training wrapper, and migration
 tests/              unit and integration test coverage
 prompts/            versioned prompt templates
-.github/            CI/CD workflow definitions (ci, sonarcloud, codeql, gitleaks, trivy)
+.github/            CI/CD workflow definitions (ci, sonarcloud, codeql, gitleaks)
 ```
 
 ---
