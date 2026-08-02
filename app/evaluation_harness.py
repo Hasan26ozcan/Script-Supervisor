@@ -67,8 +67,22 @@ def _validate_path_within(path: Path, allowed_root: Path) -> Path:
 
 def _ensure_output_dirs(workspace_root: Path | None = None) -> dict[str, Path]:
     root = (workspace_root or Path.cwd()).resolve()
-    reports_dir = root / settings.evaluation_reports_dir
+    # Validate the user-controlled reports dir before using it in path
+    # construction: it must be a relative path with no traversal components.
+    reports_dir_name = settings.evaluation_reports_dir
+    reports_dir_parts = Path(reports_dir_name)
+    if reports_dir_parts.is_absolute():
+        raise ValueError(
+            f"evaluation_reports_dir must be a relative path, got: {reports_dir_name}"
+        )
+    if ".." in reports_dir_parts.parts:
+        raise ValueError(
+            f"evaluation_reports_dir must not contain '..' components, got: {reports_dir_name}"
+        )
+    reports_dir = root / reports_dir_name
+    _validate_path_within(reports_dir, root)
     charts_dir = reports_dir / "charts"
+    _validate_path_within(charts_dir, root)
     reports_dir.mkdir(parents=True, exist_ok=True)
     charts_dir.mkdir(parents=True, exist_ok=True)
     return {
@@ -356,6 +370,7 @@ def run_evaluation_suite(
     chart_paths: dict[str, Path] = {}
 
     chart_paths["win_rate_ci"] = charts_dir / "win_rate_ci.png"
+    _validate_path_within(chart_paths["win_rate_ci"], paths["root"])
     _write_win_rate_ci_chart(chart_paths["win_rate_ci"], win_point, win_lo, win_hi)
 
     cumulative = (
@@ -364,6 +379,7 @@ def run_evaluation_suite(
         else []
     )
     chart_paths["win_rate_trend"] = charts_dir / "win_rate_trend.png"
+    _validate_path_within(chart_paths["win_rate_trend"], paths["root"])
     _write_trend_chart(
         chart_paths["win_rate_trend"],
         "Cumulative A win rate over chronological samples",
@@ -374,6 +390,7 @@ def run_evaluation_suite(
     rater_labels = list(summary["rater_counts"].keys())
     rater_values = [summary["rater_counts"][r] for r in rater_labels]
     chart_paths["samples_per_rater"] = charts_dir / "samples_per_rater.png"
+    _validate_path_within(chart_paths["samples_per_rater"], paths["root"])
     _write_bar_chart(
         chart_paths["samples_per_rater"],
         "Samples per rater",
