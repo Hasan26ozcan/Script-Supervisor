@@ -72,9 +72,7 @@ def _ensure_output_dirs(workspace_root: Path | None = None) -> dict[str, Path]:
     reports_dir_name = settings.evaluation_reports_dir
     reports_dir_parts = Path(reports_dir_name)
     if reports_dir_parts.is_absolute():
-        raise ValueError(
-            f"evaluation_reports_dir must be a relative path, got: {reports_dir_name}"
-        )
+        raise ValueError(f"evaluation_reports_dir must be a relative path, got: {reports_dir_name}")
     if ".." in reports_dir_parts.parts:
         raise ValueError(
             f"evaluation_reports_dir must not contain '..' components, got: {reports_dir_name}"
