@@ -17,7 +17,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-import app.database  # noqa: F401
+from app import database as _database  # noqa: F401
 from app.agent_loop import CorrectionLoop
 from app.config import settings
 from app.evaluation_harness import run_evaluation_suite

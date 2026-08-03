@@ -139,7 +139,9 @@ class CorrectionLoop:
             modality=modality,
         )
 
-    def _cost_aware_stop_reason(self, delta: float, prev_total_cost: float) -> str | None:
+    def _cost_aware_stop_reason(
+        self, delta: float, prev_total_cost: float
+    ) -> Literal["cost_threshold"] | None:
         """Whether the last turn's marginal quality gain was worth its cost."""
         if not (self.quality_per_dollar_threshold and self.quality_per_dollar_threshold > 0):
             return None
@@ -153,7 +155,7 @@ class CorrectionLoop:
 
     def _stop_reason(
         self, overall: float, prev_overall: float | None, prev_total_cost: float | None
-    ) -> str | None:
+    ) -> Literal["threshold_met", "plateau", "cost_threshold"] | None:
         """Decide whether the loop should stop after this turn, and why."""
         if overall >= self.threshold:
             return "threshold_met"
