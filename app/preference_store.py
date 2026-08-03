@@ -12,7 +12,6 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -21,9 +20,6 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.db import Base, PreferencePairModel, create_sessionmaker
 from app.schemas import PreferencePair
-
-if TYPE_CHECKING:
-    pass
 
 
 class PreferenceStore:

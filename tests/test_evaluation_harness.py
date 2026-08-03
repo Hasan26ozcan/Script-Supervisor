@@ -413,17 +413,19 @@ def test_main_block_no_preferences_exits_system_exit(monkeypatch, tmp_path):
         def all(self):
             return []
 
+    def simulate_main_block():
+        with eh.PreferenceStore() as store:
+            prefs = store.all()
+        if not prefs:
+            raise SystemExit(
+                "No preferences found. Run `python -m training.generate_fake_preferences` first."
+            )
+        eh.run_evaluation_suite(prefs, suite_name="cli-run")
+
     with patch.object(eh, "PreferenceStore", EmptyStore):
         # Simulate __main__ block execution
         with pytest.raises(SystemExit):
-            with eh.PreferenceStore() as store:
-                prefs = store.all()
-            if not prefs:
-                raise SystemExit(
-                    "No preferences found. Run `python -m"
-                    " training.generate_fake_preferences` first."
-                )
-            eh.run_evaluation_suite(prefs, suite_name="cli-run")
+            simulate_main_block()
 
 
 def test_main_block_exits_when_no_preferences(monkeypatch, tmp_path):

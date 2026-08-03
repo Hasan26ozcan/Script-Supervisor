@@ -17,9 +17,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import app.database  # noqa: F401
 from app.agent_loop import CorrectionLoop
 from app.config import settings
-from app.database import *  # noqa: F403 -- ensure database initialization
 from app.evaluation_harness import run_evaluation_suite
 from app.gateway import ModelGateway
 from app.mem0 import Mem0Manager
@@ -74,7 +74,7 @@ class EvaluationRequest(BaseModel):
     include_demo_dataset: bool = True
 
 
-@app.post("/run", response_model=RunTrace)
+@app.post("/run")
 async def run_loop(req: RunRequest) -> RunTrace:
     loop = CorrectionLoop(rubric=rubric, max_turns=req.max_turns)
     refs = [ReferenceImage(path=r.path, caption=r.caption) for r in req.reference_images]
@@ -83,7 +83,10 @@ async def run_loop(req: RunRequest) -> RunTrace:
     return trace
 
 
-@app.get("/traces/{run_id}", response_model=RunTrace)
+@app.get(
+    "/traces/{run_id}",
+    responses={404: {"description": "Trace not found for the given run_id"}},
+)
 def get_trace(run_id: str) -> RunTrace:
     path = TRACES_DIR / f"{run_id}.json"
     if not path.exists():
@@ -198,7 +201,11 @@ def refresh_mem0_entries() -> dict:
     return {"refreshed": [entry.model_dump() for entry in refreshed]}
 
 
-@app.get("/compare-ui", response_class=HTMLResponse)
+@app.get(
+    "/compare-ui",
+    response_class=HTMLResponse,
+    responses={404: {"description": "Comparison UI template not found"}},
+)
 def compare_ui() -> HTMLResponse:
     html_path = Path(__file__).resolve().parent / "templates" / "compare.html"
     if not html_path.exists():

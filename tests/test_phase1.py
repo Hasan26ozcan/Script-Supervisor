@@ -16,7 +16,7 @@ from app.gateway import MODEL_PRICES, CallResult, GatewayLedger, ModelGateway
 from app.schemas import Critique
 
 
-@pytest.fixture()
+@pytest.fixture
 def gateway():
     return ModelGateway(GatewayLedger())
 

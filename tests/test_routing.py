@@ -124,15 +124,13 @@ def test_evaluate_condition_unknown_metric_raises(tmp_path):
     )
     router = AdaptiveRouter.load_from_file(rules_path)
     trace = _trace_with(5.0)
+    condition = EscalationCondition(
+        type="score_below",
+        metric="nonexistent_metric",
+        threshold=5.0,
+    )
     with pytest.raises(ValueError, match=r"Unknown routing metric"):
-        router._evaluate_condition(
-            EscalationCondition(
-                type="score_below",
-                metric="nonexistent_metric",
-                threshold=5.0,
-            ),
-            trace,
-        )
+        router._evaluate_condition(condition, trace)
 
 
 # --- _evaluate_condition: missing threshold for score_below (line 125) ---
@@ -146,11 +144,10 @@ def test_evaluate_condition_score_below_no_threshold_raises(monkeypatch, tmp_pat
         encoding="utf-8",
     )
     router = AdaptiveRouter.load_from_file(rules_path)
+    condition = EscalationCondition(type="score_below", metric="overall")
+    trace = _trace_with(5.0)
     with pytest.raises(ValueError, match=r"Threshold required"):
-        router._evaluate_condition(
-            EscalationCondition(type="score_below", metric="overall"),
-            _trace_with(5.0),
-        )
+        router._evaluate_condition(condition, trace)
 
 
 # --- _evaluate_condition: missing threshold for score_above (line 129) ---
@@ -164,11 +161,10 @@ def test_evaluate_condition_score_above_no_threshold_raises(tmp_path):
         encoding="utf-8",
     )
     router = AdaptiveRouter.load_from_file(rules_path)
+    condition = EscalationCondition(type="score_above", metric="overall")
+    trace = _trace_with(5.0)
     with pytest.raises(ValueError, match=r"Threshold required"):
-        router._evaluate_condition(
-            EscalationCondition(type="score_above", metric="overall"),
-            _trace_with(5.0),
-        )
+        router._evaluate_condition(condition, trace)
 
 
 # --- _evaluate_condition: missing lower bound for score_between (lines 132-133) ---
@@ -182,16 +178,15 @@ def test_evaluate_condition_score_between_missing_lower_raises(tmp_path):
         encoding="utf-8",
     )
     router = AdaptiveRouter.load_from_file(rules_path)
+    condition = EscalationCondition(
+        type="score_between",
+        metric="overall",
+        lower=None,
+        upper=7.0,
+    )
+    trace = _trace_with(5.0)
     with pytest.raises(ValueError, match=r"Lower and upper bounds"):
-        router._evaluate_condition(
-            EscalationCondition(
-                type="score_between",
-                metric="overall",
-                lower=None,
-                upper=7.0,
-            ),
-            _trace_with(5.0),
-        )
+        router._evaluate_condition(condition, trace)
 
 
 # --- _evaluate_condition: missing upper bound for score_between (lines 132-133) ---
@@ -205,16 +200,15 @@ def test_evaluate_condition_score_between_missing_upper_raises(tmp_path):
         encoding="utf-8",
     )
     router = AdaptiveRouter.load_from_file(rules_path)
+    condition = EscalationCondition(
+        type="score_between",
+        metric="overall",
+        lower=5.0,
+        upper=None,
+    )
+    trace = _trace_with(5.0)
     with pytest.raises(ValueError, match=r"Lower and upper bounds"):
-        router._evaluate_condition(
-            EscalationCondition(
-                type="score_between",
-                metric="overall",
-                lower=5.0,
-                upper=None,
-            ),
-            _trace_with(5.0),
-        )
+        router._evaluate_condition(condition, trace)
 
 
 # --- score_between condition type (lines 128-130) ---
@@ -250,11 +244,10 @@ def test_evaluate_condition_unknown_type_raises(tmp_path):
         encoding="utf-8",
     )
     router = AdaptiveRouter.load_from_file(rules_path)
+    condition = EscalationCondition(type="impossible_condition", metric="overall")
+    trace = _trace_with(5.0)
     with pytest.raises(ValueError, match=r"Unknown condition type"):
-        router._evaluate_condition(
-            EscalationCondition(type="impossible_condition", metric="overall"),
-            _trace_with(5.0),
-        )
+        router._evaluate_condition(condition, trace)
 
 
 # --- _evaluate_condition: empty trace returns False (line 116) ---

@@ -268,9 +268,10 @@ class TestUnsupportedProviderError:
 
         from app.gateway import GatewayLedger, ModelGateway
 
+        ledger = GatewayLedger()
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
-                ModelGateway(GatewayLedger())
+                ModelGateway(ledger)
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -286,9 +287,10 @@ class TestUnsupportedProviderError:
 
         from app.gateway import GatewayLedger, ModelGateway
 
+        ledger = GatewayLedger()
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
-                ModelGateway(GatewayLedger())
+                ModelGateway(ledger)
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -309,9 +311,10 @@ class TestUnsupportedProviderError:
         gateway = ModelGateway(ledger)
         gw.MOCK_MODE = False
         gw.settings.provider = "unsupported_provider_xyz"
+        coro = gateway.call_vision("draft", "sys", "user", ["img.jpg"])
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
-                asyncio.run(gateway.call_vision("draft", "sys", "user", ["img.jpg"]))
+                asyncio.run(coro)
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -337,9 +340,10 @@ class TestUnsupportedProviderError:
         gateway = ModelGateway(ledger)
         gw.MOCK_MODE = False
         gw.settings.provider = "unsupported_provider_xyz"
+        coro = gateway.call_structured("custom", "sys", "user", SimpleSchema)
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
-                asyncio.run(gateway.call_structured("custom", "sys", "user", SimpleSchema))
+                asyncio.run(coro)
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -359,9 +363,10 @@ class TestAnthropicProviderMissingKey:
 
         from app.gateway import GatewayLedger, ModelGateway
 
+        ledger = GatewayLedger()
         try:
             with pytest.raises(ValueError, match="ANTHROPIC_API_KEY"):
-                ModelGateway(GatewayLedger())
+                ModelGateway(ledger)
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -382,9 +387,10 @@ class TestGroqProviderMissingKey:
 
         from app.gateway import GatewayLedger, ModelGateway
 
+        ledger = GatewayLedger()
         try:
             with pytest.raises(ValueError, match="GROQ_API_KEY"):
-                ModelGateway(GatewayLedger())
+                ModelGateway(ledger)
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -412,9 +418,10 @@ class TestGroqNotInstalled:
 
         from app.gateway import GatewayLedger, ModelGateway
 
+        ledger = GatewayLedger()
         try:
             with pytest.raises(ImportError, match="groq package not installed"):
-                ModelGateway(GatewayLedger())
+                ModelGateway(ledger)
         finally:
             gw.MOCK_MODE = old_mock
             gw.settings.provider = old_provider
@@ -630,10 +637,11 @@ class TestModelGatewayLiveAnthropicCall:
         gateway = ModelGateway(ledger)
         self._gw.MOCK_MODE = False
         self._gw.settings.provider = "unsupported_provider_xyz"
+        coro = gateway.call("draft", "sys", "user")
 
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
-                asyncio.run(gateway.call("draft", "sys", "user"))
+                asyncio.run(coro)
         finally:
             self._restore(monkeypatch)
 
@@ -773,10 +781,11 @@ class TestModelGatewayStructuredRetryPaths:
 
         try:
             self._gw.MOCK_MODE = False
-            with pytest.raises(Exception):  # noqa: B017
-                asyncio.run(
-                    gateway.call_structured("custom", "sys", "user", SimpleSchema, max_retries=1)
-                )
+            import json
+
+            coro = gateway.call_structured("custom", "sys", "user", SimpleSchema, max_retries=1)
+            with pytest.raises(json.JSONDecodeError):
+                asyncio.run(coro)
         finally:
             self._restore(monkeypatch)
 
@@ -1158,11 +1167,10 @@ class TestGroqNonMockPaths:
         gateway = ModelGateway(ledger)
         gateway._groq_client = mock_groq.Groq.return_value
 
+        coro = gateway.call_structured("custom", "sys", "user", SimpleSchema, max_retries=1)
         try:
             with pytest.raises(Exception, match="network error"):
-                asyncio.run(
-                    gateway.call_structured("custom", "sys", "user", SimpleSchema, max_retries=1)
-                )
+                asyncio.run(coro)
         finally:
             self._restore(monkeypatch)
 
@@ -1215,9 +1223,10 @@ class TestGroqNonMockPaths:
         ledger = GatewayLedger()
         gateway = ModelGateway(ledger)
         self._gw.settings.provider = "unsupported_provider_xyz"
+        coro = gateway.call("draft", "sys", "user")
 
         try:
             with pytest.raises(ValueError, match="Unsupported provider"):
-                asyncio.run(gateway.call("draft", "sys", "user"))
+                asyncio.run(coro)
         finally:
             self._restore(monkeypatch)

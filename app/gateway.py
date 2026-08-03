@@ -12,6 +12,7 @@ that backed it up" — every call is logged, nothing is invisible.
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import mimetypes
 import random
@@ -22,7 +23,9 @@ from typing import Any
 
 import structlog
 
-import app.logging_config  # noqa: F401 -- configures structlog on import, side effect intentional
+# Importing this module configures structlog as a side effect; the import
+# itself is otherwise unused.
+import app.logging_config  # noqa: F401
 from app.config import settings
 from app.schemas import BaseModel, Critique
 
@@ -30,38 +33,47 @@ log = structlog.get_logger(component="gateway")
 
 MOCK_MODE = settings.mock_mode
 
+# Model name constants -- defined once so we're not duplicating string
+# literals (and risking typos) across the pricing table, task defaults,
+# and per-call fallbacks below.
+MODEL_CLAUDE_HAIKU = "claude-haiku-4-5-20251001"
+MODEL_CLAUDE_SONNET = "claude-sonnet-5"
+MODEL_CLAUDE_OPUS = "claude-opus-4-8"
+MODEL_LLAMA_8B_INSTANT = "llama-3.1-8b-instant"
+MODEL_LLAMA_70B_VERSATILE = "llama-3.1-70b-versatile"
+MODEL_LLAMA_11B_VISION = "llama-3.2-11b-vision-preview"
+MODEL_LLAMA_90B_VISION = "llama-3.2-90b-vision-preview"
+MODEL_MIXTRAL_8X7B = "mixtral-8x7b-32768"
+MODEL_GEMMA_7B = "gemma-7b-it"
+
 # Rough per-1M-token prices (USD). Update as needed; this is a stand-in,
 # not a source of truth. Keeping it explicit and swappable is the point.
 # These are approximate rates - adjust based on actual provider pricing
 MODEL_PRICES = {
     # Anthropic models (legacy support)
-    "claude-haiku-4-5-20251001": {"input": 0.80, "output": 4.00},
-    "claude-sonnet-5": {"input": 3.00, "output": 15.00},
-    "claude-opus-4-8": {"input": 15.00, "output": 75.00},
+    MODEL_CLAUDE_HAIKU: {"input": 0.80, "output": 4.00},
+    MODEL_CLAUDE_SONNET: {"input": 3.00, "output": 15.00},
+    MODEL_CLAUDE_OPUS: {"input": 15.00, "output": 75.00},
     # Groq models (approximate pricing - adjust as needed)
-    "llama-3.1-8b-instant": {"input": 0.10, "output": 0.10},
-    "llama-3.1-70b-versatile": {"input": 0.60, "output": 0.60},
-    "llama-3.2-11b-vision-preview": {"input": 0.30, "output": 0.30},
-    "llama-3.2-90b-vision-preview": {"input": 0.90, "output": 0.90},
-    "mixtral-8x7b-32768": {"input": 0.45, "output": 0.45},
-    "gemma-7b-it": {"input": 0.10, "output": 0.10},
+    MODEL_LLAMA_8B_INSTANT: {"input": 0.10, "output": 0.10},
+    MODEL_LLAMA_70B_VERSATILE: {"input": 0.60, "output": 0.60},
+    MODEL_LLAMA_11B_VISION: {"input": 0.30, "output": 0.30},
+    MODEL_LLAMA_90B_VISION: {"input": 0.90, "output": 0.90},
+    MODEL_MIXTRAL_8X7B: {"input": 0.45, "output": 0.45},
+    MODEL_GEMMA_7B: {"input": 0.10, "output": 0.10},
 }
 
 TASK_DEFAULT_MODEL = {
     # Cheap model by default for drafting -- the harness's job is to make
     # this viable. Escalate only when the rubric says quality is lacking.
-    "draft": (
-        "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001"
-    ),
-    "critique": ("llama-3.1-70b-versatile" if settings.provider == "groq" else "claude-sonnet-5"),
-    "revise": (
-        "llama-3.1-8b-instant" if settings.provider == "groq" else "claude-haiku-4-5-20251001"
-    ),
+    "draft": (MODEL_LLAMA_8B_INSTANT if settings.provider == "groq" else MODEL_CLAUDE_HAIKU),
+    "critique": (MODEL_LLAMA_70B_VERSATILE if settings.provider == "groq" else MODEL_CLAUDE_SONNET),
+    "revise": (MODEL_LLAMA_8B_INSTANT if settings.provider == "groq" else MODEL_CLAUDE_HAIKU),
     # Vision-grounded critique needs a model that actually looks at the
     # image, not just describes what it assumes an image like that would
     # show.
     "visual_critique": (
-        "llama-3.2-11b-vision-preview" if settings.provider == "groq" else "claude-sonnet-5"
+        MODEL_LLAMA_11B_VISION if settings.provider == "groq" else MODEL_CLAUDE_SONNET
     ),
 }
 
@@ -107,42 +119,55 @@ class ModelGateway:
     next turn") without callers needing to know pricing or client details.
     """
 
+    @staticmethod
+    def _build_budget():
+        if settings.run_budget_usd is None and settings.daily_budget_usd is None:
+            return None
+        from app.budget import CostBudget
+
+        return CostBudget(
+            per_run_limit=settings.run_budget_usd,
+            daily_limit=settings.daily_budget_usd,
+        )
+
+    @staticmethod
+    def _build_anthropic_client():
+        if not settings.anthropic_api_key:
+            raise ValueError(
+                "ANTHROPIC_API_KEY required when provider=anthropic and mock_mode=False"
+            )
+        # Lazy import: only needed for live (non-mock) calls.
+        import anthropic  # noqa: F401
+
+        return anthropic.Anthropic(api_key=settings.anthropic_api_key)
+
+    @staticmethod
+    def _build_groq_client():
+        if not settings.groq_api_key:
+            raise ValueError("GROQ_API_KEY required when provider=groq and mock_mode=False")
+        try:
+            from groq import Groq
+        except ImportError:
+            raise ImportError(
+                "groq package not installed. Install with: pip install groq"
+            ) from None
+
+        return Groq(api_key=settings.groq_api_key)
+
     def __init__(self, ledger: GatewayLedger | None = None):
         self.ledger = ledger or GatewayLedger()
         self._anthropic_client = None
         self._groq_client = None
-        self.budget = None
+        self.budget = self._build_budget()
 
-        if settings.run_budget_usd is not None or settings.daily_budget_usd is not None:
-            from app.budget import CostBudget
-
-            self.budget = CostBudget(
-                per_run_limit=settings.run_budget_usd,
-                daily_limit=settings.daily_budget_usd,
-            )
-
-        if not MOCK_MODE:
-            if settings.provider == "anthropic":
-                if not settings.anthropic_api_key:
-                    raise ValueError(
-                        "ANTHROPIC_API_KEY required when provider=anthropic and mock_mode=False"
-                    )
-                import anthropic  # noqa: F401 -- lazy import, only needed for live calls
-
-                self._anthropic_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-            elif settings.provider == "groq":
-                if not settings.groq_api_key:
-                    raise ValueError("GROQ_API_KEY required when provider=groq and mock_mode=False")
-                try:
-                    from groq import Groq
-                except ImportError:
-                    raise ImportError(
-                        "groq package not installed. Install with: pip install groq"
-                    ) from None
-
-                self._groq_client = Groq(api_key=settings.groq_api_key)
-            else:
-                raise ValueError(f"Unsupported provider: {settings.provider}")
+        if MOCK_MODE:
+            return
+        if settings.provider == "anthropic":
+            self._anthropic_client = self._build_anthropic_client()
+        elif settings.provider == "groq":
+            self._groq_client = self._build_groq_client()
+        else:
+            raise ValueError(f"Unsupported provider: {settings.provider}")
 
     def _record(
         self,
@@ -189,16 +214,17 @@ class ModelGateway:
     async def call(self, task: str, system: str, user: str, model: str | None = None) -> CallResult:
         model = model or TASK_DEFAULT_MODEL.get(
             task,
-            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile",
+            MODEL_CLAUDE_SONNET if settings.provider == "anthropic" else MODEL_LLAMA_70B_VERSATILE,
         )
         start = time.perf_counter()
 
         if MOCK_MODE:
-            text, prompt_tok, completion_tok = self._mock_response(task, user)
+            text, prompt_tok, completion_tok = await self._mock_response(task, user)
         else:
             if settings.provider == "anthropic":
                 assert self._anthropic_client is not None
-                resp = self._anthropic_client.messages.create(
+                resp = await asyncio.to_thread(
+                    self._anthropic_client.messages.create,
                     model=model,
                     max_tokens=1024,
                     system=system,
@@ -210,7 +236,8 @@ class ModelGateway:
             elif settings.provider == "groq":
                 assert self._groq_client is not None
                 # Groq uses OpenAI-compatible API
-                resp = self._groq_client.chat.completions.create(
+                resp = await asyncio.to_thread(
+                    self._groq_client.chat.completions.create,
                     model=model,
                     messages=[
                         {"role": "system", "content": system},
@@ -244,16 +271,12 @@ class ModelGateway:
         """
         model = model or TASK_DEFAULT_MODEL.get(
             task,
-            (
-                "claude-sonnet-5"
-                if settings.provider == "anthropic"
-                else "llama-3.2-11b-vision-preview"
-            ),
+            (MODEL_CLAUDE_SONNET if settings.provider == "anthropic" else MODEL_LLAMA_11B_VISION),
         )
         start = time.perf_counter()
 
         if MOCK_MODE:
-            text, prompt_tok, completion_tok = self._mock_vision_response(
+            text, prompt_tok, completion_tok = await self._mock_vision_response(
                 task, user_text, len(image_paths)
             )
         else:
@@ -272,7 +295,8 @@ class ModelGateway:
                     )
                 content.append({"type": "text", "text": user_text})
 
-                resp = self._anthropic_client.messages.create(
+                resp = await asyncio.to_thread(
+                    self._anthropic_client.messages.create,
                     model=model,
                     max_tokens=1024,
                     system=system,
@@ -299,7 +323,8 @@ class ModelGateway:
                 vision_context = " ".join(image_descriptions)
                 enhanced_user_text = f"{user_text}\n\nVisual context: {vision_context}"
 
-                resp = self._groq_client.chat.completions.create(
+                resp = await asyncio.to_thread(
+                    self._groq_client.chat.completions.create,
                     model=model,
                     messages=[
                         {"role": "system", "content": system},
@@ -318,6 +343,145 @@ class ModelGateway:
         return self._record(
             task, model, text, prompt_tok, completion_tok, latency_ms, n_images=len(image_paths)
         )
+
+    @staticmethod
+    def _structured_mock_text(user: str, schema: type[BaseModel]) -> tuple[str, int, int]:
+        """Generate a mock response that the schema validator can parse."""
+        import json as _json
+
+        if schema == Critique:
+            text = _json.dumps(
+                {
+                    "turn": 1,
+                    "scores": [
+                        {
+                            "criterion": "clarity",
+                            "score": 7.0,
+                            "rationale": "shot descriptions are clear",
+                        },
+                        {"criterion": "tone_match", "score": 8.0, "rationale": "appropriate tone"},
+                        {
+                            "criterion": "actionability",
+                            "score": 6.0,
+                            "rationale": "mostly actionable",
+                        },
+                    ],
+                    "overall": 7.0,
+                    "revision_notes": "add more specific camera movements",
+                    "modality": "text",
+                }
+            )
+            return text, max(20, len(user) // 4) + 50, max(10, len(text) // 4)
+
+        # Fallback for other schemas
+        return '{"error": "mock mode fallback"}', max(20, len(user) // 4), 20
+
+    async def _structured_anthropic_call(
+        self, model: str, system: str, user: str, schema: type[BaseModel]
+    ) -> tuple[str, int, int]:
+        assert self._anthropic_client is not None
+        import json
+
+        tool_definition = {
+            "name": "submit_critique",
+            "description": "Submit a structured critique",
+            "input_schema": schema.model_json_schema(),
+        }
+        resp = await asyncio.to_thread(
+            self._anthropic_client.messages.create,
+            model=model,
+            max_tokens=1024,
+            system=system,
+            messages=[{"role": "user", "content": user}],
+            tools=[tool_definition],
+            tool_choice={"type": "tool", "name": "submit_critique"},
+        )  # type: ignore[call-overload]
+
+        # Extract the tool use result
+        text = ""
+        for block in resp.content:
+            if block.type == "tool_use" and block.name == "submit_critique":
+                text = json.dumps(block.input)
+                break
+        if not text:
+            # Fallback if no tool use was found
+            text = "".join(b.text for b in resp.content if b.type == "text")
+
+        return text, resp.usage.input_tokens, resp.usage.output_tokens
+
+    async def _structured_groq_call(
+        self, model: str, system: str, user: str, schema: type[BaseModel]
+    ) -> tuple[str, int, int]:
+        assert self._groq_client is not None
+        import json
+        import re
+
+        # Groq doesn't have a native structured-output tool-use path here, so
+        # we prompt for JSON conforming to the schema and parse it out.
+        schema_str = json.dumps(schema.model_json_schema(), indent=2)
+        enhanced_system = f"""{system}
+
+                        You must respond with a valid JSON object that conforms to this schema:
+                        {schema_str}
+
+                        Respond ONLY with the JSON object, no additional text."""
+
+        resp = await asyncio.to_thread(
+            self._groq_client.chat.completions.create,
+            model=model,
+            messages=[
+                {"role": "system", "content": enhanced_system},
+                {"role": "user", "content": user},
+            ],
+            max_tokens=1024,
+            temperature=0.1,  # Lower temperature for more consistent JSON
+        )
+        text = resp.choices[0].message.content
+
+        # Extract JSON-like content between curly braces; if none is found,
+        # let downstream validation fail and trigger a retry.
+        json_match = re.search(r"\{.*\}", text, re.DOTALL)
+        if json_match:
+            text = json_match.group(0)
+
+        prompt_tok = len(system) // 4 + len(user) // 4
+        completion_tok = len(text) // 4
+        return text, prompt_tok, completion_tok
+
+    async def _get_structured_text(
+        self, model: str, system: str, user: str, schema: type[BaseModel]
+    ) -> tuple[str, int, int]:
+        """Dispatch to mock/anthropic/groq and return (text, prompt_tok, completion_tok)."""
+        if MOCK_MODE:
+            return self._structured_mock_text(user, schema)
+        if settings.provider == "anthropic":
+            return await self._structured_anthropic_call(model, system, user, schema)
+        if settings.provider == "groq":
+            return await self._structured_groq_call(model, system, user, schema)
+        raise ValueError(f"Unsupported provider: {settings.provider}")
+
+    @staticmethod
+    def _parse_error_critique(max_retries: int, error: Exception) -> Critique:
+        return Critique(
+            turn=0,  # This would need to be set properly in context
+            scores=[],
+            overall=0.0,
+            revision_notes=f"Parse error after {max_retries} attempts: {error!s}",
+            modality="text",
+            parse_error=True,
+        )
+
+    def _validate_structured(
+        self, result: CallResult, text: str, schema: type[BaseModel]
+    ) -> BaseModel | CallResult:
+        """Parse+validate `text` against `schema`, raising on failure."""
+        import json
+
+        # Non-Critique schemas in mock mode always return the raw result.
+        if MOCK_MODE and schema != Critique:
+            return result
+        data = json.loads(text)
+        return schema(**data)
 
     async def call_structured(
         self,
@@ -344,189 +508,45 @@ class ModelGateway:
         """
         model = model or TASK_DEFAULT_MODEL.get(
             task,
-            "claude-sonnet-5" if settings.provider == "anthropic" else "llama-3.1-70b-versatile",
+            MODEL_CLAUDE_SONNET if settings.provider == "anthropic" else MODEL_LLAMA_70B_VERSATILE,
         )
         start = time.perf_counter()
 
         for attempt in range(max_retries):
+            is_last_attempt = attempt >= max_retries - 1
             try:
-                if MOCK_MODE:
-                    # For mock mode, generate a mock response that the
-                    # schema validator can parse (JSON for structured schemas).
-                    import json as _json
-
-                    if schema == Critique:
-                        mock_text = _json.dumps(
-                            {
-                                "turn": 1,
-                                "scores": [
-                                    {
-                                        "criterion": "clarity",
-                                        "score": 7.0,
-                                        "rationale": "shot descriptions are clear",
-                                    },
-                                    {
-                                        "criterion": "tone_match",
-                                        "score": 8.0,
-                                        "rationale": "appropriate tone",
-                                    },
-                                    {
-                                        "criterion": "actionability",
-                                        "score": 6.0,
-                                        "rationale": "mostly actionable",
-                                    },
-                                ],
-                                "overall": 7.0,
-                                "revision_notes": "add more specific camera movements",
-                                "modality": "text",
-                            }
-                        )
-                        text = mock_text
-                        prompt_tok = max(20, len(user) // 4) + 50
-                        completion_tok = max(10, len(text) // 4)
-                    else:
-                        # Fallback for other schemas
-                        text = '{"error": "mock mode fallback"}'
-                        prompt_tok = max(20, len(user) // 4)
-                        completion_tok = 20
-                else:
-                    if settings.provider == "anthropic":
-                        assert self._anthropic_client is not None
-                        # Prepare the tool definition from the Pydantic schema
-                        tool_definition = {
-                            "name": "submit_critique",
-                            "description": "Submit a structured critique",
-                            "input_schema": schema.model_json_schema(),
-                        }
-
-                        resp = self._anthropic_client.messages.create(
-                            model=model,
-                            max_tokens=1024,
-                            system=system,
-                            messages=[{"role": "user", "content": user}],
-                            tools=[tool_definition],
-                            tool_choice={"type": "tool", "name": "submit_critique"},
-                        )  # type: ignore[call-overload]
-
-                        # Extract the tool use result
-                        text = ""
-                        for block in resp.content:
-                            if block.type == "tool_use" and block.name == "submit_critique":
-                                # The tool use block contains the structured input
-                                import json
-
-                                tool_input = block.input
-                                text = json.dumps(tool_input)
-                                break
-
-                        if not text:
-                            # Fallback if no tool use was found
-                            text = "".join(b.text for b in resp.content if b.type == "text")
-
-                        prompt_tok = resp.usage.input_tokens
-                        completion_tok = resp.usage.output_tokens
-                    elif settings.provider == "groq":
-                        assert self._groq_client is not None
-                        # For Groq, we'll use JSON mode if available, or prompt engineering
-                        # Groq supports JSON schema via the format parameter in some models
-                        # For simplicity, we'll prompt for JSON and parse it
-
-                        # Add JSON formatting instructions to the system prompt
-                        json_schema = schema.model_json_schema()
-                        import json
-
-                        schema_str = json.dumps(json_schema, indent=2)
-
-                        enhanced_system = f"""{system}
-
-                        You must respond with a valid JSON object that conforms to this schema:
-                        {schema_str}
-
-                        Respond ONLY with the JSON object, no additional text."""
-
-                        resp = self._groq_client.chat.completions.create(
-                            model=model,
-                            messages=[
-                                {"role": "system", "content": enhanced_system},
-                                {"role": "user", "content": user},
-                            ],
-                            max_tokens=1024,
-                            temperature=0.1,  # Lower temperature for more consistent JSON
-                        )
-                        text = resp.choices[0].message.content
-
-                        # Try to extract JSON from the response
-                        # Look for JSON-like content between curly braces
-                        import re
-
-                        json_match = re.search(r"\{.*\}", text, re.DOTALL)
-                        if json_match:
-                            text = json_match.group(0)
-                        # If no JSON found, we'll let the validation fail and retry
-
-                        prompt_tok = len(system) // 4 + len(user) // 4
-                        completion_tok = len(text) // 4
-                    else:
-                        raise ValueError(f"Unsupported provider: {settings.provider}")
-
+                text, prompt_tok, completion_tok = await self._get_structured_text(
+                    model, system, user, schema
+                )
                 latency_ms = (time.perf_counter() - start) * 1000
                 result = self._record(task, model, text, prompt_tok, completion_tok, latency_ms)
 
-                # Try to parse and validate the response against the schema
                 try:
-                    import json
-
-                    # Non-Critique schemas in mock mode always return raw result
-                    if MOCK_MODE and schema != Critique:
-                        return result
-                    data = json.loads(text)
-                    validated = schema(**data)
-                    return validated
+                    return self._validate_structured(result, text, schema)
                 except Exception as e:
-                    # Validation error - retry if we have attempts left
-                    if attempt < max_retries - 1:
-                        # Append error to user prompt for retry
-                        error_msg = (
-                            f"Previous attempt failed validation: {str(e)}. "
+                    if not is_last_attempt:
+                        user = (
+                            f"{user}\n\nPrevious attempt failed validation: {e!s}. "
                             "Please correct your response."
                         )
-                        user = f"{user}\n\n{error_msg}"
                         continue
-                    else:
-                        # Max retries exceeded, return error result
-                        if schema == Critique:
-                            # Return a Critique with parse_error=True
-                            error_critique = Critique(
-                                turn=0,  # This would need to be set properly in context
-                                scores=[],
-                                overall=0.0,
-                                revision_notes=(
-                                    f"Parse error after {max_retries} attempts: {str(e)}"
-                                ),
-                                modality="text",
-                                parse_error=True,
-                            )
-                            return error_critique
-                        else:
-                            # For other schemas, raise the exception
-                            raise
+                    if schema == Critique:
+                        return self._parse_error_critique(max_retries, e)
+                    raise
 
             except Exception as e:
-                if attempt < max_retries - 1:
-                    # Append error to user prompt for retry
-                    error_msg = f"Previous attempt failed: {str(e)}. Please correct your response."
-                    user = f"{user}\n\n{error_msg}"
-                    continue
-                else:
-                    # Max retries exceeded
+                if is_last_attempt:
                     raise
+                user = f"{user}\n\nPrevious attempt failed: {e!s}. Please correct your response."
 
         # This shouldn't be reached, but just in case
         raise RuntimeError("Failed to get valid response after retries")  # pragma: no cover
 
     @staticmethod
-    def _mock_vision_response(task: str, user_text: str, n_images: int) -> tuple[str, int, int]:
-        time.sleep(random.uniform(0.03, 0.10))  # vision calls are typically slower
+    async def _mock_vision_response(
+        task: str, user_text: str, n_images: int
+    ) -> tuple[str, int, int]:
+        await asyncio.sleep(random.uniform(0.03, 0.10))  # vision calls are typically slower
         prompt_tok = max(50, len(user_text) // 4) + n_images * 300  # images cost real tokens
         text = (
             f"visual_continuity: 6/10 - shot 2 framing plausible against the {n_images} "
@@ -540,10 +560,10 @@ class ModelGateway:
         return text, prompt_tok, completion_tok
 
     @staticmethod
-    def _mock_response(task: str, user: str) -> tuple[str, int, int]:
+    async def _mock_response(task: str, user: str) -> tuple[str, int, int]:
         """Deterministic-ish fake responses so the loop is testable end to end
         without a network call. Latency is simulated to keep timing code honest."""
-        time.sleep(random.uniform(0.02, 0.08))
+        await asyncio.sleep(random.uniform(0.02, 0.08))
         prompt_tok = max(20, len(user) // 4)
         if task == "draft":
             text = (

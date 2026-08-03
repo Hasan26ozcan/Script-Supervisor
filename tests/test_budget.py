@@ -28,14 +28,15 @@ def test_cost_budget_consumes_and_resets():
 
 def test_cost_budget_raises_when_limit_exceeded():
     budget = CostBudget(per_run_limit=5.0, daily_limit=10.0)
-    budget.consume(4.0, today=date(2026, 7, 26))
+    today = date(2026, 7, 26)
+    budget.consume(4.0, today=today)
     with pytest.raises(BudgetExceeded):
-        budget.consume(2.0, today=date(2026, 7, 26))
+        budget.consume(2.0, today=today)
 
     budget = CostBudget(per_run_limit=10.0, daily_limit=5.0)
-    budget.consume(3.0, today=date(2026, 7, 26))
+    budget.consume(3.0, today=today)
     with pytest.raises(BudgetExceeded):
-        budget.consume(3.0, today=date(2026, 7, 26))
+        budget.consume(3.0, today=today)
 
 
 def test_cost_budget_no_limits():
@@ -50,8 +51,9 @@ def test_cost_budget_no_limits():
 
 def test_cost_budget_negative_consumption_raises():
     budget = CostBudget(per_run_limit=10.0)
+    today = date(2026, 7, 26)
     with pytest.raises(ValueError, match="non-negative"):
-        budget.consume(-1.0, today=date(2026, 7, 26))
+        budget.consume(-1.0, today=today)
 
 
 def test_cost_budget_auto_daily_reset_on_new_day():

@@ -79,13 +79,18 @@ class Mem0Store:
         scores_b, _ = rubric.parse_critique_text(call_b.text)
         score_a = rubric.weighted_overall(scores_a)
         score_b = rubric.weighted_overall(scores_b)
-        predicted = "a" if score_a > score_b else "b" if score_b > score_a else "tie"
+        if score_a > score_b:
+            predicted: Literal["a", "b", "tie"] = "a"
+        elif score_b > score_a:
+            predicted = "b"
+        else:
+            predicted = "tie"
         margin = abs(score_a - score_b)
         stale = predicted != entry.expected_winner or margin < settings.mem0_stale_margin
         record = MemoryValidationRecord(
             score_a=score_a,
             score_b=score_b,
-            predicted_winner=predicted,  # type: ignore[arg-type]
+            predicted_winner=predicted,
             expected_winner=entry.expected_winner,
             margin=margin,
             stale=stale,
@@ -129,7 +134,7 @@ class Mem0Manager:
         records = await asyncio.gather(
             *(
                 self.store.validate_entry(entry_id, self.rubric, self.gateway)
-                for entry_id in list(self.store.entries)
+                for entry_id in self.store.entries
             )
         )
         return list(records)

@@ -55,7 +55,7 @@ class Rubric:
             saved = json.loads(self.weights_path.read_text())
             # keep any new criteria at default weight if rubric evolved
             return {c: saved.get(c, 1.0) for c in self.criteria}
-        return {c: 1.0 for c in self.criteria}
+        return dict.fromkeys(self.criteria, 1.0)
 
     def save_weights(self) -> None:
         self.weights_path.parent.mkdir(parents=True, exist_ok=True)

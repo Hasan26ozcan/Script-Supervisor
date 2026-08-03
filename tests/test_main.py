@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("HARNESS_MOCK_MODE", "1")

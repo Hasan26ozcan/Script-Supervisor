@@ -47,6 +47,134 @@ class CorrectionLoop:
             else settings.cost_efficiency_threshold
         )
 
+    async def _generate_draft(
+        self, turn: int, brief: str, revision_notes: str, trace: RunTrace
+    ) -> Draft:
+        """Produce the draft (or revision) for a single turn."""
+        draft_prompt = brief if turn == 1 else f"{brief}\n\nRevision notes: {revision_notes}"
+        task = "draft" if turn == 1 else "revise"
+        draft_system = get_prompt("draft")
+
+        draft_model = self.model_overrides.get(task) or self.router.select_model(
+            task, trace.steps
+        )
+        draft_call = await self.gateway.call(task, draft_system, draft_prompt, model=draft_model)
+        return Draft(
+            turn=turn,
+            content=draft_call.text,
+            model=draft_call.model,
+            prompt_tokens=draft_call.prompt_tokens,
+            completion_tokens=draft_call.completion_tokens,
+            latency_ms=draft_call.latency_ms,
+        )
+
+    @staticmethod
+    def _get_vision_critique_system() -> str:
+        try:
+            return get_prompt("vision_critique")
+        except FileNotFoundError:
+            # Fallback to regular critique if vision_critique not available
+            return get_prompt("critique")
+
+    async def _run_vision_critique(
+        self,
+        brief: str,
+        draft: Draft,
+        reference_images: list[ReferenceImage],
+        trace: RunTrace,
+    ):
+        """Vision-grounded critique, using the reference images."""
+        critique_model = self.model_overrides.get("visual_critique") or self.router.select_model(
+            "visual_critique", trace.steps
+        )
+        captions = "; ".join(
+            f"[{i + 1}] {ri.caption or 'no caption'}" for i, ri in enumerate(reference_images)
+        )
+        vision_prompt = (
+            f"Brief: {brief}\n\nReference images: {captions}\n\nShot list:\n{draft.content}"
+        )
+        critique_call = await self.gateway.call_vision(
+            "visual_critique",
+            self._get_vision_critique_system(),
+            vision_prompt,
+            [ri.path for ri in reference_images],
+            model=critique_model,
+        )
+        return critique_call, "vision"
+
+    async def _run_text_critique(self, brief: str, draft: Draft, trace: RunTrace):
+        """Plain text critique (no reference images, or vision skipped by router)."""
+        critique_model = self.model_overrides.get("critique") or self.router.select_model(
+            "critique", trace.steps
+        )
+        critique_call = await self.gateway.call(
+            "critique",
+            get_prompt("critique"),
+            f"Brief: {brief}\n\nShot list:\n{draft.content}",
+            model=critique_model,
+        )
+        return critique_call, "text"
+
+    async def _generate_critique(
+        self,
+        brief: str,
+        draft: Draft,
+        reference_images: list[ReferenceImage],
+        use_vision: bool,
+        trace: RunTrace,
+    ) -> Critique:
+        modality: Literal["text", "vision"]
+        if use_vision and self.router.should_use_vision(trace.steps):
+            critique_call, modality = await self._run_vision_critique(
+                brief, draft, reference_images, trace
+            )
+        else:
+            critique_call, modality = await self._run_text_critique(brief, draft, trace)
+
+        scores, revision_notes = self.rubric.parse_critique_text(critique_call.text)
+        overall = self.rubric.weighted_overall(scores)
+        return Critique(
+            turn=draft.turn,
+            scores=scores,
+            overall=overall,
+            revision_notes=revision_notes,
+            modality=modality,
+        )
+
+    def _cost_aware_stop_reason(self, delta: float, prev_total_cost: float) -> str | None:
+        """Whether the last turn's marginal quality gain was worth its cost."""
+        if not (self.quality_per_dollar_threshold and self.quality_per_dollar_threshold > 0):
+            return None
+        last_turn_cost = self.gateway.ledger.total_cost_usd - prev_total_cost
+        if last_turn_cost <= 0:
+            return None
+        quality_per_dollar = delta / last_turn_cost
+        if quality_per_dollar < self.quality_per_dollar_threshold:
+            return "cost_threshold"
+        return None
+
+    def _stop_reason(
+        self, overall: float, prev_overall: float | None, prev_total_cost: float | None
+    ) -> str | None:
+        """Decide whether the loop should stop after this turn, and why."""
+        if overall >= self.threshold:
+            return "threshold_met"
+
+        if prev_overall is None or prev_total_cost is None:
+            return None
+
+        # Cost-aware early stop: ask whether the last marginal quality
+        # gain was worth the expense of another full turn. The point is
+        # not to avoid every extra turn, but to stop when the gain is
+        # too small relative to the cost.
+        delta = overall - prev_overall
+        cost_stop = self._cost_aware_stop_reason(delta, prev_total_cost)
+        if cost_stop:
+            return cost_stop
+        if abs(delta) < self.plateau_epsilon:
+            return "plateau"
+        return None
+
     async def run(
         self,
         brief: str,
@@ -60,112 +188,19 @@ class CorrectionLoop:
         use_vision = len(reference_images) > 0
 
         for turn in range(1, self.max_turns + 1):
-            # Get prompts from the registry
-            draft_prompt = brief if turn == 1 else f"{brief}\n\nRevision notes: {revision_notes}"
-            task = "draft" if turn == 1 else "revise"
-
-            # Get prompts from registry
-            draft_system = get_prompt("draft")
-            critique_system = get_prompt("critique")
-            try:
-                vision_critique_system = get_prompt("vision_critique")
-            except FileNotFoundError:
-                # Fallback to regular critique if vision_critique not available
-                vision_critique_system = get_prompt("critique")
-
-            draft_model = self.model_overrides.get(task) or self.router.select_model(
-                task, trace.steps
+            draft = await self._generate_draft(turn, brief, revision_notes, trace)
+            critique = await self._generate_critique(
+                brief, draft, reference_images, use_vision, trace
             )
-            draft_call = await self.gateway.call(
-                task, draft_system, draft_prompt, model=draft_model
-            )
-            draft = Draft(
-                turn=turn,
-                content=draft_call.text,
-                model=draft_call.model,
-                prompt_tokens=draft_call.prompt_tokens,
-                completion_tokens=draft_call.completion_tokens,
-                latency_ms=draft_call.latency_ms,
-            )
-
-            modality: Literal["text", "vision"]
-            if use_vision:
-                captions = "; ".join(
-                    f"[{i + 1}] {ri.caption or 'no caption'}"
-                    for i, ri in enumerate(reference_images)
-                )
-                vision_prompt = (
-                    f"Brief: {brief}\n\nReference images: {captions}\n\nShot list:\n{draft.content}"
-                )
-
-                if self.router.should_use_vision(trace.steps):
-                    critique_model = self.model_overrides.get(
-                        "visual_critique"
-                    ) or self.router.select_model("visual_critique", trace.steps)
-                    critique_call = await self.gateway.call_vision(
-                        "visual_critique",
-                        vision_critique_system,
-                        vision_prompt,
-                        [ri.path for ri in reference_images],
-                        model=critique_model,
-                    )
-                    modality = "vision"
-                else:
-                    critique_model = self.model_overrides.get(
-                        "critique"
-                    ) or self.router.select_model("critique", trace.steps)
-                    critique_call = await self.gateway.call(
-                        "critique",
-                        critique_system,
-                        f"Brief: {brief}\n\nShot list:\n{draft.content}",
-                        model=critique_model,
-                    )
-                    modality = "text"
-            else:
-                critique_model = self.model_overrides.get("critique") or self.router.select_model(
-                    "critique", trace.steps
-                )
-                critique_call = await self.gateway.call(
-                    "critique",
-                    critique_system,
-                    f"Brief: {brief}\n\nShot list:\n{draft.content}",
-                    model=critique_model,
-                )
-                modality = "text"
-
-            scores, revision_notes = self.rubric.parse_critique_text(critique_call.text)
-            overall = self.rubric.weighted_overall(scores)
-            critique = Critique(
-                turn=turn,
-                scores=scores,
-                overall=overall,
-                revision_notes=revision_notes,
-                modality=modality,
-            )
-
+            revision_notes = critique.revision_notes
             trace.steps.append(TraceStep(draft=draft, critique=critique))
 
-            if overall >= self.threshold:
-                trace.stop_reason = "threshold_met"
+            stop_reason = self._stop_reason(critique.overall, prev_overall, prev_total_cost)
+            if stop_reason:
+                trace.stop_reason = stop_reason
                 break
 
-            if prev_overall is not None and prev_total_cost is not None:
-                # Cost-aware early stop: ask whether the last marginal quality
-                # gain was worth the expense of another full turn. The point is
-                # not to avoid every extra turn, but to stop when the gain is
-                # too small relative to the cost.
-                delta = overall - prev_overall
-                if self.quality_per_dollar_threshold and self.quality_per_dollar_threshold > 0:
-                    last_turn_cost = self.gateway.ledger.total_cost_usd - prev_total_cost
-                    if last_turn_cost > 0:
-                        quality_per_dollar = delta / last_turn_cost
-                        if quality_per_dollar < self.quality_per_dollar_threshold:
-                            trace.stop_reason = "cost_threshold"
-                            break
-                if abs(delta) < self.plateau_epsilon:
-                    trace.stop_reason = "plateau"
-                    break
-            prev_overall = overall
+            prev_overall = critique.overall
             prev_total_cost = self.gateway.ledger.total_cost_usd
         else:
             trace.stop_reason = "max_turns"
