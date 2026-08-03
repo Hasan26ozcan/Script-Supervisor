@@ -483,6 +483,30 @@ class ModelGateway:
         data = json.loads(text)
         return schema(**data)
 
+    async def _attempt_structured_call(
+        self,
+        task: str,
+        model: str,
+        system: str,
+        user: str,
+        schema: type[BaseModel],
+        start: float,
+    ) -> BaseModel | CallResult:
+        """Perform a single structured-call attempt: fetch text, record it as a
+        call, then validate it against `schema`.
+
+        Raises whatever exception occurs along the way (a provider/network
+        failure from `_get_structured_text`, or a validation failure from
+        `_validate_structured`) so the retry loop in `call_structured` can
+        decide how to proceed.
+        """
+        text, prompt_tok, completion_tok = await self._get_structured_text(
+            model, system, user, schema
+        )
+        latency_ms = (time.perf_counter() - start) * 1000
+        result = self._record(task, model, text, prompt_tok, completion_tok, latency_ms)
+        return self._validate_structured(result, text, schema)
+
     async def call_structured(
         self,
         task: str,
@@ -515,27 +539,11 @@ class ModelGateway:
         for attempt in range(max_retries):
             is_last_attempt = attempt >= max_retries - 1
             try:
-                text, prompt_tok, completion_tok = await self._get_structured_text(
-                    model, system, user, schema
-                )
-                latency_ms = (time.perf_counter() - start) * 1000
-                result = self._record(task, model, text, prompt_tok, completion_tok, latency_ms)
-
-                try:
-                    return self._validate_structured(result, text, schema)
-                except Exception as e:
-                    if not is_last_attempt:
-                        user = (
-                            f"{user}\n\nPrevious attempt failed validation: {e!s}. "
-                            "Please correct your response."
-                        )
-                        continue
-                    if schema == Critique:
-                        return self._parse_error_critique(max_retries, e)
-                    raise
-
+                return await self._attempt_structured_call(task, model, system, user, schema, start)
             except Exception as e:
                 if is_last_attempt:
+                    if schema == Critique:
+                        return self._parse_error_critique(max_retries, e)
                     raise
                 user = f"{user}\n\nPrevious attempt failed: {e!s}. Please correct your response."
 

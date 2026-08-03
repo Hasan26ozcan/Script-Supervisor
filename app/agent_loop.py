@@ -55,9 +55,7 @@ class CorrectionLoop:
         task = "draft" if turn == 1 else "revise"
         draft_system = get_prompt("draft")
 
-        draft_model = self.model_overrides.get(task) or self.router.select_model(
-            task, trace.steps
-        )
+        draft_model = self.model_overrides.get(task) or self.router.select_model(task, trace.steps)
         draft_call = await self.gateway.call(task, draft_system, draft_prompt, model=draft_model)
         return Draft(
             turn=turn,

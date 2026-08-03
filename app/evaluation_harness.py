@@ -494,12 +494,12 @@ dataset can and cannot support -- see the limitations above.
 """
 
     report_root = paths["root"]
-    _validate_path_within(paths["markdown"], report_root)
-    _validate_path_within(paths["html"], report_root)
-    _validate_path_within(paths["metrics"], report_root)
-    paths["markdown"].write_text(markdown, encoding="utf-8")
-    paths["html"].write_text(html, encoding="utf-8")
-    (paths["metrics"]).write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    safe_markdown_path = _validate_path_within(paths["markdown"], report_root)
+    safe_html_path = _validate_path_within(paths["html"], report_root)
+    safe_metrics_path = _validate_path_within(paths["metrics"], report_root)
+    safe_markdown_path.write_text(markdown, encoding="utf-8")
+    safe_html_path.write_text(html, encoding="utf-8")
+    safe_metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
     return {
         "summary": summary,
