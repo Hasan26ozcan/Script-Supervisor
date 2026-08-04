@@ -37,90 +37,64 @@ The system is organized into five architectural layers, each with a clear respon
 
 ## 2. Module Dependency Graph
 
+Key internal package dependencies (selective view — see source for full detail):
+
 ```mermaid
 graph LR
-    subgraph app["app/ module"]
-        direction LR
+    subgraph app["app/"]
         MAIN["main.py"]
         LOOP["agent_loop.py"]
         GW["gateway.py"]
         RUB["rubric.py"]
         MEM["mem0.py"]
         PREF["preference_store.py"]
-        DB["db.py"]
-        ROUTE["routing.py"]
-        CFG["config.py"]
-        SCHEMA["schemas.py"]
-        PROMPT["prompts.py"]
-        BUDGET["budget.py"]
         EVAL["evaluation_harness.py"]
-        LOG["logging_config.py"]
     end
 
-    subgraph training["training/ module"]
+    subgraph training["training/"]
         DPO["dpo_train.py"]
         EXPORT["export_dpo_dataset.py"]
-        FAKE["generate_fake_preferences.py"]
-        MIGRATE["migrate_preferences_to_db.py"]
     end
 
-    subgraph evals["evals/ module"]
+    subgraph evals["evals/"]
         INSPECT["inspect_preference_task.py"]
     end
 
     MAIN --> LOOP
-    MAIN --> RUB
     MAIN --> PREF
     MAIN --> MEM
     MAIN --> EVAL
-    MAIN --> CFG
 
     LOOP --> GW
     LOOP --> RUB
-    LOOP --> ROUTE
-    LOOP --> PROMPT
-    LOOP --> SCHEMA
-
-    GW --> BUDGET
-    GW --> CFG
-    GW --> LOG
-    GW --> SCHEMA
-
-    RUB --> CFG
-    RUB --> SCHEMA
 
     MEM --> GW
-    MEM --> RUB
     MEM --> PREF
-    MEM --> SCHEMA
+    MEM --> RUB
 
-    PREF --> DB
-    PREF --> CFG
-    PREF --> SCHEMA
-
-    DB --> CFG
-
-    ROUTE --> CFG
-    ROUTE --> SCHEMA
-
-    EVAL --> PREF
-    EVAL --> CFG
-    EVAL --> SCHEMA
-
-    SCHEMA --> CFG
+    PREF --> GW
+    PREF --> RUB
 
     EXPORT --> PREF
-
-    MIGRATE --> PREF
-    MIGRATE --> DB
-
-    FAKE --> PREF
-    FAKE --> SCHEMA
-
-    INSPECT --> SCHEMA
+    DPO --> EXPORT
 
     classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
+
+Internal dependency table — the `settings` object (`app/config.py`) and schema types (`app/schemas.py`) are shared across nearly all modules but omitted from the diagram for clarity:
+
+| Module | Imports from |
+|---|---|
+| `app/main.py` | `agent_loop`, `gateway`, `rubric`, `preference_store`, `mem0`, `evaluation_harness`, `config`, `prompts`, `schemas` |
+| `app/agent_loop.py` | `gateway`, `rubric`, `routing`, `prompts`, `schemas`, `config` |
+| `app/gateway.py` | `config`, `schemas`, `logging_config`, `budget` |
+| `app/rubric.py` | `config`, `schemas` |
+| `app/mem0.py` | `gateway`, `rubric`, `prompts`, `schemas`, `config` |
+| `app/preference_store.py` | `db`, `schemas`, `config` |
+| `app/evaluation_harness.py` | `preference_store`, `schemas`, `config` |
+| `training/export_dpo_dataset.py` | `preference_store` |
+| `training/dpo_train.py` | `export_dpo_dataset`, `preference_store` |
+| `evals/inspect_preference_task.py` | `schemas` |
 
 ---
 
@@ -516,96 +490,91 @@ graph TD
 
 ## 11. Configuration Binding — Environment to Components
 
+All settings use the `HARNESS_` environment prefix, managed by a single `Settings` class in `app/config.py` using `pydantic-settings`. A `.env` file works out of the box for local development.
+
 ```mermaid
 graph TD
-    ENV["Environment Variables - HARNESS_ prefix + .env file"]
+    ENV["HARNESS_ environment variables<br/>.env file"]
 
     subgraph "Correction Loop"
-        MAX_TURNS["max_turns: int = 3"]
-        THRESHOLD["quality_threshold: float = 8.0"]
-        PLATEAU["plateau_epsilon: float = 0.3"]
-        COST_THRESH["cost_efficiency_threshold: float = 0.0"]
+        LOOP_CFG["max_turns, quality_threshold,<br/>plateau_epsilon,<br/>cost_efficiency_threshold"]
     end
 
     subgraph "Gateway / Provider"
-        MOCK["mock_mode: bool = True"]
-        PROVIDER["provider: str = 'anthropic'"]
-        ANTHROPIC_KEY["anthropic_api_key: Optional[str]"]
-        GROQ_KEY["groq_api_key: Optional[str]"]
+        GW_CFG["mock_mode, provider,<br/>anthropic_api_key,<br/>groq_api_key"]
     end
 
     subgraph "Persistence"
-        DB_URL["database_url: str"]
-        DB_ECHO["database_echo: bool = False"]
-        PREF_PATH["preferences_path: str"]
-        MEM0_PATH["mem0_state_path: str"]
+        DB_CFG["database_url, database_echo,<br/>preferences_path,<br/>mem0_state_path"]
     end
 
     subgraph "Storage Paths"
-        DATA_DIR["data_dir: str = 'data'"]
-        TRACES_DIR["traces_dir: str = 'data/traces'"]
-        RUBRIC_PATH["rubric_weights_path: str"]
-        RUBRIC_HIST["rubric_weight_history_path: str"]
-        COMPARE_PATH["comparison_pairs_path: str"]
-        EVAL_DIR["evaluation_reports_dir: str"]
+        PATH_CFG["data_dir, traces_dir,<br/>rubric_weights_path,<br/>rubric_weight_history_path,<br/>comparison_pairs_path,<br/>evaluation_reports_dir"]
     end
 
     subgraph "Budgeting"
-        RUN_BUDGET["run_budget_usd: Optional[float]"]
-        DAILY_BUDGET["daily_budget_usd: Optional[float]"]
+        BUDGET_CFG["run_budget_usd, daily_budget_usd"]
     end
 
     subgraph "Routing"
-        ROUTE_PATH["routing_rules_path: str"]
-        ROUTE_DEFAULTS["routing_default_models: dict"]
+        ROUTE_CFG["routing_rules_path,<br/>routing_default_models"]
     end
 
     subgraph "Mem0"
-        STALE_MARGIN["mem0_stale_margin: float = 1.0"]
+        MEM_CFG["mem0_stale_margin"]
     end
 
     subgraph "Observability"
-        LANGFUSE_EN["langfuse_enabled: bool = False"]
-        LANGFUSE_PUB["langfuse_public_key: Optional[str]"]
-        LANGFUSE_SEC["langfuse_secret_key: Optional[str]"]
-        LANGFUSE_HOST["langfuse_host: str"]
+        OBS_CFG["langfuse_enabled,<br/>langfuse_public_key,<br/>langfuse_secret_key,<br/>langfuse_host"]
     end
 
     subgraph "Logging"
-        LOG_LEVEL["log_level: str = 'INFO'"]
+        LOG_CFG["log_level"]
     end
 
-    ENV --> MAX_TURNS
-    ENV --> THRESHOLD
-    ENV --> PLATEAU
-    ENV --> COST_THRESH
-    ENV --> MOCK
-    ENV --> PROVIDER
-    ENV --> ANTHROPIC_KEY
-    ENV --> GROQ_KEY
-    ENV --> DB_URL
-    ENV --> DB_ECHO
-    ENV --> PREF_PATH
-    ENV --> MEM0_PATH
-    ENV --> DATA_DIR
-    ENV --> TRACES_DIR
-    ENV --> RUBRIC_PATH
-    ENV --> RUBRIC_HIST
-    ENV --> COMPARE_PATH
-    ENV --> EVAL_DIR
-    ENV --> RUN_BUDGET
-    ENV --> DAILY_BUDGET
-    ENV --> ROUTE_PATH
-    ENV --> ROUTE_DEFAULTS
-    ENV --> STALE_MARGIN
-    ENV --> LANGFUSE_EN
-    ENV --> LANGFUSE_PUB
-    ENV --> LANGFUSE_SEC
-    ENV --> LANGFUSE_HOST
-    ENV --> LOG_LEVEL
+    ENV --> LOOP_CFG
+    ENV --> GW_CFG
+    ENV --> DB_CFG
+    ENV --> PATH_CFG
+    ENV --> BUDGET_CFG
+    ENV --> ROUTE_CFG
+    ENV --> MEM_CFG
+    ENV --> OBS_CFG
+    ENV --> LOG_CFG
 
     classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
+
+Default values and types for every variable:
+
+| Variable | Default | Type |
+|---|---|---|
+| `HARNESS_MOCK_MODE` | `True` | bool |
+| `HARNESS_PROVIDER` | `anthropic` | str |
+| `HARNESS_ANTHROPIC_API_KEY` | None | str \| None |
+| `HARNESS_GROQ_API_KEY` | None | str \| None |
+| `HARNESS_MAX_TURNS` | `3` | int |
+| `HARNESS_QUALITY_THRESHOLD` | `8.0` | float |
+| `HARNESS_PLATEAU_EPSILON` | `0.3` | float |
+| `HARNESS_COST_EFFICIENCY_THRESHOLD` | `0.0` | float |
+| `HARNESS_DATABASE_URL` | `postgresql+psycopg://...` | str |
+| `HARNESS_DATABASE_ECHO` | `False` | bool |
+| `HARNESS_PREFERENCES_PATH` | `data/preferences.jsonl` | str |
+| `HARNESS_MEM0_STATE_PATH` | `data/mem0_entries.jsonl` | str |
+| `HARNESS_DATA_DIR` | `data` | str |
+| `HARNESS_TRACES_DIR` | `data/traces` | str |
+| `HARNESS_RUBRIC_WEIGHTS_PATH` | `data/rubric_weights.json` | str |
+| `HARNESS_RUBRIC_WEIGHT_HISTORY_PATH` | `data/rubric_weight_history.jsonl` | str |
+| `HARNESS_COMPARISON_PAIRS_PATH` | `data/comparisons/phase5_pairs.jsonl` | str |
+| `HARNESS_EVALUATION_REPORTS_DIR` | `docs/evaluation` | str |
+| `HARNESS_RUN_BUDGET_USD` | None | float \| None |
+| `HARNESS_DAILY_BUDGET_USD` | None | float \| None |
+| `HARNESS_ROUTING_RULES_PATH` | `config/routing_rules.yaml` | str |
+| `HARNESS_ROUTING_DEFAULT_MODELS` | `{}` | dict |
+| `HARNESS_MEM0_STALE_MARGIN` | `1.0` | float |
+| `HARNESS_LANGFUSE_ENABLED` | `False` | bool |
+| `HARNESS_LANGFUSE_HOST` | `http://localhost:3000` | str |
+| `HARNESS_LOG_LEVEL` | `INFO` | str |
 
 ---
 
