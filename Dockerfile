@@ -2,6 +2,14 @@ FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
+# Patch OS packages first so known-fixed CVEs in the base image (glibc,
+# openssl, etc.) don't fail the Trivy image scan in CI. Keep the apt
+# cache out of the final layer.
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # System deps kept minimal -- this image is for the FastAPI harness only.
 # Phase 9/10 training runs on a rented GPU box directly, not in this image.
 COPY pyproject.toml ./
