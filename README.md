@@ -192,7 +192,6 @@ Script-Supervisor/
 ---
 
 ## Configuration
-
 All settings use the `HARNESS_` prefix, managed by `pydantic-settings`. A `.env` file works out of the box.
 
 | Variable | Default | Description |
@@ -298,7 +297,3 @@ make phase8   # vision routing
 ## License
 
 This project is released under the [MIT](LICENSE) license.
-
----
-
-<!-- TODO: update after Trivy workflow fix is pushed -->

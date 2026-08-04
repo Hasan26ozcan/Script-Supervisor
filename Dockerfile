@@ -15,12 +15,24 @@ RUN apt-get update \
 COPY pyproject.toml ./
 COPY uv.lock ./
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir "setuptools>=78.1.1" "msgpack>=1.2.1" \
     && pip install --no-cache-dir --only-binary :all: .
 
 COPY app ./app
 COPY prompts ./prompts
 COPY training ./training
+
+# pip is not needed at runtime once dependencies are installed, and every
+# pip release vendors its own bundled copies of msgpack/setuptools
+# (pip/_vendor) pinned to whatever versions shipped with that pip release
+# -- these show up as "installed" packages to Trivy regardless of what we
+# pip-install ourselves, since installing a newer setuptools/msgpack at the
+# top level does NOT touch pip's internal vendored copies. Removing pip
+# (and setuptools/wheel, which the app doesn't use at runtime) eliminates
+# that vendored code -- and the CVEs -- from the final image entirely.
+RUN pip uninstall -y pip setuptools wheel \
+    && rm -rf /usr/local/lib/python3.12/ensurepip \
+              /usr/local/lib/python3.12/site-packages/_distutils_hack \
+              /usr/local/lib/python3.12/site-packages/distutils-precedence.pth
 
 ENV HARNESS_MOCK_MODE=1 \
     PYTHONUNBUFFERED=1
