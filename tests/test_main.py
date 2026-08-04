@@ -109,10 +109,19 @@ def test_comparison_pairs_endpoint_returns_list(client, tmp_path):
 def test_compare_ui_endpoint_returns_html(client):
     ui_path = Path("app/templates/compare.html")
     ui_path.parent.mkdir(parents=True, exist_ok=True)
-    ui_path.write_text("<html></html>", encoding="utf-8")
-    resp = client.get("/compare-ui")
-    assert resp.status_code == 200
-    assert "html" in resp.text.lower()
+    original_content = ui_path.read_text(encoding="utf-8") if ui_path.exists() else None
+    try:
+        ui_path.write_text("<html></html>", encoding="utf-8")
+        resp = client.get("/compare-ui")
+        assert resp.status_code == 200
+        assert "html" in resp.text.lower()
+    finally:
+        # Restore the real template so it isn't permanently clobbered by
+        # this test run (the previous version of this test overwrote the
+        # committed file with a bare stub, which is why it kept losing its
+        # <!DOCTYPE>/lang/<title> markup between commits).
+        if original_content is not None:
+            ui_path.write_text(original_content, encoding="utf-8")
 
 
 def test_run_endpoint_with_reference_images(client, tmp_path):
@@ -220,12 +229,16 @@ def test_compare_ui_missing_template(client, tmp_path):
     import app.main as main_module
 
     template_path = Path(main_module.__file__).resolve().parent / "templates" / "compare.html"
+    original_content = template_path.read_text(encoding="utf-8") if template_path.exists() else None
     if template_path.exists():
         template_path.unlink()
     try:
         resp = client.get("/compare-ui")
         assert resp.status_code == 404
     finally:
-        # Restore the file so subsequent compare-ui tests still work
+        # Restore the real template exactly as it was, rather than
+        # overwriting it with a bare stub, so subsequent compare-ui tests
+        # (and the committed file on disk) keep their real markup.
         template_path.parent.mkdir(parents=True, exist_ok=True)
-        template_path.write_text("<html></html>", encoding="utf-8")
+        if original_content is not None:
+            template_path.write_text(original_content, encoding="utf-8")

@@ -35,6 +35,7 @@ What this module *does* do honestly, using real statistics (numpy/scipy):
 from __future__ import annotations
 
 import json
+import os
 from collections import Counter
 from collections.abc import Sequence
 from datetime import UTC, datetime
@@ -53,21 +54,29 @@ BOOTSTRAP_RESAMPLES = 5000
 RNG_SEED = 20260726  # fixed for reproducible reports
 
 
-def _validate_path_within(path: Path, allowed_root: Path) -> Path:
-    resolved = path.resolve()
-    root = allowed_root.resolve()
-    try:
-        resolved.relative_to(root)
-    except ValueError as err:
-        raise RuntimeError(
-            f"Path escapes allowed directory: {path} is not within {allowed_root}"
-        ) from err
-    return resolved
+def _safe_path_join(base_dir: Path, *relative_parts: str) -> Path:
+    """Join ``relative_parts`` onto ``base_dir`` and guarantee the result stays
+    inside ``base_dir`` before it is ever handed to a filesystem call.
+
+    This is the standard remediation pattern for path-traversal / CWE-22:
+    both sides are resolved to their canonical, symlink-free absolute form
+    with ``os.path.realpath`` and the resolved target must be equal to, or a
+    strict child of, the resolved base directory. Any ``..`` segment, and
+    any symlink that would otherwise let the target escape ``base_dir``, is
+    rejected outright rather than merely warned about.
+    """
+    real_base = os.path.realpath(str(base_dir))
+    real_target = os.path.realpath(os.path.join(real_base, *relative_parts))
+    if real_target != real_base and not real_target.startswith(real_base + os.sep):
+        raise ValueError(
+            f"Path escapes allowed directory: {relative_parts} is not within {base_dir}"
+        )
+    return Path(real_target)
 
 
 def _ensure_output_dirs(workspace_root: Path | None = None) -> dict[str, Path]:
-    root = (workspace_root or Path.cwd()).resolve()
-    # Validate the user-controlled reports dir before using it in path
+    root = Path(os.path.realpath(str(workspace_root or Path.cwd())))
+    # Validate the configurable reports dir before using it in path
     # construction: it must be a relative path with no traversal components.
     reports_dir_name = settings.evaluation_reports_dir
     reports_dir_parts = Path(reports_dir_name)
@@ -77,18 +86,16 @@ def _ensure_output_dirs(workspace_root: Path | None = None) -> dict[str, Path]:
         raise ValueError(
             f"evaluation_reports_dir must not contain '..' components, got: {reports_dir_name}"
         )
-    reports_dir = root / reports_dir_name
-    _validate_path_within(reports_dir, root)
-    charts_dir = reports_dir / "charts"
-    _validate_path_within(charts_dir, root)
+    reports_dir = _safe_path_join(root, reports_dir_name)
+    charts_dir = _safe_path_join(reports_dir, "charts")
     reports_dir.mkdir(parents=True, exist_ok=True)
     charts_dir.mkdir(parents=True, exist_ok=True)
     return {
         "root": root,
         "reports_dir": reports_dir,
-        "markdown": reports_dir / "evaluation_report.md",
-        "html": reports_dir / "evaluation_report.html",
-        "metrics": reports_dir / "metrics.json",
+        "markdown": _safe_path_join(reports_dir, "evaluation_report.md"),
+        "html": _safe_path_join(reports_dir, "evaluation_report.html"),
+        "metrics": _safe_path_join(reports_dir, "metrics.json"),
         "charts": charts_dir,
     }
 
@@ -367,8 +374,7 @@ def run_evaluation_suite(
 
     chart_paths: dict[str, Path] = {}
 
-    chart_paths["win_rate_ci"] = charts_dir / "win_rate_ci.png"
-    _validate_path_within(chart_paths["win_rate_ci"], paths["root"])
+    chart_paths["win_rate_ci"] = _safe_path_join(charts_dir, "win_rate_ci.png")
     _write_win_rate_ci_chart(chart_paths["win_rate_ci"], win_point, win_lo, win_hi)
 
     cumulative = (
@@ -376,8 +382,7 @@ def run_evaluation_suite(
         if a_win_outcomes
         else []
     )
-    chart_paths["win_rate_trend"] = charts_dir / "win_rate_trend.png"
-    _validate_path_within(chart_paths["win_rate_trend"], paths["root"])
+    chart_paths["win_rate_trend"] = _safe_path_join(charts_dir, "win_rate_trend.png")
     _write_trend_chart(
         chart_paths["win_rate_trend"],
         "Cumulative A win rate over chronological samples",
@@ -387,8 +392,7 @@ def run_evaluation_suite(
 
     rater_labels = list(summary["rater_counts"].keys())
     rater_values = [summary["rater_counts"][r] for r in rater_labels]
-    chart_paths["samples_per_rater"] = charts_dir / "samples_per_rater.png"
-    _validate_path_within(chart_paths["samples_per_rater"], paths["root"])
+    chart_paths["samples_per_rater"] = _safe_path_join(charts_dir, "samples_per_rater.png")
     _write_bar_chart(
         chart_paths["samples_per_rater"],
         "Samples per rater",
@@ -493,10 +497,14 @@ dataset can and cannot support -- see the limitations above.
 </html>
 """
 
-    report_root = paths["root"]
-    safe_markdown_path = _validate_path_within(paths["markdown"], report_root)
-    safe_html_path = _validate_path_within(paths["html"], report_root)
-    safe_metrics_path = _validate_path_within(paths["metrics"], report_root)
+    # Re-derive and re-validate the destination paths immediately before the
+    # writes, from the already-sandboxed reports directory plus fixed,
+    # hardcoded filenames only -- never from external/config-provided data at
+    # this point -- so each sink is provably safe on its own.
+    reports_dir = paths["reports_dir"]
+    safe_markdown_path = _safe_path_join(reports_dir, "evaluation_report.md")
+    safe_html_path = _safe_path_join(reports_dir, "evaluation_report.html")
+    safe_metrics_path = _safe_path_join(reports_dir, "metrics.json")
     safe_markdown_path.write_text(markdown, encoding="utf-8")
     safe_html_path.write_text(html, encoding="utf-8")
     safe_metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
