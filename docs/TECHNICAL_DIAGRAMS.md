@@ -4,77 +4,34 @@ This document provides a comprehensive set of technical diagrams for the Creativ
 
 ---
 
-## 1. Five-Layer Architecture
+## 1. Five-Layer Architecture — High-Level
 
 ```mermaid
 graph TD
-    subgraph Presentation["Presentation Layer"]
-        direction TB
-        API["FastAPI REST API"]
-        UI["Comparison UI - HTML"]
-        CLI["Inspect AI CLI"]
-    end
+    P["Presentation Layer<br/>FastAPI REST API<br/>Comparison UI<br/>Inspect AI CLI"]
+    O["Orchestration Layer<br/>CorrectionLoop<br/>AdaptiveRouter<br/>EvaluationHarness"]
+    S["Service Layer<br/>ModelGateway<br/>Rubric<br/>Mem0Manager<br/>PreferenceStore<br/>CostBudget"]
+    D["Persistence Layer<br/>PostgreSQL 16<br/>JSONL Files"]
+    I["Infrastructure Layer<br/>Docker Compose<br/>Postgres 16<br/>Langfuse - optional<br/>GitHub Actions"]
 
-    subgraph Orchestration["Orchestration Layer"]
-        direction TB
-        LOOP["CorrectionLoop"]
-        ROUTER["AdaptiveRouter"]
-        EVAL["EvaluationHarness"]
-    end
-
-    subgraph Service["Service Layer"]
-        direction TB
-        GW["ModelGateway"]
-        RUB["Rubric"]
-        MEM["Mem0Manager"]
-        PREF["PreferenceStore"]
-        BUD["CostBudget"]
-    end
-
-    subgraph Persistence["Persistence Layer"]
-        direction TB
-        PG["PostgreSQL 16"]
-        JSONL["JSONL Files"]
-    end
-
-    subgraph Infra["Infrastructure Layer"]
-        direction TB
-        DOCKER["Docker Compose"]
-        GHA["GitHub Actions CI/CD"]
-        LANGFUSE["Langfuse - optional"]
-    end
-
-    API --> LOOP
-    API --> EVAL
-    UI --> API
-    CLI --> API
-
-    LOOP --> GW
-    LOOP --> RUB
-    LOOP --> ROUTER
-
-    EVAL --> PREF
-    EVAL --> PG
-
-    API --> RUB
-    API --> PREF
-    API --> MEM
-
-    GW --> BUD
-    RUB --> JSONL
-    MEM --> JSONL
-
-    PREF --> PG
-    PREF --> JSONL
-
-    PG --> DOCKER
-    JSONL --> DOCKER
-    GHA --> DOCKER
-    GW -.->|optional tracing| LANGFUSE
+    P --> O
+    O --> S
+    S --> D
+    D --> I
+    P -.->|optional tracing| I
 
     classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
-    classDef subgraph fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
+
+The system is organized into five architectural layers, each with a clear responsibility boundary:
+
+| Layer | Components |
+|---|---|
+| **Presentation** | FastAPI REST API, Comparison UI (HTML), Inspect AI CLI |
+| **Orchestration** | CorrectionLoop, AdaptiveRouter, EvaluationHarness |
+| **Service** | ModelGateway, Rubric, Mem0Manager, PreferenceStore, CostBudget |
+| **Persistence** | PostgreSQL 16 (primary), JSONL (offline fallback) |
+| **Infrastructure** | Docker Compose, Postgres 16, optional Langfuse, GitHub Actions CI/CD |
 
 ---
 
