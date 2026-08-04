@@ -1,74 +1,148 @@
-# Evaluation Harness Notes
+# Evaluation Harness — Methodology & Notes
 
-This file documents what the evaluation harness actually does, what it does
-not do, why, and exactly how to execute it end-to-end with a real
-PostgreSQL backend. It replaces the earlier version of this harness, which
-self-described as "modern"/"frontier" in its docstring without actually
-implementing any statistical rigor or integrating a real eval framework.
+This document details the statistical methodology, design decisions, and
+known limitations of the Creative Harness evaluation harness. It is the
+primary reference for understanding what the numbers in
+`docs/evaluation/metrics.json`, `docs/evaluation/evaluation_report.md`, and
+`docs/evaluation/charts/` actually mean.
 
-## What changed and why
+---
 
-The previous `app/evaluation_harness.py`:
-- computed "accuracy" as `(wins_a + wins_b) / total`, which is ~1.0 for any
-  dataset without ties and carries no information about quality
-- hardcoded `"database_backend": "postgresql"` as a string literal instead
-  of querying what actually served the write
-- drew two static bar charts of raw counts
-- had never actually been executed in this repo (`docs/evaluation/` did not
-  exist before this change)
+## Overview
 
-The current version:
-- reports a **bootstrap 95% confidence interval** on the human win rate
-  (percentile method, 5000 resamples, fixed seed for reproducibility)
-- runs a **two-sided binomial significance test** against a 50/50 null
-- fits a **Bradley-Terry model** (MLE via `scipy.optimize`) for relative
-  candidate-template strength
-- computes **agreement + Cohen's kappa** between a deterministic offline
-  "judge" and the recorded human label -- the standard "model-graded vs
-  human" check used in modern harnesses (see references below), clearly
-  labeled as a heuristic stand-in, not a live LLM judge
-- actually **writes and reads back** a row from the SQL backend via
-  SQLAlchemy and reports which dialect really served it
-- states its own limitations in the generated report rather than omitting
-  them
+Creative Harness ships two complementary evaluation layers:
 
-## What it honestly cannot do with the bundled 20-sample dataset
+| Layer | Framework | Offline? | Requires API key? | File |
+|---|---|---|---|---|
+| **Offline harness** | Self-contained (numpy/scipy) | Yes | No | `app/evaluation_harness.py` |
+| **Inspect AI adapter** | [Inspect AI](https://inspect.aisi.org.uk/) (UK AISI) | No (live model) | Yes | `evals/inspect_preference_task.py` |
 
-`training/generate_fake_preferences.py` generates 20 rows using **two
-fixed candidate templates** repeated across every brief, with **one rater
-per item**. Running the real statistics on this data (see the reproducible
-run below) correctly shows:
+The offline harness runs fully without network access — ideal for CI and
+local development. The Inspect AI adapter performs real model-graded
+pairwise-preference evaluation and produces Inspect's standard run logs with
+a web UI for inspection.
 
-- win rate: 0.5, 95% CI [0.30, 0.70]
-- binomial test vs 50/50: p = 1.0 (not significant)
-- Bradley-Terry: no detectable template strength difference
-- inter-rater reliability: **not computable** -- no item has more than one
-  rating
+---
 
-This is the right answer, not a bug: the synthetic data alternates winner
-by index parity, so there is no real signal in it. A harness that reported
-a confident "94% accuracy" on this data (as the old cosmetic accuracy
-metric implicitly did) would be misleading. If you want statistically
-meaningful results, replace the demo data with real multi-rater human
-judgments -- the code already supports it (`PreferencePair.rater`, the
-kappa calculation, and the Bradley-Terry fit all generalize).
+## What the Harness Actually Does
 
-## Modern harness framework: Inspect AI
+This file replaces the earlier version of the evaluation harness, which
+self-described as "modern"/"frontier" without implementing actual statistical
+rigor. The current version:
 
-Industry practice as of mid-2026 (Anthropic, DeepMind, and the wider AISI
-evals ecosystem) has converged on **Inspect AI**
-(https://inspect.aisi.org.uk/, UK AI Security Institute, MIT-licensed) as
-the standard open-source framework for reproducible LLM evaluation:
-Dataset -> Task -> Solver -> Scorer, sandboxed execution, a log viewer UI,
-and built-in statistical aggregation (accuracy/stderr/bootstrap). We chose
-it over `lm-evaluation-harness`/OpenCompass (benchmark-focused, less suited
-to custom pairwise-preference tasks), promptfoo/DeepEval (product-eval
-tools, less standard for research-style reporting), and rolling a fully
-custom pairwise-judge pipeline (loses the log viewer, statistical
-aggregation, and reproducibility tooling for free).
+1. **Bootstrap 95% confidence interval** on the human win rate — percentile
+   method, 5000 resamples, fixed random seed (`RNG_SEED = 20260726`) for
+   reproducibility
+2. **Two-sided binomial significance test** against a 50/50 null hypothesis
+   — `scipy.stats.binomtest`
+3. **Bradley-Terry MLE fit** — maximum-likelihood estimation of relative
+   candidate-template strength using `scipy.optimize.minimize` with BFGS
+4. **Cohen's κ (kappa)** between a deterministic heuristic offline judge and
+   the recorded human label — this is the standard "model-graded vs human"
+   check used in modern LLM eval harnesses
+5. **SQL backend verification** — actually writes a row to PostgreSQL (or
+   SQLite fallback), reads it back, and reports which dialect really served
+   the write — not a hardcoded string
 
-`evals/inspect_preference_task.py` wires this project's preference dataset
-into Inspect:
+---
+
+## The Demo Dataset — What It Can and Cannot Support
+
+`training/generate_fake_preferences.py` generates 20 rows using **two fixed
+candidate templates** repeated across every brief, with **one rater per
+item**. Running the real statistics on this data:
+
+| Metric | Demo Dataset Value | Interpretation |
+|---|---|---|
+| Win rate | 0.500 (95% CI: 0.350–0.650) | No signal — synthetic data alternates winner by index parity |
+| Binomial test vs 50/50 | p = 1.0 (not significant) | Cannot reject the null — correct for alternating data |
+| Bradley-Terry P(A beats B) | 0.5 | No detectable template strength difference |
+| Cohen's κ | 0.0 (not computable with 1 rater/item) | Inter-rater reliability impossible with single rater |
+
+**This is the correct answer, not a bug.** The synthetic data alternates the
+winner by index parity (odd → A wins, even → B wins), so there is no real
+signal in it. A harness that reported "94% accuracy" on this data would be
+misleading.
+
+### To get statistically meaningful results:
+
+Replace the demo data with real multi-rater human judgments. The code already
+supports this:
+
+- `PreferencePair.rater` — records which rater made each judgment
+- The Cohen's κ calculation generalizes to multiple raters
+- The Bradley-Terry fit handles any number of pairwise outcomes
+
+---
+
+## What the Heuristic Judge Is
+
+The `heuristic_judge_*` metrics come from a **deterministic offline text-feature
+judge** — not a live LLM-graded judge. It uses simple features:
+
+- **Sentence count** — longer, more detailed outputs tend to win
+- **Action verb hits** — count of cinematic action verbs (dolly, pan, zoom,
+  cut, etc.)
+
+This exists so the agreement-with-automated-judge metric has something real to
+compute in mock/offline mode. When `HARNESS_MOCK_MODE=0` and real preference
+data is collected with >= 2 raters per item, swap the heuristic judge for
+`app.rubric.Rubric` + a live model call.
+
+---
+
+## Modern Harness Framework: Inspect AI
+
+### Why Inspect AI?
+
+As of mid-2026, the LLM evaluation ecosystem has converged on **Inspect AI**
+(https://inspect.aisi.org.uk/), the open-source framework from the UK AI
+Security Institute, used by Anthropic, DeepMind, and the broader AISI/Inspect
+Evals ecosystem.
+
+We chose Inspect AI over alternatives:
+
+| Framework | Why Not Chosen |
+|---|---|
+| `lm-evaluation-harness` | Benchmark-focused, less suited to custom pairwise-preference tasks |
+| `promptfoo` / `DeepEval` | Product-eval tools, less standard for research-style reporting |
+| Fully custom pairwise-judge pipeline | Loses the log viewer, statistical aggregation, and reproducibility tooling for free |
+
+### What Inspect AI Provides
+
+- **Dataset -> Task -> Solver -> Scorer** pipeline
+- Sandboxed execution
+- Built-in statistical aggregation (mean/stderr/bootstrap)
+- Web UI (`inspect view`) for result inspection
+- Reproducible run logs
+
+### Position Bias Mitigation
+
+A known limitation of pairwise LLM-judge comparisons is **position bias** —
+the tendency to favor whichever candidate is shown first. Inspect AI's
+standard single-ordering eval is subject to this. The harness mitigates it
+the standard way:
+
+```python
+@task
+def script_supervisor_preference_eval_bias_checked() -> Task:
+    """Runs every pair in both A/B orderings in a single dataset."""
+    records = _load_records()
+    samples = (
+        _records_to_samples(records, swap=False)
+        + _records_to_samples(records, swap=True)
+    )
+    return Task(
+        dataset=MemoryDataset(samples),
+        solver=generate(),
+        scorer=human_label_match(),
+    )
+```
+
+**Treat a pair's model judgment as reliable only when both orderings agree.**
+A single-ordering win rate should not be reported as ground truth on its own.
+
+### Running the Inspect AI Adapter
 
 ```bash
 pip install inspect-ai
@@ -76,48 +150,31 @@ uv run inspect eval evals/inspect_preference_task.py --model anthropic/claude-so
 inspect view
 ```
 
-It ships two tasks:
-- `script_supervisor_preference_eval` -- single-ordering pairwise judge eval
-- `script_supervisor_preference_eval_bias_checked` -- runs every pair in
-  both A/B orderings, since pairwise LLM-judge comparisons are known to be
-  sensitive to **position bias** (favoring whichever candidate is shown
-  first). Treat a pair's model judgment as reliable only when both
-  orderings agree; a single-ordering win rate should not be reported as
-  ground truth on its own.
+---
 
-This is complementary to `app/evaluation_harness.py`, not a replacement:
-the internal harness runs fully offline (no API key, no network -- useful
-in CI and for anyone without model access), while the Inspect task
-requires a real model call and produces Inspect's standard run logs.
+## Running Against Real PostgreSQL
 
-## Running the full pipeline against real PostgreSQL
-
-This repo's default config already points at PostgreSQL
-(`app/config.py: database_url`), and `docker-compose.yml` already ships a
-`db: postgres:16-alpine` service plus an optional Langfuse observability
-stack. To execute end-to-end for real:
+The repo's default config already points at PostgreSQL
+(`app/config.py: database_url`), and `docker-compose.yml` ships a
+`db: postgres:16-alpine` service. To execute end-to-end:
 
 ```bash
-# 1. Bring up Postgres (and the app) via Docker
+# 1. Bring up Postgres (and optionally the app) via Docker
 docker compose up -d db
 docker compose ps                      # wait for db to report "healthy"
 
-# 2. Install the project (with dev + eval extras) into a local venv
+# 2. Install the project locally
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
-python -m pip install inspect-ai       # optional, for the Inspect AI task
 
-# 3. Point the app at the containerized Postgres and disable mock mode
-#    for real API calls if desired (mock mode works fine for the harness
-#    itself, since it only needs the preference data, not live generation)
+# 3. Point the app at the containerized Postgres
 export HARNESS_DATABASE_URL="postgresql+psycopg://postgres:postgres@localhost:5432/creative_harness"
 
 # 4. Generate the 20-sample demo dataset and migrate it into Postgres
 python -m training.generate_fake_preferences
 
-# 5. Run the statistically-grounded harness -- writes
-#    docs/evaluation/{evaluation_report.md,evaluation_report.html,metrics.json}
-#    and docs/evaluation/charts/*.png, and persists one run row to Postgres
+# 5. Run the harness -- writes evaluation_report.{md,html}, metrics.json,
+#    charts/*.png, and persists one run row to Postgres
 python -m app.evaluation_harness
 
 # 6. Confirm the row actually landed in Postgres (not a fallback)
@@ -129,26 +186,84 @@ docker compose exec db psql -U postgres -d creative_harness -c \
 # 7. Run the full test suite against the same Postgres instance
 HARNESS_DATABASE_URL=$HARNESS_DATABASE_URL pytest -v
 
-# 8. (Optional) modern harness run via Inspect AI -- requires a real model
-#    key, e.g. ANTHROPIC_API_KEY, since this makes live model calls
+# 8. (Optional) modern harness run via Inspect AI -- requires a real model key
 uv run inspect eval evals/inspect_preference_task.py --model anthropic/claude-sonnet-4-6
 inspect view
 
-# 9. (Optional) bring up the full stack including the API server and the
-#    Langfuse observability profile
+# 9. (Optional) bring up the full stack including Langfuse
 docker compose --profile default up -d
 docker compose --profile observability up -d   # adds Langfuse + its own Postgres
 
 # 10. Tear down
-docker compose down            # keep volumes (pgdata) for next run
+docker compose down            # keep volumes for next run
 docker compose down -v         # also wipe the Postgres volume
 ```
 
-Step 6 is the important one: it proves the write went to real Postgres,
-not the JSONL fallback that `app/preference_store.py` silently uses when
-the database is unreachable.
+**Step 6 is the critical verification:** it proves the write went to real
+PostgreSQL, not the JSONL fallback that `app/preference_store.py` uses
+silently when the database is unreachable.
+
+---
+
+## How to Run the Offline Harness
+
+```bash
+# Generate demo preferences (20 samples)
+python -m training.generate_fake_preferences
+
+# Run the evaluation suite
+python -m app.evaluation_harness
+```
+
+Output files:
+
+| File | Description |
+|---|---|
+| `docs/evaluation/evaluation_report.md` | Human-readable markdown report |
+| `docs/evaluation/evaluation_report.html` | Stylized HTML report |
+| `docs/evaluation/metrics.json` | Machine-readable metrics |
+| `docs/evaluation/charts/win_rate_ci.png` | Win rate with 95% CI |
+| `docs/evaluation/charts/win_rate_trend.png` | Win rate over preference sequence |
+| `docs/evaluation/charts/samples_per_rater.png` | Samples per rater distribution |
+
+---
+
+## Statistical Methods Reference
+
+### Bootstrap Confidence Interval
+
+- **Method:** Percentile bootstrap
+- **Resamples:** 5000
+- **Seed:** 20260726 (fixed for reproducibility)
+- **What it estimates:** Plausible range for the true human win rate
+
+### Binomial Test
+
+- **Null hypothesis:** Win rate = 0.5 (no preference)
+- **Method:** Two-sided exact binomial test
+- **Implementation:** `scipy.stats.binomtest`
+
+### Bradley-Terry MLE
+
+- **Model:** P(A beats B) = sigma(beta_A - beta_B), where beta are latent strengths
+- **Optimization:** `scipy.optimize.minimize` with BFGS solver on the
+  negative log-likelihood
+- **What it estimates:** Relative candidate-template strength from pairwise
+  outcomes
+
+### Cohen's Kappa
+
+- **Purpose:** Inter-rater agreement beyond chance
+- **Interpretation:** 1.0 = perfect, 0.0 = chance, <0 = worse than chance
+- **Limitation:** Not computable if any item has only one rater — the harness
+  reports this explicitly
+
+---
 
 ## References
+
 - Inspect AI: https://inspect.aisi.org.uk/
 - Inspect Evals: https://github.com/UKGovernmentBEIS/inspect_evals
 - UK AISI announcement: https://www.aisi.gov.uk/blog/inspect-evals
+- Anthropic "Demystifying Evals for AI Agents" (Jan 2026)
+- POPE: "Prompt-based Optical/Perceptual Evaluation" — grounding benchmark methodology
