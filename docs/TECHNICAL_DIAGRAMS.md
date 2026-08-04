@@ -72,10 +72,8 @@ graph TD
     GHA --> DOCKER
     GW -.->|optional tracing| LANGFUSE
 
-    classDef layer fill:#f8f9fa,stroke:#495057,stroke-width:1px;
-    classDef component fill:#ffffff,stroke:#6c757d,stroke-width:1px;
-    class Presentation,Orchestration,Service,Persistence,Infra layer;
-    class API,UI,CLI,LOOP,ROUTER,EVAL,GW,RUB,MEM,PREF,BUD,PG,JSONL,DOCKER,GHA,LANGFUSE component;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
+    classDef subgraph fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -164,12 +162,7 @@ graph LR
 
     INSPECT --> SCHEMA
 
-    classDef app_module fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
-    classDef training_module fill:#fff3e0,stroke:#e65100,stroke-width:2px;
-    classDef eval_module fill:#fce4ec,stroke:#880e4f,stroke-width:2px;
-    class MAIN,LOOP,GW,RUB,MEM,PREF,DB,ROUTE,CFG,SCHEMA,PROMPT,BUDGET,EVAL,LOG app_module;
-    class DPO,EXPORT,FAKE,MIGRATE training_module;
-    class INSPECT eval_module;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -194,10 +187,8 @@ sequenceDiagram
         CorrectionLoop->>AdaptiveRouter: select_model("draft", trace_steps)
         AdaptiveRouter-->>CorrectionLoop: model_name
         CorrectionLoop->>ModelGateway: call(task, system_prompt, user_prompt, model)
-        activate ModelGateway
         ModelGateway->>ModelGateway: record call (tokens, cost, latency)
         ModelGateway-->>CorrectionLoop: CallResult(text)
-        deactivate ModelGateway
 
         CorrectionLoop->>CorrectionLoop: Draft(turn, content, metadata)
 
@@ -205,20 +196,14 @@ sequenceDiagram
             CorrectionLoop->>AdaptiveRouter: should_use_vision(trace_steps)
             alt vision approved
                 CorrectionLoop->>ModelGateway: call_vision(task, system, vision_prompt, image_paths)
-                activate ModelGateway
                 ModelGateway-->>CorrectionLoop: CallResult(text)
-                deactivate ModelGateway
             else
                 CorrectionLoop->>ModelGateway: call("critique", system, text_prompt)
-                activate ModelGateway
                 ModelGateway-->>CorrectionLoop: CallResult(text)
-                deactivate ModelGateway
             end
         else
             CorrectionLoop->>ModelGateway: call("critique", system, text_prompt)
-            activate ModelGateway
             ModelGateway-->>CorrectionLoop: CallResult(text)
-            deactivate ModelGateway
         end
 
         CorrectionLoop->>Rubric: parse_critique_text(text)
@@ -268,8 +253,7 @@ flowchart LR
     CLAMP --> PERSIST_W["write rubric_weights.json"]
     CLAMP --> PERSIST_H["append rubric_weight_history.jsonl"]
 
-    classDef step fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1px;
-    class HUMAN,CRITIQUE_A,CRITIQUE_B,DIFF,PREDICT,COMPARE,NUDGE_UP,NUDGE_DOWN,CONF,CLAMP,PERSIST_W,PERSIST_H step;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -329,8 +313,7 @@ flowchart LR
     PREF_STORE --> EXPORT
     EXPORT --> DPO
 
-    classDef store fill:#fffde7,stroke:#f9a825,stroke-width:1px;
-    class PG,JSONL store;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -415,21 +398,21 @@ erDiagram
 
 ```mermaid
 graph TD
-    POST_RUN["POST /run<br/>Execute correction loop"]
-    GET_TRACE["GET /traces/{run_id}<br/>Retrieve trace JSON"]
-    POST_COMPARE["POST /compare<br/>Record pairwise preference"]
-    POST_EVAL["POST /evaluation/run<br/>Run statistical suite"]
-    GET_RUBRIC["GET /rubric<br/>Current criteria + weights"]
-    GET_RUBRIC_HISTORY["GET /rubric/history<br/>Weight evolution"]
-    GET_COMPARISONS["GET /comparison-pairs<br/>All comparison pairs"]
-    GET_MEM0_ENTRIES["GET /mem0/entries<br/>All compression entries"]
-    GET_MEM0_STALE["GET /mem0/stale<br/>Stale entries"]
-    POST_MEM0_VALIDATE["POST /mem0/validate<br/>Re-validate all entries"]
-    POST_MEM0_REFRESH["POST /mem0/refresh<br/>Replace stale entries"]
-    GET_COMPARE_UI["GET /compare-ui<br/>Interactive HTML UI"]
-    GET_HEALTH["GET /health<br/>Liveness probe"]
+    POST_RUN["POST /run - Execute correction loop"]
+    GET_TRACE["GET /traces/{run_id} - Retrieve trace JSON"]
+    POST_COMPARE["POST /compare - Record pairwise preference"]
+    POST_EVAL["POST /evaluation/run - Run statistical suite"]
+    GET_RUBRIC["GET /rubric - Current criteria + weights"]
+    GET_RUBRIC_HISTORY["GET /rubric/history - Weight evolution"]
+    GET_COMPARISONS["GET /comparison-pairs - All comparison pairs"]
+    GET_MEM0_ENTRIES["GET /mem0/entries - All compression entries"]
+    GET_MEM0_STALE["GET /mem0/stale - Stale entries"]
+    POST_MEM0_VALIDATE["POST /mem0/validate - Re-validate all entries"]
+    POST_MEM0_REFRESH["POST /mem0/refresh - Replace stale entries"]
+    GET_COMPARE_UI["GET /compare-ui - Interactive HTML UI"]
+    GET_HEALTH["GET /health - Liveness probe"]
 
-    subgraph "Correction Loop"<br/>POST_RUN
+    subgraph "Correction Loop"
         POST_RUN
         GET_TRACE
     end
@@ -461,8 +444,7 @@ graph TD
     POST_COMPARE --> GET_MEM0_ENTRIES
     POST_EVAL --> GET_RUBRIC_HISTORY
 
-    classDef group fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1px;
-    class POST_RUN,GET_TRACE,POST_COMPARE,GET_RUBRIC,GET_RUBRIC_HISTORY,GET_COMPARISONS,GET_MEM0_ENTRIES,GET_MEM0_STALE,POST_MEM0_VALIDATE,POST_MEM0_REFRESH,GET_COMPARE_UI,GET_HEALTH,POST_EVAL group;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -471,15 +453,15 @@ graph TD
 
 ```mermaid
 graph LR
-    TASK["Logical task<br/>(draft, critique, revise,<br/>visual_critique)"] --> MODE_SELECT["AdaptiveRouter.select_model<br/>+ TASK_DEFAULT_MODEL fallback"]
+    TASK["Logical task<br/>(draft, critique, revise,<br/>visual_critique)"] --> MODE_SELECT["AdaptiveRouter.select_model<br/>TASK_DEFAULT_MODEL fallback"]
 
     MODE_SELECT --> GW["ModelGateway"]
 
     subgraph Gateway["ModelGateway"]
         direction LR
-        LEDGER["GatewayLedger<br/>calls[]<br/>total_cost<br/>total_latency"]
-        PRICES["MODEL_PRICES<br/>input/output per 1M tokens"]
-        BUDGET["CostBudget<br/>per-run + daily limits"]
+        LEDGER["GatewayLedger - calls[]<br/>total_cost<br/>total_latency"]
+        PRICES["MODEL_PRICES - input/output per 1M tokens"]
+        BUDGET["CostBudget - per-run + daily limits"]
 
         GW --> LEDGER
         GW --> PRICES
@@ -489,7 +471,7 @@ graph LR
     subgraph Provider["Provider Dispatch"]
         direction TB
         MOCK["MOCK_MODE (default)<br/>_mock_response<br/>_mock_vision_response"]
-        ANTHROPIC["provider=anthropic<br/>AsyncAnthropic.messages.create<br/>tool_use for structured output"]
+        ANTHROPIC["provider=anthropic<br/>Anthropic.messages.create<br/>tool_use for structured output"]
         GROQ["provider=groq<br/>Groq.chat.completions.create<br/>JSON extraction for structured output"]
     end
 
@@ -497,10 +479,9 @@ graph LR
     GW --> ANTHROPIC
     GW --> GROQ
 
-    LEDGER --> RECORD["CallResult<br/>text, model, tokens,<br/>cost_usd, latency_ms"]
+    LEDGER --> RECORD["CallResult - text, model, tokens,<br/>cost_usd, latency_ms"]
 
-    classDef infra fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
-    class LEDGER,PRICES,BUDGET,RECORD infra;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -509,7 +490,7 @@ graph LR
 
 ```mermaid
 flowchart TD
-    RAW_DATA["PreferenceStore.all()<br/>or fake preferences generator"] --> PREP["Filter non-tie pairs<br/>Extract A-win outcomes [0,1,...]"]
+    RAW_DATA["PreferenceStore.all() or fake preferences generator"] --> PREP["Filter non-tie pairs<br/>Extract A-win outcomes [0,1,...]"]
 
     PREP --> BOOTSTRAP["Bootstrap CI on win rate<br/>5000 resamples<br/>percentile method<br/>seed=20260726"]
     PREP --> BINOMIAL["Binomial test vs 50/50 null<br/>scipy.stats.binomtest<br/>two-sided"]
@@ -537,11 +518,7 @@ flowchart TD
     METRICS --> REPORTS["Write:<br/>evaluation_report.md<br/>evaluation_report.html<br/>metrics.json"]
     METRICS --> PERSIST["Persist run row to SQL<br/>Read back to confirm dialect"]
 
-    classDef transform fill:#f3e5f5,stroke:#6a1b9a,stroke-width:1px;
-    class BOOTSTRAP,BINOMIAL,BT_FIT,HEURISTIC,AGREEMENT,KAPPA,POINT_CI,PVAL,STRENGTH,ACC,KAP transform;
-
-    classDef output fill:#e0f2f1,stroke:#00695c,stroke-width:1px;
-    class CHARTS,REPORTS,PERSIST output;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -551,12 +528,12 @@ flowchart TD
 ```mermaid
 graph TD
     TRIGGER["push / pull_request to main"]
-    LINT["Lint:<br/>ruff check + format check<br/>mypy type checking"]
-    SECURITY["Security:<br/>bandit static scan<br/>pip-audit dependency check"]
-    TEST["Test:<br/>pytest with coverage<br/>PostgreSQL service container<br/>70% coverage gate"]
-    EVAL_REG["Eval Regression:<br/>golden-qa dataset<br/>artifact upload"]
-    SONAR["SonarCloud:<br/>code quality + coverage"]
-    CODEQL["CodeQL:<br/>semantic analysis"]
+    LINT["Lint - ruff check + format check<br/>mypy type checking"]
+    SECURITY["Security - bandit static scan<br/>pip-audit dependency check"]
+    TEST["Test - pytest with coverage<br/>PostgreSQL service container<br/>70% coverage gate"]
+    EVAL_REG["Eval Regression - golden-qa dataset<br/>artifact upload"]
+    SONAR["SonarCloud - code quality + coverage"]
+    CODEQL["CodeQL - semantic analysis"]
 
     TRIGGER --> LINT
     TRIGGER --> SECURITY
@@ -575,15 +552,7 @@ graph TD
     GATE -->|"success"| MERGE["Merge to main"]
     GATE -->|"failure"| BLOCK["Block PR"]
 
-    classDef trigger fill:#e3f2fd,stroke:#1565c0;
-    classDef job fill:#fafafa,stroke:#616161;
-    classDef result fill:#e8f5e9,stroke:#2e7d32;
-    classDef blocked fill:#ffebee,stroke:#c62828;
-
-    class TRIGGER trigger;
-    class LINT,SECURITY,TEST,EVAL_REG,SONAR,CODEQL job;
-    class MERGE result;
-    class BLOCK blocked;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -592,7 +561,7 @@ graph TD
 
 ```mermaid
 graph TD
-    ENV["Environment Variables<br/>HARNESS_ prefix + .env file"]
+    ENV["Environment Variables - HARNESS_ prefix + .env file"]
 
     subgraph "Correction Loop"
         MAX_TURNS["max_turns: int = 3"]
@@ -678,10 +647,7 @@ graph TD
     ENV --> LANGFUSE_HOST
     ENV --> LOG_LEVEL
 
-    classDef env fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
-    classDef group fill:#fafafa,stroke:#424242,stroke-width:1px;
-    class ENV env;
-    class MAX_TURNS,THRESHOLD,PLATEAU,COST_THRESH,MOCK,PROVIDER,ANTHROPIC_KEY,GROQ_KEY,DB_URL,DB_ECHO,PREF_PATH,MEM0_PATH,DATA_DIR,TRACES_DIR,RUBRIC_PATH,RUBRIC_HIST,COMPARE_PATH,EVAL_DIR,RUN_BUDGET,DAILY_BUDGET,ROUTE_PATH,ROUTE_DEFAULTS,STALE_MARGIN,LANGFUSE_EN,LANGFUSE_PUB,LANGFUSE_SEC,LANGFUSE_HOST,LOG_LEVEL group;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -691,15 +657,15 @@ graph TD
 ```mermaid
 graph TD
     subgraph "Default Profile"
-        HARNESS["harness<br/>FastAPI :8000<br/>HARNESS_MOCK_MODE<br/>HARNESS_DATABASE_URL"]
-        POSTGRES["db<br/>PostgreSQL 16 :5432<br/>POSTGRES_USER=postgres<br/>POSTGRES_DB=creative_harness"]
-        VOLUME["data volume<br/>./data -> /app/data"]
-        HEALTH["healthcheck<br/>/health endpoint<br/>pg_isready probe"]
+        HARNESS["harness - FastAPI :8000<br/>HARNESS_MOCK_MODE<br/>HARNESS_DATABASE_URL"]
+        POSTGRES["db - PostgreSQL 16 :5432<br/>POSTGRES_USER=postgres<br/>POSTGRES_DB=creative_harness"]
+        VOLUME["data volume - ./data to /app/data"]
+        HEALTH["healthcheck - /health endpoint<br/>pg_isready probe"]
     end
 
     subgraph "Observability Profile"
-        LANGFUSE["langfuse<br/>Langfuse :3000"]
-        LANGFUSE_DB["langfuse-db<br/>PostgreSQL 16 :5432<br/>POSTGRES_DB=langfuse"]
+        LANGFUSE["langfuse - Langfuse :3000"]
+        LANGFUSE_DB["langfuse-db - PostgreSQL 16 :5432<br/>POSTGRES_DB=langfuse"]
     end
 
     HARNESS -->|"primary persistence"| POSTGRES
@@ -708,12 +674,7 @@ graph TD
     HARNESS -.->|"optional tracing"| LANGFUSE
     LANGFUSE -->|"its own DB"| LANGFUSE_DB
 
-    classDef service fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
-    classDef storage fill:#fff8e1,stroke:#ff6f00,stroke-width:1px;
-    classDef probe fill:#fce4ec,stroke:#880e4f,stroke-width:1px;
-    class HARNESS,POSTGRES,LANGFUSE,LANGFUSE_DB service;
-    class VOLUME storage;
-    class HEALTH probe;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
@@ -765,7 +726,7 @@ stateDiagram-v2
 
     Stale --> RefreshEntries: POST /mem0/refresh
     RefreshEntries --> Replaced: Mem0Manager.refresh_stale()
-    Replaced --> [*]: status='replaced'<br/>new entry created
+    Replaced --> [*]: status='replaced' - new entry created
 
     Active --> [*]: end of lifecycle
     Stale --> [*]: end of lifecycle
@@ -789,13 +750,13 @@ stateDiagram-v2
 
 ```mermaid
 graph TD
-    REGISTRY["prompts/ directory<br/>versioned YAML templates"]
+    REGISTRY["prompts/ directory - versioned YAML templates"]
 
-    subgraph PromptTypes["Prompt Types"]
-        DRAFT["draft/v1.yaml<br/>Shot list generation instructions"]
-        CRITIQUE["critique/v1.yaml<br/>Rubric-based scoring + revision notes"]
-        VISION["vision_critique/v1.yaml<br/>Reference image grounded critique"]
-        REVISE["revise/v1.yaml<br/>Incorporate critique notes"]
+    subgraph "Prompt Types"
+        DRAFT["draft/v1.yaml - Shot list generation instructions"]
+        CRITIQUE["critique/v1.yaml - Rubric-based scoring + revision notes"]
+        VISION["vision_critique/v1.yaml - Reference image grounded critique"]
+        REVISE["revise/v1.yaml - Incorporate critique notes"]
     end
 
     REGISTRY --> DRAFT
@@ -803,58 +764,47 @@ graph TD
     REGISTRY --> VISION
     REGISTRY --> REVISE
 
-    DRAFT --> LOOP_DRAFT["CorrectionLoop._generate_draft()<br/>get_prompt('draft')"]
-    CRITIQUE --> LOOP_CRITIQUE["CorrectionLoop._generate_critique()<br/>get_prompt('critique')"]
-    VISION --> LOOP_VISION["CorrectionLoop._get_vision_critique_system()<br/>get_prompt('vision_critique')"]
-    REVISE --> LOOP_REVISE["CorrectionLoop._generate_draft()<br/>task='revise' -> get_prompt('draft')"]
+    DRAFT --> LOOP_DRAFT["CorrectionLoop._generate_draft() - get_prompt('draft')"]
+    CRITIQUE --> LOOP_CRITIQUE["CorrectionLoop._generate_critique() - get_prompt('critique')"]
+    VISION --> LOOP_VISION["CorrectionLoop._get_vision_critique_system() - get_prompt('vision_critique')"]
+    REVISE --> LOOP_REVISE["CorrectionLoop._generate_draft() - task='revise' -> get_prompt('draft')"]
 
-    CACHE["lru_cache(maxsize=128)<br/>get_prompt()"] --> REGISTRY
+    CACHE["lru_cache(maxsize=128) - get_prompt()"] --> REGISTRY
 
     LOOP_DRAFT --> GW_CALL["ModelGateway.call()"]
     LOOP_CRITIQUE --> GW_CALL_V["ModelGateway.call()"]
     LOOP_VISION --> GW_CALL_IMG["ModelGateway.call_vision()"]
 
-    classDef registry fill:#e8f5e9,stroke:#1b5e20;
-    classDef caller fill:#e3f2fd,stroke:#0d47a1;
-    class REGISTRY,CACHE registry;
-    class LOOP_DRAFT,LOOP_CRITIQUE,LOOP_VISION,LOOP_REVISE,GW_CALL,GW_CALL_V,GW_CALL_IMG caller;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
 
 ---
 
-## 16. Test Suite — Coverage Areas
+## 16. Test Suite — Coverage Distribution
 
-```mermaid
-pie showData
-    title Test Coverage Distribution
-    "agent_loop correction logic" : 25
-    "gateway mock + live paths" : 15
-    "rubric scoring + weight updates" : 15
-    "preference_store postgres + jsonl" : 12
-    "mem0 ingestion + validation" : 10
-    "evaluation_harness statistics" : 8
-    "routing yaml rules" : 5
-    "schema validation" : 5
-    "budget enforcement" : 5
-```
+| Test Area | Coverage Share |
+|---|---|
+| agent_loop correction logic | 25% |
+| gateway mock + live paths | 15% |
+| rubric scoring + weight updates | 15% |
+| preference_store postgres + jsonl | 12% |
+| mem0 ingestion + validation | 10% |
+| evaluation_harness statistics | 8% |
+| routing yaml rules | 5% |
+| schema validation | 5% |
+| budget enforcement | 5% |
 
 ```mermaid
 graph TD
-    PYTEST["pytest<br/>asyncio_mode=auto<br/>testpaths=tests/"] --> UNIT["Unit Tests<br/>app.rubric<br/>app.gateway<br/>app.budget<br/>app.schemas"]
-    PYTEST --> INTEGRATION["Integration Tests<br/>app.agent_loop<br/>app.main (TestClient)<br/>app.preference_store"]
-    PYTEST --> EVAL["Eval Regression<br/>evaluation_harness<br/>golden-qa outputs"]
+    PYTEST["pytest - asyncio_mode=auto - testpaths=tests/"] --> UNIT["Unit Tests - app.rubric<br/>app.gateway<br/>app.budget<br/>app.schemas"]
+    PYTEST --> INTEGRATION["Integration Tests - app.agent_loop<br/>app.main (TestClient)<br/>app.preference_store"]
+    PYTEST --> EVAL["Eval Regression - evaluation_harness<br/>golden-qa outputs"]
 
-    UNIT --> COVERAGE["--cov=app<br/>70% gate"]
+    UNIT --> COVERAGE["--cov=app - 70% gate"]
     INTEGRATION --> COVERAGE
     EVAL --> COVERAGE
 
     PYTEST --> FIXTURES["pytest fixtures:<br/>MockGateway<br/>TestDatabase<br/>FakePreferences"]
 
-    classDef runner fill:#fafafa,stroke:#424242;
-    classDef level fill:#e8f5e9,stroke:#1b5e20;
-    classDef result fill:#fff3e0,stroke:#e65100;
-
-    class PYTEST runner;
-    class UNIT,INTEGRATION,EVAL level;
-    class COVERAGE,FIXTURES result;
+    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
 ```
