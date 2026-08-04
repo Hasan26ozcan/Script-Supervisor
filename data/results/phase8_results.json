@@ -1,0 +1,290 @@
+{
+  "results": {
+    "trials": [
+      {
+        "id": "fluorescent_office",
+        "title": "Fluorescent Office",
+        "brief": "A scene typical of fluorescent office.",
+        "reference_image": "data\\images\\grounding\\fluorescent_office\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0043866,
+          "latency_ms": 427.72610019892454,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0084396,
+          "latency_ms": 433.4698000457138,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.0084396,
+          "latency_ms": 324.28930001333356,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 1.923950212009301
+      },
+      {
+        "id": "forest_clearing",
+        "title": "Forest Clearing",
+        "brief": "A scene typical of forest clearing.",
+        "reference_image": "data\\images\\grounding\\forest_clearing\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0037196,
+          "latency_ms": 386.3559002056718,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.008432,
+          "latency_ms": 375.09399955160916,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.008432,
+          "latency_ms": 400.6151999346912,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 2.26691042047532
+      },
+      {
+        "id": "golden_hour_street",
+        "title": "Golden Hour Street",
+        "brief": "A scene typical of golden hour street.",
+        "reference_image": "data\\images\\grounding\\golden_hour_street\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0037332,
+          "latency_ms": 300.5079997237772,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0084396,
+          "latency_ms": 348.39900000952184,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.0084396,
+          "latency_ms": 347.66299999319017,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2606878817100613
+      },
+      {
+        "id": "hospital_corridor",
+        "title": "Hospital Corridor",
+        "brief": "A scene typical of hospital corridor.",
+        "reference_image": "data\\images\\grounding\\hospital_corridor\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0037242,
+          "latency_ms": 319.6272999048233,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.008436599999999999,
+          "latency_ms": 295.67160038277507,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.008436599999999999,
+          "latency_ms": 357.885800069198,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 2.265345577573707
+      },
+      {
+        "id": "neon_alley",
+        "title": "Neon Alley",
+        "brief": "A scene typical of neon alley.",
+        "reference_image": "data\\images\\grounding\\neon_alley\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.003698,
+          "latency_ms": 443.62299982458353,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0084044,
+          "latency_ms": 435.1139997597784,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.0084044,
+          "latency_ms": 435.1917998865247,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 2.272687939426717
+      },
+      {
+        "id": "rooftop_sunset",
+        "title": "Rooftop Sunset",
+        "brief": "A scene typical of rooftop sunset.",
+        "reference_image": "data\\images\\grounding\\rooftop_sunset\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0037156,
+          "latency_ms": 347.040300257504,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.008421999999999999,
+          "latency_ms": 469.8385999072343,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.008421999999999999,
+          "latency_ms": 389.5451994612813,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2666594897190224
+      },
+      {
+        "id": "subway_car",
+        "title": "Subway Car",
+        "brief": "A scene typical of subway car.",
+        "reference_image": "data\\images\\grounding\\subway_car\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.003698,
+          "latency_ms": 352.7736004907638,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0084044,
+          "latency_ms": 367.74549982510507,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.0084044,
+          "latency_ms": 389.6822000388056,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 2.272687939426717
+      },
+      {
+        "id": "warehouse",
+        "title": "Warehouse",
+        "brief": "A scene typical of warehouse.",
+        "reference_image": "data\\images\\grounding\\warehouse\\relevant.jpg",
+        "text_only": {
+          "overall": 6.0,
+          "cost_usd": 0.003689,
+          "latency_ms": 342.22710016183555,
+          "turns": 3,
+          "modality": "text",
+          "stop_reason": "max_turns"
+        },
+        "vision_only": {
+          "overall": 6.0,
+          "cost_usd": 0.0084014,
+          "latency_ms": 319.82470001094043,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive": {
+          "overall": 6.0,
+          "cost_usd": 0.0084014,
+          "latency_ms": 343.6733002308756,
+          "turns": 3,
+          "modality": "vision",
+          "stop_reason": "max_turns"
+        },
+        "adaptive_used_vision": true,
+        "delta_overall": 0.0,
+        "cost_ratio": 2.2774193548387096
+      }
+    ]
+  },
+  "analysis": {
+    "text_only": {
+      "mean_overall": 6.0,
+      "mean_cost": 0.003795525,
+      "median_overall": 6.0,
+      "median_cost": 0.0037175999999999997
+    },
+    "vision_only": {
+      "mean_overall": 6.0,
+      "mean_cost": 0.0084225,
+      "median_overall": 6.0,
+      "median_cost": 0.008427
+    },
+    "adaptive": {
+      "mean_overall": 6.0,
+      "mean_cost": 0.0084225,
+      "median_overall": 6.0,
+      "median_cost": 0.008427
+    }
+  }
+}

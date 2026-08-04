@@ -1,0 +1,389 @@
+{
+  "results": {
+    "trials": [
+      {
+        "id": "action_001",
+        "title": "High-Speed Chase Through Neon City",
+        "brief": "A detective races through a rain-slicked cyberpunk city at night, pursuing a cybernetic assassin who stole a vital data chip. Neon signs reflect in puddles, steam rises from vents, and the chase weaves between flying vehicles and crowded market stalls.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014294,
+          "latency_ms": 104.06949976459146,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A detective races through a rain-slicked cyberpunk city at n...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005145200000000001,
+          "latency_ms": 311.7535994388163,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A detective races through a rain-slicked...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "drama_001",
+        "title": "Last Letter Home",
+        "brief": "A young soldier sits in a trench during WWI, writing what might be his last letter to his younger sister. He describes the mud, the constant artillery, and his fear, but ends with hopes for her future and promises to return home.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014066,
+          "latency_ms": 166.27729986794293,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A young soldier sits in a trench during WWI, writing what mi...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.0050636,
+          "latency_ms": 333.6838998366147,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A young soldier sits in a trench during ...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "comedy_001",
+        "title": "The Misdelivered Pizza",
+        "brief": "Two rival food truck owners accidentally swap orders, leading to a vegan receiving a meat-lovers pizza and a meat-lover receiving a vegan special. Their attempt to swap back creates a series of increasingly absurd misunderstandings across the city.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014256,
+          "latency_ms": 115.30060018412769,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'Two rival food truck owners accidentally swap orders, leadin...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005131599999999999,
+          "latency_ms": 352.8921001125127,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'Two rival food truck owners accidentally...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "minimal_dialogue_001",
+        "title": "The Last Light",
+        "brief": "An elderly lighthouse keeper makes his final climb up the spiral stairs to check the lamp one last time before automation makes his job obsolete. The film focuses on his weathered hands, the rhythmic climb, and the sweeping ocean views from each window.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014294,
+          "latency_ms": 131.32449984550476,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'An elderly lighthouse keeper makes his final climb up the sp...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005145200000000001,
+          "latency_ms": 353.52480015717447,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'An elderly lighthouse keeper makes his f...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "ensemble_001",
+        "title": "The Heist Team Assembly",
+        "brief": "A master thief recruits five specialists for an impossible casino heist: the hacker, the acrobat, the con artist, the explosives expert, and the inside man. Each specialist demonstrates their unique skill in a quick vignette before they meet to plan the job.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014332,
+          "latency_ms": 138.82400002330542,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A master thief recruits five specialists for an impossible c...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005164800000000001,
+          "latency_ms": 368.7456001061946,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A master thief recruits five specialists...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "scifi_001",
+        "title": "First Contact Protocol",
+        "brief": "A linguist stationed at a remote Arctic research station receives the first extraterrestrial signal - a repeating mathematical sequence embedded in cosmic background radiation. As she decodes it, she realizes the message contains both a warning and an invitation.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.00144,
+          "latency_ms": 117.64559987932444,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A linguist stationed at a remote Arctic research station rec...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005181400000000001,
+          "latency_ms": 324.9212000519037,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A linguist stationed at a remote Arctic ...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "horror_001",
+        "title": "The Whispering Walls",
+        "brief": "After moving into a converted 19th-century asylum, a family begins hearing whispers in the walls that sound remarkably like their deceased relatives. The whispers grow more insistent, guiding them toward a hidden basement room.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014058,
+          "latency_ms": 151.0413996875286,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'After moving into a converted 19th-century asylum, a family ...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005058999999999999,
+          "latency_ms": 397.2526004072279,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'After moving into a converted 19th-centu...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "romance_001",
+        "title": "The Letter Shop",
+        "brief": "In a nostalgic stationery shop, a shy calligrapher finds themselves falling for a regular customer who commissions love letters they never send. When the customer stops coming, the calligrapher must decide whether to confess their feelings through one final, unsent letter.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014483999999999999,
+          "latency_ms": 163.05570001713932,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'In a nostalgic stationery shop, a shy calligrapher finds the...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005213199999999999,
+          "latency_ms": 369.7317996993661,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'In a nostalgic stationery shop, a shy ca...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "thriller_001",
+        "title": "Dead Drop",
+        "brief": "A bike messenger picks up what they think is a routine package, only to discover it contains evidence of a city-wide corruption scandal. Now they must navigate the urban landscape while evading both corrupt officials and the criminals who want the evidence destroyed.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014438,
+          "latency_ms": 106.04910016991198,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A bike messenger picks up what they think is a routine packa...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005195,
+          "latency_ms": 322.85869983024895,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A bike messenger picks up what they thin...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "period_001",
+        "title": "The Botanist's Daughter",
+        "brief": "In 1890s London, a female botanist disguises herself as a man to join an expedition to the Amazon rainforest. When her identity is discovered mid-journey, she must prove her expertise while navigating both the wilderness and her crew's prejudices.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014248,
+          "latency_ms": 129.1510001756251,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'In 1890s London, a female botanist disguises herself as a ma...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005127,
+          "latency_ms": 383.772199973464,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'In 1890s London, a female botanist disgu...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "mystery_001",
+        "title": "The Last Guest",
+        "brief": "At an isolated mountain lodge during a blizzard, seven strangers are stranded for the night. When one is found dead in the morning, the remaining six must determine which of them is the murderer before the storm passes and they can escape.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014172,
+          "latency_ms": 75.05169976502657,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'At an isolated mountain lodge during a blizzard, seven stran...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.0050998,
+          "latency_ms": 372.40260001271963,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'At an isolated mountain lodge during a b...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "fantasy_001",
+        "title": "The Last Lightkeeper",
+        "brief": "In a realm where stars are physical entities that can be harvested for power, a young apprentice discovers that the recent dimming of the night sky is caused by a conspiracy to harvest the last remaining pure star for a weapon that could plunge the world into eternal darkness.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014522000000000003,
+          "latency_ms": 113.13339998014271,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'In a realm where stars are physical entities that can be har...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.0052268,
+          "latency_ms": 353.03030046634376,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'In a realm where stars are physical enti...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "slice_of_life_001",
+        "title": "The Repair Shop",
+        "brief": "Every Saturday, an elderly watchmaker opens their tiny shop to repair not just timepieces, but also the cherished trinkets and broken heirlooms of neighborhood residents. Each repair reveals a story about the owner and their connection to the object.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014256,
+          "latency_ms": 158.63800002261996,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'Every Saturday, an elderly watchmaker opens their tiny shop ...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.0051376,
+          "latency_ms": 361.9870003312826,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'Every Saturday, an elderly watchmaker op...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "documentary_style_001",
+        "title": "One Day in the Market",
+        "brief": "Following the interconnected stories of six vendors in a bustling Asian market from opening bell to closing time - the fishmonger who rises before dawn, the flower arranger who creates ephemeral beauty, the tea master who knows each customer's preference, and more.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014408000000000001,
+          "latency_ms": 121.492899954319,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'Following the interconnected stories of six vendors in a bus...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005186000000000001,
+          "latency_ms": 354.1857998352498,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'Following the interconnected stories of ...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "animation_concept_001",
+        "title": "The Clockbird's Apprentice",
+        "brief": "In a city where time is literally harvested from special birds and stored in towers, a young street urchin befriends a injured clockbird and learns that the city's ruling council is secretly draining the birds' life force to extend their own lives.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014256,
+          "latency_ms": 124.27400005981326,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'In a city where time is literally harvested from special bir...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005131599999999999,
+          "latency_ms": 406.0804999899119,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'In a city where time is literally harves...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "experimental_001",
+        "title": "Rooms",
+        "brief": "A character moves through a series of interconnected rooms, each representing a different year of their life. Objects remain, but their context and meaning shift as we see the same objects gain new significance through the lens of accumulated experience.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014294,
+          "latency_ms": 110.6208001729101,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'A character moves through a series of interconnected rooms, ...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.0051512,
+          "latency_ms": 311.9245998095721,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'A character moves through a series of in...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "western_001",
+        "title": "The Last Ride",
+        "brief": "An aging gunslinger agrees to escort a young widow and her child across dangerous territory to reach her family's ranch. What begins as a simple job becomes a journey of redemption as ghosts from the shooter's past emerge one by one.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014104,
+          "latency_ms": 104.31650001555681,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'An aging gunslinger agrees to escort a young widow and her c...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.0050772,
+          "latency_ms": 362.08810005337,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'An aging gunslinger agrees to escort a y...'"
+        },
+        "delta": 0.0
+      },
+      {
+        "id": "musical_001",
+        "title": "The Bridge Songs",
+        "brief": "On the day a historic slated-for-demolition bridge is to be replaced, musicians, poets, and everyday people gather to perform their final tributes. Each performance reveals a personal connection to the structure that has defined their community for generations.",
+        "single": {
+          "overall": 6.0,
+          "cost_usd": 0.0014370000000000001,
+          "latency_ms": 103.2364999409765,
+          "turns": 1,
+          "final_output": "[MOCK DRAFT] Shot 1: wide establishing shot.\nShot 2: medium on protagonist reacting.\nDirector's note: keep pacing slow, based on brief: 'On the day a historic slated-for-demolition bridge is to be ...'"
+        },
+        "loop": {
+          "overall": 6.0,
+          "cost_usd": 0.005172400000000001,
+          "latency_ms": 309.46070002391934,
+          "turns": 3,
+          "final_output": "[MOCK REVISED] Shot 1: wide establishing shot, slow dolly in, 35mm.\nShot 2: close-up on protagonist's hands before face, handheld.\nDirector's note: revised per critique for 'On the day a historic slated-for-demolit...'"
+        },
+        "delta": 0.0
+      }
+    ]
+  },
+  "analysis": {
+    "mean_delta": 0.0,
+    "median_delta": 0.0,
+    "bootstrap_ci": {
+      "lower": 0.0,
+      "upper": 0.0
+    },
+    "t_test": {
+      "statistic": NaN,
+      "p_value": NaN
+    },
+    "wilcoxon": {
+      "statistic": 0.0,
+      "p_value": NaN
+    },
+    "cost_ratio": 3.599917590533796,
+    "summary": {
+      "mean_single_cost": 0.0014291777777777777,
+      "mean_loop_cost": 0.005144922222222223,
+      "mean_single_latency_ms": 124.08347219590925,
+      "mean_loop_latency_ms": 352.7942277853274
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "visual_continuity": {
+    "b_mean": 6.0,
+    "c_mean": 6.0,
+    "effect_size": 0.0,
+    "p_value": 1.0,
+    "statistic": 0.0,
+    "significant": false
+  },
+  "lighting_match": {
+    "b_mean": 5.0,
+    "c_mean": 5.0,
+    "effect_size": 0.0,
+    "p_value": 1.0,
+    "statistic": 0.0,
+    "significant": false
+  },
+  "mood_match": {
+    "b_mean": 7.0,
+    "c_mean": 7.0,
+    "effect_size": 0.0,
+    "p_value": 1.0,
+    "statistic": 0.0,
+    "significant": false
+  }
+}
