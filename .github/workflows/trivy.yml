@@ -44,6 +44,16 @@ jobs:
       - name: Build Docker image
         run: docker build -t script-supervisor:latest .
 
+      - name: Show Trivy findings (human-readable, non-blocking)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          image-ref: script-supervisor:latest
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+
       - name: Run Trivy Docker scan
         uses: aquasecurity/trivy-action@master
         with:

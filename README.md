@@ -298,3 +298,7 @@ make phase8   # vision routing
 ## License
 
 This project is released under the [MIT](LICENSE) license.
+
+---
+
+<!-- TODO: update after Trivy workflow fix is pushed -->
