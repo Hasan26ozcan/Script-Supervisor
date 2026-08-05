@@ -15,11 +15,11 @@ structural annotations suitable for inclusion in technical documentation.
 
 ```mermaid
 graph TD
-    P["🎨 Presentation Layer<br/>FastAPI REST API<br/>Comparison UI (HTML)<br/>Inspect AI CLI"]
-    O["⚙️ Orchestration Layer<br/>CorrectionLoop<br/>AdaptiveRouter<br/>EvaluationHarness"]
-    S["🔧 Service Layer<br/>ModelGateway<br/>Rubric<br/>Mem0<br/>PreferenceStore<br/>CostBudget"]
-    D["💾 Persistence Layer<br/>PostgreSQL (primary)<br/>JSONL (offline fallback)"]
-    I["🏗️ Infrastructure Layer<br/>Docker<br/>Postgres 16<br/>Langfuse (optional)<br/>GitHub Actions"]
+    P["Presentation Layer<br/>FastAPI REST API<br/>Comparison UI<br/>Inspect AI CLI"]
+    O["Orchestration Layer<br/>CorrectionLoop<br/>AdaptiveRouter<br/>EvaluationHarness"]
+    S["Service Layer<br/>ModelGateway<br/>Rubric<br/>Mem0<br/>PreferenceStore<br/>CostBudget"]
+    D["Persistence Layer<br/>PostgreSQL 16 (primary)<br/>JSONL (offline fallback)"]
+    I["Infrastructure Layer<br/>Docker Compose<br/>Postgres 16<br/>Langfuse (optional)<br/>GitHub Actions CI/CD"]
 
     P --> O
     O --> S
@@ -27,7 +27,16 @@ graph TD
     D --> I
     P -.->|optional tracing| I
 
-    classDef default fill:#000000,stroke:#ffffff,stroke-width:1px,color:#ffffff
+    classDef presentation fill:#f0f9ff,stroke:#0284c7,stroke-width:2px,color:#07377e
+    classDef orchestration fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#065f46
+    classDef service fill:#fffbeb,stroke:#ea580c,stroke-width:2px,color:#78350f
+    classDef persistence fill:#f1f5f9,stroke:#475569,stroke-width:2px,color:#0f172a
+    classDef infrastructure fill:#f5f3ff,stroke:#4f46e5,stroke-width:2px,color:#312e81
+    class P presentation
+    class O orchestration
+    class S service
+    class D persistence
+    class I infrastructure
 ```
 
 The system is organized into five architectural layers, each with a clear
